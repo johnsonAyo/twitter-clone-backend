@@ -1,5 +1,13 @@
-import { ErrorInt } from './interfaces/errorInterface';
-const ErrorHandler = (status: number, message: string, data: object): ErrorInt => {
-  return { status, message, data, success: false };
-};
+class ErrorHandler extends Error {
+  statusCode: number;
+  status: string;
+  isOperational: true;
+  constructor(statusCode: number, message: string) {
+    super(message);
+    this.statusCode = statusCode;
+    this.status = `${statusCode}`.startsWith('4') ? 'fail' : 'error';
+    this.isOperational = true;
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
 export default ErrorHandler;

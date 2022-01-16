@@ -1,21 +1,29 @@
 import ErrorHandler from './../utils/appError';
+
 const handleCastErrorDB = (err: { path: any; value: any }) => {
   const message = `Invalid ${err.path}: ${err.value}.`;
-  return ErrorHandler(400, message, {});
+  return new ErrorHandler(400, message);
 };
-const handleDuplicateFieldsDB = (err: { errmsg: { match: (arg0: RegExp) => any[] } }) => {
-  const value = err.errmsg.match(/(["'])(\\?.)*?\1/)[0];
-  const message = `Duplicate field value: ${value}. Please use another value!`;
-  return ErrorHandler(400, message, {});
+const handleDuplicateFieldsDB = (err: any) => {
+  console.log(err);
+
+  const dupValue = Object.values(err.keyValue);
+  const message = `Duplicate field value: ${dupValue}. Please use another value!`;
+
+  console.log(message);
+
+  return new ErrorHandler(400, message);
 };
+
 const handleValidationErrorDB = (err: any) => {
   const errors = Object.values(err.errors).map((el: any) => el.message);
   const message = `Invalid input data. ${errors.join('. ')}`;
-  return ErrorHandler(400, message, {});
+  return new ErrorHandler(400, message);
 };
-const handleJWTError = () => ErrorHandler(401, 'Invalid token. Please log in again!', {});
+
+const handleJWTError = () => new ErrorHandler(401, 'Invalid token. Please log in again!');
 const handleJWTExpiredError = () =>
-  ErrorHandler(401, 'Your token has expired! Please log in again.', {});
+  new ErrorHandler(401, 'Your token has expired! Please log in again.');
 const sendErrorDev = (
   err: { statusCode: any; status: any; message: any; stack: any },
   req: { originalUrl: string },
@@ -75,9 +83,10 @@ const globalErrorHandler = (
   res: any,
   next: any,
 ) => {
-  // console.log(err.stack);
+  console.log('err.stack');
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
+  console.log('**()');
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, req, res);
   } else if (process.env.NODE_ENV === 'production') {
@@ -91,4 +100,5 @@ const globalErrorHandler = (
     sendErrorProd(error, req, res);
   }
 };
+
 export default globalErrorHandler;

@@ -5,6 +5,7 @@
   "scripts": {
     "start": "CI= node ./bin/www",
     "dev": "nodemon ./bin/www",
+    "start:prod": "NODE_ENV=production nodemon ./bin/www",
     "build": "tsc",
     "test": "jest --runInBand",
     "compile": "yarn tsc -w",

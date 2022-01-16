@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import User from '../models/userModels';
 import { ISign } from '../utils/interfaces/userInterface';
 import catchAsync from '../utils/catchAsync';
+import ErrorHandler from '../utils/appError';
 
 const generateToken = (email: string) => {
   const token = jwt.sign({ email }, process.env.JWT_SECRET_KEY as string, {
@@ -13,14 +14,6 @@ const generateToken = (email: string) => {
 };
 
 export const signup = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const oldUser = await User.findOne({ email: req.body.email });
-  if (oldUser) {
-    return res.status(400).json({
-      status: 'failed!',
-      message: 'Email in use. Please register with another email address',
-    });
-  }
-
   const newUser = await User.create({
     email: req.body.email,
     password: req.body.password,
@@ -41,24 +34,18 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
   //check if user submitted email and password
   const { email, password } = req.body;
   if (!email || !password) {
-    throw new Error('Please provide email and password');
+    return next(new ErrorHandler(401, 'Please provide email and password'));
   }
 
   //check if user with the email exists
   const user: ISign | null = await User.findOne({ email: req.body.email }).select('+password');
   if (!user) {
-    return res.status(401).json({
-      status: 'failed!',
-      message: 'Invalid login credential',
-    });
+    return next(new ErrorHandler(401, 'invalid login credentials'));
   }
   //Check if password is correct
   const match = await bcrypt.compare(req.body.password, user.password);
   if (!match) {
-    res.status(400).json({
-      status: 'failed!',
-      message: 'Invalid login credentials',
-    });
+    return next(new ErrorHandler(401, 'invalid login credentials'));
   }
 
   //Generate token for user
