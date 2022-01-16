@@ -6,7 +6,7 @@ import { ISign } from '../utils/interfaces/userInterface';
 import catchAsync from '../utils/catchAsync';
 import ErrorHandler from '../utils/appError';
 
-const generateToken = (email: string) => {
+export const generateToken = (email: string) => {
   const token = jwt.sign({ email }, process.env.JWT_SECRET_KEY as string, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
@@ -30,6 +30,8 @@ export const signup = catchAsync(async (req: Request, res: Response, next: NextF
   });
 });
 
+
+
 export const login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   //check if user submitted email and password
   const { email, password } = req.body;
@@ -42,6 +44,8 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
   if (!user) {
     return next(new ErrorHandler(401, 'invalid login credentials'));
   }
+
+
   //Check if password is correct
   const match = await bcrypt.compare(req.body.password, user.password);
   if (!match) {
@@ -56,3 +60,25 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
     user,
   });
 });
+
+export const protectRoute = catchAsync(async(req:Request, res:Response, next: NextFunction) => {
+  let token: string | undefined;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
+
+  if (!token) {
+    return next(new ErrorHandler(401, 'You are not authorized! 🚨'))
+  }
+
+    const decodedToken: any = jwt.verify(
+      token as string,
+      process.env.JWT_SECRET as string
+    );
+    const user = await User.findOne({ email: decodedToken.email });
+    req.user = user;
+    next();
+})

@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import { ISign } from '../interfaces/userInterface';
 
+
 export const validateSignup = (user: ISign) => {
   const schema = Joi.object({
     email: Joi.string().email().required(),
@@ -8,3 +9,6 @@ export const validateSignup = (user: ISign) => {
   });
   return schema.validate(user);
 };
+
+
+

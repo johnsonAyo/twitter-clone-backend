@@ -1,9 +1,13 @@
-import mongoose from 'mongoose';
+import {Schema, model} from 'mongoose';
 import bcrypt from 'bcrypt';
 import validator from 'validator';
 import { ISign } from '../utils/interfaces/userInterface';
 
-const UserSchema = new mongoose.Schema({
+const UserSchema = new Schema({
+
+  name:String,
+  profilePic: String,
+  bioData: String,
   email: {
     type: String,
     required: [true, 'Please provide your email address'],
@@ -15,8 +19,18 @@ const UserSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, 'Please provide your password'],
+    select: false
   },
+  isActive: {
+    type: Boolean,
+    default: false
+  },
+
+  provider:  {
+    type: String,
+    enum: ["local", "facebook", "google"],
+    default: "local"
+  }
 });
 
 UserSchema.pre<ISign>('save', async function (next) {
@@ -35,4 +49,4 @@ UserSchema.methods.confirmPassword = async function (userPassword: string) {
   return isMatch;
 };
 
-export default mongoose.model<ISign>('User', UserSchema);
+export default model<ISign>('User', UserSchema);
