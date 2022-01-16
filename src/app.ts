@@ -6,9 +6,11 @@ import logger from 'morgan';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
+
 dotenv.config();
 
 import indexRouter from './routes/index';
+import tweetRoute from './routes/tweetingRouting'
 // import { startDB } from './model/db';
 import { connectDB, connectTestDB } from './database/mem';
 
@@ -38,6 +40,7 @@ console.log(process.env.NODE_ENV, process.env.JWT_SECRET_KEY);
 // connectDB()
 
 app.use('/', indexRouter);
+app.use('/', tweetRoute);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
