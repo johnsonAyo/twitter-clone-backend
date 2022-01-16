@@ -13,6 +13,8 @@ import indexRouter from './routes/index';
 import { connectDB, connectTestDB } from './database/mem';
 import usersRouter from './routes/users';
 
+
+
 const app = express();
 
 app.use(cors());
@@ -38,6 +40,7 @@ console.log(process.env.NODE_ENV);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
 
 app.all('*', (req, res) => {
   res.status(404).json({
