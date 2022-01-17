@@ -1,6 +1,5 @@
 import mongoose, { mongo } from 'mongoose';
 
-
 /***********************************
  * tweet content interface
  ***********************************/
@@ -13,21 +12,13 @@ interface tweetIn {
   cloudinary_id: string;
 }
 
-
 // /***********************************
 //  * sub schema for who can replay
 //  ***********************************/
 
-
-
-
-
-
 /***********************************
  * let whoCanReply = mongoose.model
  ***********************************/
-
-
 
 const tweetSchema = new mongoose.Schema<tweetIn>(
   {
@@ -36,23 +27,22 @@ const tweetSchema = new mongoose.Schema<tweetIn>(
       ref: 'userCollection',
     },
     messageBody: {
-        type: String,
-        default: ''
+      type: String,
+      default: '',
     },
     tweetImage: {
       type: String,
     },
     whoCanReply: {
       type: String,
-        },
-        cloudinary_id: {
-        String
+    },
+    cloudinary_id: {
+      String,
     },
   },
   { timestamps: true },
 );
 
 const CreateTweetCln = mongoose.model('allCreatedTweets', tweetSchema);
-
 
 export default CreateTweetCln;
