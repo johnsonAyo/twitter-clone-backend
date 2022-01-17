@@ -86,7 +86,6 @@ const globalErrorHandler = (
   console.log('err.stack');
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
-  console.log('**()');
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, req, res);
   } else if (process.env.NODE_ENV === 'production') {
