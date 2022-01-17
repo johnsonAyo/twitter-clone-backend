@@ -16,7 +16,7 @@ const followSchema = new mongoose.Schema(
 const Follow = mongoose.model('Follow', followSchema);
 
 // Create follow object
-export const createFollow = async (userId: string, followId: string) => {
+export const createFollowModel = async (userId: string, followId: string) => {
   let newId = userId + followId;
   const follow = new Follow({
     userId: userId,
@@ -28,7 +28,7 @@ export const createFollow = async (userId: string, followId: string) => {
 };
 // Get follower list
 
-export const getFollowers = async (userId: string, pageNo: number) => {
+export const getFollowersModel = async (userId: string, pageNo: number) => {
   const followList = await Follow.find({ userId });
   const userIdArray = followList.map((val) => val['followId']);
   const result = await userModels.find({ _id: { $in: userIdArray } }).select({ _id: 1, email: 1 });
@@ -39,3 +39,8 @@ export const getFollowers = async (userId: string, pageNo: number) => {
   const output = { Totalfollowers: result.length, pageNo, pageSize: 5, followers: resultWithPagno };
   return output;
 };
+
+export const unFollowModel = async (userId: string,followId: string)=>{
+  let result= await Follow.deleteOne({ userId, followId})
+  return result
+}
