@@ -5,13 +5,15 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import globalErrorHandler from './controllers/errorController';
 
 dotenv.config();
 
 import indexRouter from './routes/index';
-import userRoutes from './routes/followRoute';
+import followRoutes from './routes/followRoute';
 // import { startDB } from './model/db';
 import { connectDB, connectTestDB } from './database/mem';
+import usersRouter from './routes/users';
 
 const app = express();
 
@@ -34,31 +36,38 @@ if (process.env.NODE_ENV === 'test') {
   connectDB();
 }
 
-console.log(process.env.NODE_ENV, process.env.JWT_SECRET_KEY);
-
-// connectDB()
+console.log(process.env.NODE_ENV);
 
 app.use('/', indexRouter);
-app.use('/api/follow', userRoutes);
+app.use('/api/follow', followRoutes);
+app.use('/users', usersRouter);
 
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
+app.all('*', (req, res) => {
+  res.status(404).json({
+    status: 'fail',
+    message: `Can not find ${req.originalUrl} endpoint on this server`,
+  });
 });
+// // catch 404 and forward to error handler
+// app.use(function (req, res, next) {
+//   next(createError(404));
+// });
 
 app.set('views', path.join(`${__dirname}/../`, 'views'));
 app.set('view engine', 'ejs');
 
-// error handler
-app.use(function (err: HttpError, req: Request, res: Response, next: NextFunction) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+// // error handler
+// app.use(function (err: HttpError, req: Request, res: Response, next: NextFunction) {
+//   // set locals, only providing error in development
+//   res.locals.message = err.message;
+//   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
+//   // render the error page
+//   res.status(err.status || 500);
 
-  res.send(err);
-});
+//   res.send(err);
+// });
+
+app.use(globalErrorHandler);
 
 export default app;
