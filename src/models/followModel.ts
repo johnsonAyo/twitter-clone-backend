@@ -34,9 +34,9 @@ export const getFollowersModel = async (userId: string, pageNo: number) => {
   const result = await userModels.find({ _id: { $in: userIdArray } }).select({ _id: 1, email: 1 });
   const resultWithPagno = await userModels
     .find({ _id: { $in: userIdArray } })
-    .skip(pageNo)
-    .limit(5);
   const output = { Totalfollowers: result.length, pageNo, pageSize: 5, followers: resultWithPagno };
+  console.log(result,'sdsdsdsdsdsd',resultWithPagno);
+  
   return output;
 };
 
