@@ -11,6 +11,7 @@ dotenv.config();
 
 import indexRouter from './routes/index';
 import followRoutes from './routes/followRoute';
+import tweetRoute from './routes/tweetingRouting';
 // import { startDB } from './model/db';
 import { connectDB, connectTestDB } from './database/mem';
 import usersRouter from './routes/users';
@@ -40,6 +41,7 @@ console.log(process.env.NODE_ENV);
 
 app.use('/', indexRouter);
 app.use('/api/follow', followRoutes);
+app.use('/tweet', tweetRoute);
 app.use('/users', usersRouter);
 
 app.all('*', (req, res) => {
