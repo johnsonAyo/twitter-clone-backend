@@ -1,11 +1,10 @@
-import {Schema, model} from 'mongoose';
+import { Schema, model } from 'mongoose';
 import bcrypt from 'bcrypt';
 import validator from 'validator';
 import { ISign } from '../utils/interfaces/userInterface';
 
 const UserSchema = new Schema({
-
-  name:String,
+  name: String,
   profilePic: String,
   bioData: String,
   email: {
@@ -19,18 +18,18 @@ const UserSchema = new Schema({
   },
   password: {
     type: String,
-    select: false
+    select: false,
   },
   isActive: {
     type: Boolean,
-    default: false
+    default: false,
   },
 
-  provider:  {
+  provider: {
     type: String,
-    enum: ["local", "facebook", "google"],
-    default: "local"
-  }
+    enum: ['local', 'facebook', 'google'],
+    default: 'local',
+  },
 });
 
 UserSchema.pre<ISign>('save', async function (next) {

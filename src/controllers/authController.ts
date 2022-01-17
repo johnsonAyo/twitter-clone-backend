@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction, response } from 'express';
-import jwt from 'jsonwebtoken';
+const jwt =  require('jsonwebtoken');
 import bcrypt from 'bcrypt';
 import User from '../models/userModels';
 import { ISign } from '../utils/interfaces/userInterface';
@@ -10,6 +10,7 @@ export const generateToken = (email: string) => {
   const token = jwt.sign({ email }, process.env.JWT_SECRET_KEY as string, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
+  
   return token;
 };
 
@@ -30,8 +31,6 @@ export const signup = catchAsync(async (req: Request, res: Response, next: NextF
   });
 });
 
-
-
 export const login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   //check if user submitted email and password
   const { email, password } = req.body;
@@ -45,7 +44,6 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
     return next(new ErrorHandler(401, 'invalid login credentials'));
   }
 
-
   //Check if password is correct
   const match = await bcrypt.compare(req.body.password, user.password);
   if (!match) {
@@ -53,7 +51,17 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
   }
 
   //Generate token for user
-  const token = generateToken(user.email);
+  // const token = generateToken(user.email);
+
+  
+  const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET_KEY, {
+    
+    expiresIn: process.env.JWT_EXPIRES_IN
+  });
+
+  res.cookie("jwt_token",token, {httpOnly:true})
+
+  
   res.status(201).json({
     status: 'Login successful!',
     token,
@@ -61,24 +69,27 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
   });
 });
 
-export const protectRoute = catchAsync(async(req:Request, res:Response, next: NextFunction) => {
-  let token: string | undefined;
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
-    token = req.headers.authorization.split(" ")[1];
-  }
 
-  if (!token) {
-    return next(new ErrorHandler(401, 'You are not authorized! 🚨'))
-  }
+export const protectRoute = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  // let token: string | undefined;
+  // if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+  //   token = req.headers.authorization.split(' ')[1];
+  // }
 
-    const decodedToken: any = jwt.verify(
-      token as string,
-      process.env.JWT_SECRET as string
-    );
+  const token = req.cookies.jwt_token;
+  console.log(token);
+  
+
+  if (token) {
+    const decodedToken: any = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findOne({ email: decodedToken.email });
     req.user = user;
+    console.log(user);
+    
     next();
-})
+  } else {
+    return next(new ErrorHandler(401, 'You are not authorized! 🚨'));
+  }
+
+
+});
