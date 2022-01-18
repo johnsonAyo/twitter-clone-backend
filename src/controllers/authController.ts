@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction, response } from 'express';
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import User from '../models/userModels';
 import { ISign } from '../utils/interfaces/userInterface';
@@ -80,9 +80,10 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
   }
 
   //Generate token for user
-  // const token = generateToken(user.email);
 
-  const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET_KEY, {
+  const token = generateToken(user.email);
+
+  jwt.sign({ email: user.email }, `${process.env.JWT_SECRET_KEY}`, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
@@ -108,5 +109,6 @@ export const protectRoute = catchAsync(async (req: Request, res: Response, next:
   const decodedToken: any = jwt.verify(token as string, process.env.JWT_SECRET_KEY as string);
   const user = await User.findOne({ email: decodedToken.email });
   req.user = user;
+
   next();
 });
