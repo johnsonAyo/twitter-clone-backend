@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction, response } from 'express';
-import jwt from 'jsonwebtoken';
+const jwt = require('jsonwebtoken');
 import bcrypt from 'bcrypt';
 import User from '../models/userModels';
 import { ISign } from '../utils/interfaces/userInterface';
@@ -11,6 +11,7 @@ const generateToken = (email: string) => {
   const token = jwt.sign({ email }, process.env.JWT_SECRET_KEY as string, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
+
   return token;
 };
 
@@ -20,39 +21,37 @@ export const signup = catchAsync(async (req: Request, res: Response, next: NextF
     password: req.body.password,
   });
 
-  
   const token = generateToken(newUser._id);
   await sendEmail(newUser.email);
   res.status(200).json({
     status: 'success',
     message: 'Token sent to email',
   });
-  
 });
-
 
 export const confirmEmail = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const emailToken: any = jwt.verify(
     req.params.token as string,
     process.env.JWT_EMAIL_KEY as string,
   );
-  if(!emailToken){
+  if (!emailToken) {
     return next(new ErrorHandler(401, 'Invalid Token. Please SignUp!'));
   }
   //console.log(decodedToken)
-  const data = await User.findOne({email: emailToken.email})
-  if(!data){
-    return next(new ErrorHandler(401, 'We were unable to find a user for this verification. Please SignUp!'));
-  }else{
+  const data = await User.findOne({ email: emailToken.email });
+  if (!data) {
+    return next(
+      new ErrorHandler(401, 'We were unable to find a user for this verification. Please SignUp!'),
+    );
+  } else {
     data.isActive = true;
-    await data.save()
+    await data.save();
   }
-  
+
   //await User.updateOne({ isActive: emailToken.isActive }, isActive: true, { new: true});
 
   return res.redirect('back');
 });
-
 
 export const login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   //check if user submitted email and password
@@ -69,7 +68,9 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
 
   if (!user.isActive) {
     await sendEmail(user.email);
-    return next(new ErrorHandler(401, 'A mail has been sent to you. Please confirm email to login'));
+    return next(
+      new ErrorHandler(401, 'A mail has been sent to you. Please confirm email to login'),
+    );
   }
 
   //Check if password is correct
@@ -79,7 +80,14 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
   }
 
   //Generate token for user
-  const token = generateToken(user.email);
+  // const token = generateToken(user.email);
+
+  const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET_KEY, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
+  });
+
+  res.cookie('jwt_token', token, { httpOnly: true });
+
   res.status(201).json({
     status: 'Login successful!',
     token,

@@ -11,14 +11,14 @@ const generateEmailToken = (email: string) => {
 };
 const sendEmail = async (email: string) => {
   //1. create a transporter
-  if(process.env.NODE_ENV === 'production'){
+  if (process.env.NODE_ENV === 'production') {
     return nodemailer.createTransport({
       service: 'SendGrid',
       auth: {
         user: process.env.SENDGRID_USERNAME,
-        pass: process.env.SENDGRID_PASSWORD
-      }
-    })
+        pass: process.env.SENDGRID_PASSWORD,
+      },
+    });
   }
   const transporter = nodemailer.createTransport({
     host: 'smtp.mailtrap.io',
