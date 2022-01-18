@@ -37,7 +37,7 @@ const tweetSchema = new mongoose.Schema<tweetIn>(
       type: String,
     },
     cloudinary_id: {
-      String,
+      type:String,
     },
   },
   { timestamps: true },
