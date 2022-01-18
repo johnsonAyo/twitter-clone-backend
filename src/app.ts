@@ -12,6 +12,7 @@ dotenv.config();
 import indexRouter from './routes/index';
 import { connectDB, connectTestDB } from './database/mem';
 import usersRouter from './routes/users';
+import profileRouter from './routes/profile';
 
 const app = express();
 
@@ -38,6 +39,7 @@ console.log(process.env.NODE_ENV);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/profile', profileRouter)
 
 app.all('*', (req, res) => {
   res.status(404).json({
