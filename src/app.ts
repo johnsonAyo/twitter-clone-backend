@@ -10,6 +10,8 @@ import globalErrorHandler from './controllers/errorController';
 dotenv.config();
 
 import indexRouter from './routes/index';
+import tweetRoute from './routes/tweetingRouting';
+// import { startDB } from './model/db';
 import { connectDB, connectTestDB } from './database/mem';
 import usersRouter from './routes/users';
 import profileRouter from './routes/profile';
@@ -38,6 +40,7 @@ if (process.env.NODE_ENV === 'test') {
 console.log(process.env.NODE_ENV);
 
 app.use('/', indexRouter);
+app.use('/tweet', tweetRoute);
 app.use('/users', usersRouter);
 app.use('/profile', profileRouter)
 
