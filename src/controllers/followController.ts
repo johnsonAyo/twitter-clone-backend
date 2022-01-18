@@ -20,9 +20,11 @@ export const getFollowersController = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     {
       let { userId } = req.params;
-      let  pageNo  :any= req.query.pageNo;
-      let data: any = await getFollowersModel(userId,parseInt(pageNo));
-      if (!data) return next(new ErrorHandler(401, 'Error occurred'));
+      let pageNo: any = req.query.pageNo;
+      let pageSize: any = req.query.pageSize;
+      let data: any = await getFollowersModel(userId, parseInt(pageNo), parseInt(pageSize));
+      if (!data)
+        return next(new ErrorHandler(401, 'Error occurred'));
 
       data
         ? res.status(200).json({ message: 'success', data })
