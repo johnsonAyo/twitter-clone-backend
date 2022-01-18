@@ -21,4 +21,7 @@ router.get('/allTweet', protectRoute, tweetControls.allUserTweet);
 //delete tweet
 router.delete('/deletetweet/:id', protectRoute, tweetControls.deleteTweet);
 
+//undo retweet
+router.delete('/undoretweet/:id', protectRoute, tweetControls.undoUserReweet);
+
 export default router;

@@ -8,7 +8,7 @@ const reTweetSchema = new mongoose.Schema(
     },
     reTweeterId: {
       type: String,
-    }
+    },
   },
   { timestamps: true },
 );

@@ -12,13 +12,23 @@ const imageMulter = multer({
   fileFilter: (req: any, file: any, cb: any) => {
     let extn = path.extname(file.originalname);
 
-    if (extn !== '.jpg' && extn !== '.jpeg' && extn !== '.png') {
+    if (
+      extn !== '.jpg' &&
+      extn !== '.jpeg' &&
+      extn !== '.png'
+      
+  
+     
+    ) {
       cb(new Error('File type is not supported...'), false);
       return;
     }
-
     cb(null, true);
   },
 });
+
+
+
+
 
 export default imageMulter;
