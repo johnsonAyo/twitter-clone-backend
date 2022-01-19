@@ -71,4 +71,3 @@ export const validateLogin = (data: LoginInt) => {
 export const writeFile = (data: author[]) => {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 3));
 };
-

@@ -9,26 +9,23 @@ describe('Simple Test for adding two Numbers', () => {
   });
 });
 
-
-describe("authors", () => {
+describe('authors', () => {
   const authorData = {
-    author: "Hannah Montanna",
+    author: 'Hannah Montanna',
     age: 32,
-    address: "7, Straight Street, Walls",
+    address: '7, Straight Street, Walls',
   };
 
-  test("follow user test", async () => {
+  test('follow user test', async () => {
     const response = await supertest(app)
-      .post("/api/follow")
+      .post('/api/follow')
       // .set("Authorization", `Bearer ${token}`)
       .send(authorData);
     // authorId = response.body.data.id;
     // ID = response.body.data.id;
     //console.log(response.body.message,ID, 'CHIIDFJDFDFJD')
     expect(response.status).toBe(200);
-    expect(response.body.message).toBe("creates new author");
+    expect(response.body.message).toBe('creates new author');
     expect(response.body.data.author).toBe(authorData.author);
   });
-
 });
-
