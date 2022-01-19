@@ -37,10 +37,8 @@ export const uploadProfilePicture = catchAsync(
 );
 
 export const createProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const user = await userModels.findById(req.params.id);
-  if (!user) return next(new ErrorHandler(404, 'User not found'));
   const newProfile = await Profile.create({
-    user: user.id,
+    user: req.user.id,
     name: req.body.name,
     bio: req.body.bio,
     location: req.body.location,
