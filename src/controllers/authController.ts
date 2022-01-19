@@ -15,6 +15,13 @@ const generateToken = (email: string) => {
   return token;
 };
 
+const generateEmailToken = (email: string) => {
+  const emailToken = jwt.sign({ email }, process.env.JWT_EMAIL_KEY as string, {
+    expiresIn: process.env.JWT_EMAIL_EXPIRES_IN,
+  });
+  return emailToken;
+};
+
 export const signup = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const newUser = await User.create({
     email: req.body.email,
@@ -22,7 +29,17 @@ export const signup = catchAsync(async (req: Request, res: Response, next: NextF
   });
 
   const token = generateToken(newUser._id);
-  await sendEmail(newUser.email);
+  const emailToken = generateEmailToken(newUser.email);
+
+  await sendEmail(
+    newUser.email,
+    'Email Verification',
+    `<p>Thank you for signing up for a Twitter account</p>
+     <p>In order to access your Twitter account</p>
+     Click
+     <button><a href= http://localhost:3000/users/verify/${emailToken}>here</a></button> 
+     to verify your email. Thanks`,
+  );
   res.status(200).json({
     status: 'success',
     message: 'Token sent to email',
@@ -48,8 +65,6 @@ export const confirmEmail = catchAsync(async (req: Request, res: Response, next:
     await data.save();
   }
 
-  //await User.updateOne({ isActive: emailToken.isActive }, isActive: true, { new: true});
-
   return res.redirect('back');
 });
 
@@ -66,8 +81,17 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
     return next(new ErrorHandler(401, 'invalid login credentials'));
   }
 
+  const emailToken = generateEmailToken(user.email);
   if (!user.isActive) {
-    await sendEmail(user.email);
+    await sendEmail(
+      user.email,
+      'Email Verification',
+      `<p>Thank you for signing up for a Twitter account</p>
+    <p>In order to access your Twitter account</p>
+    Click
+    <button><a href= http://localhost:3000/users/verify/${emailToken}>here</a></button> 
+    to verify your email. Thanks`,
+    );
     return next(
       new ErrorHandler(401, 'A mail has been sent to you. Please confirm email to login'),
     );
@@ -80,18 +104,17 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
   }
 
   //Generate token for user
-  // const token = generateToken(user.email);
+  const token = generateToken(user.email);
 
-  const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET_KEY, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
+  // (const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET_KEY, {
+  //   expiresIn: process.env.JWT_EXPIRES_IN,
+  // });
 
-  res.cookie('jwt_token', token, { httpOnly: true });
+  // res.cookie'jwt_token', token, { httpOnly: true });
 
   res.status(201).json({
     status: 'Login successful!',
     token,
-    user,
   });
 });
 
