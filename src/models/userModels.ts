@@ -17,6 +17,14 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please provide your password'],
   },
+  passwordChangedAt: {
+    type: Date,
+  },
+  passwordResetToken: {
+    type: String,
+  },
+  passwordExpires: String,
+  passwordResetTokenExpires: Date,
 });
 
 UserSchema.pre<ISign>('save', async function (next) {

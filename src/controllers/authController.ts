@@ -6,6 +6,7 @@ import { ISign } from '../utils/interfaces/userInterface';
 import catchAsync from '../utils/catchAsync';
 import ErrorHandler from '../utils/appError';
 
+
 const generateToken = (email: string) => {
   const token = jwt.sign({ email }, process.env.JWT_SECRET_KEY as string, {
     expiresIn: process.env.JWT_EXPIRES_IN,
