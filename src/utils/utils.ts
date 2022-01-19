@@ -72,17 +72,3 @@ export const writeFile = (data: author[]) => {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 3));
 };
 
-export const multerJs = () => {
-  const upload = multer({
-    fileFilter: (req, file, cb) => {
-      const fileFormat = ['jpg', 'jpeg', 'png'];
-      const filename = file.filename.split('.');
-      const fileExtension = filename[filename.length - 1];
-
-      if (fileFormat.includes(fileExtension)) return cb(null, true);
-      return cb(null, false);
-    },
-  }).single('profilePicture');
-
-  return { upload }
-};
