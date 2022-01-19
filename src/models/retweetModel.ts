@@ -13,6 +13,7 @@ const reTweetSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-const CreateRetTweet = mongoose.model('allReTweets', reTweetSchema);
+const CreateReTweet = mongoose.model('allReTweets', reTweetSchema);
 
-export default CreateRetTweet;
+export default CreateReTweet;
+
