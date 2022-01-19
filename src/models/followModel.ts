@@ -28,33 +28,76 @@ export const createFollowModel = async (userId: string, followerId: string) => {
 };
 // Get follower list
 
-export const getFollowersModel = async (userId: string, pageNo: number,pageSize:number) => {
+export const getFollowersModel = async (userId: string, pageNo: number, pageSize: number) => {
   const followList = await Follow.find({ userId });
   const userIdArray = followList.map((val) => val['followId']);
   const result = await userModels.find({ _id: { $in: userIdArray } }).select({ _id: 1, email: 1 });
   const resultWithPagno = await userModels
-    .find({ _id: { $in: userIdArray } }).skip(pageNo-1).limit(pageSize)
+    .find({ _id: { $in: userIdArray } })
+    .skip(pageNo - 1)
+    .limit(pageSize);
   const output = { Totalfollowers: result.length, pageNo, pageSize, followers: resultWithPagno };
-  
+
   return output;
 };
 
-
-export const getFollowingModel= async (userId: string, pageNo: number,pageSize:number)=>{
-  const followList = await Follow.find({ followId:userId });
+export const getFollowingModel = async (userId: string, pageNo: number, pageSize: number) => {
+  const followList = await Follow.find({ followId: userId });
   console.log(followList);
-  
+
   const userIdArray = followList.map((val) => val['userId']);
   const result = await userModels.find({ _id: { $in: userIdArray } }).select({ _id: 1, email: 1 });
   const resultWithPagno = await userModels
-    .find({ _id: { $in: userIdArray } }).skip(pageNo-1).limit(pageSize)
+    .find({ _id: { $in: userIdArray } })
+    .skip(pageNo - 1)
+    .limit(pageSize);
   const output = { Totalfollowing: result.length, pageNo, pageSize, following: resultWithPagno };
-  
-  return output;
 
+  return output;
+};
+
+export const unFollowModel = async (userId: string, followId: string) => {
+  let result = await Follow.deleteOne({ userId, followId });
+  return result;
+};
+
+export const suggestFollowersModel = async (userId: string, pageNo: number, pageSize: number) => {
+  let myFollowing = await Follow.find({ followId: userId }).select({ userId: 1 });
+
+  let myFollowingArr = myFollowing.map((item) => item.userId.toString());
+
+  let myFollowingsNetwork: any = await myFollowingsConnection(myFollowingArr);
+
+  let data = await filterConnections(myFollowingArr, myFollowingsNetwork);
+
+  let suggestedConnection = await userModels.find({ _id: { $in: data } });
+
+  console.log(data, 'find');
+
+  return suggestedConnection 
+};
+
+async function myFollowingsConnection(followingList: any) {
+  let data = await Follow.find({ followId: { $in: followingList } });
+  let myNetwork = data.map((item) => item.userId.toString());
+  return new Promise((resolve, reject) => {
+    if (myNetwork) {
+      resolve(myNetwork);
+    } else {
+      resolve('your connections are not folllowing anyone');
+    }
+  });
 }
 
-export const unFollowModel = async (userId: string,followId: string)=>{
-  let result= await Follow.deleteOne({ userId, followId})
-  return result
+async function filterConnections(followingList: Array<string>, connectionList: Array<string>) {
+  let ans = followingList.filter((val) => !connectionList.includes(val));
+  console.log(ans);
+
+  return new Promise((resolve, reject) => {
+    if (ans) {
+      resolve(ans);
+    } else {
+      resolve('no follow suggestion');
+    }
+  });
 }

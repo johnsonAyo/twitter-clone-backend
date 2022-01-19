@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { createFollowModel, getFollowersModel, getFollowingModel, unFollowModel } from '../models/followModel';
+import { createFollowModel, getFollowersModel, getFollowingModel, suggestFollowersModel, unFollowModel } from '../models/followModel';
 import catchAsync from '../utils/catchAsync';
 import ErrorHandler from '../utils/appError';
 
@@ -76,3 +76,24 @@ export const unFollowController = catchAsync(
     }
   },
 );
+
+export const suggestFollowersController = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    {
+      let userId : any= req.user._id;
+      userId=userId.toString()
+
+      // let { userId } = req.params;
+      let pageNo: any = req.query.pageNo;
+      let pageSize: any = req.query.pageSize;
+      let data: any = await suggestFollowersModel(userId, parseInt(pageNo), parseInt(pageSize));
+      if (!data)
+        return next(new ErrorHandler(401, 'Error occurred'));
+
+      return res.status(200).json({ message: 'success', "suggested-connection":data })
+
+      return data;
+    }
+  },
+);
+
