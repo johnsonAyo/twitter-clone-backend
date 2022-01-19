@@ -3,21 +3,22 @@ import CreateTweetCln from './tweetModel';
 import mongoose from 'mongoose';
 import CreateReTweet from './retweetModel';
 
-
-// view tweets of users I follow
+/***********************************
+ * Method to view tweets and retweets
+ * for users a user follows
+ ***********************************/
 export async function viewTweet(userId: string, pageNo: number, pageSize: number): Promise<void> {
-  let following: any = await Follow.find({ followId:userId  })
+  let following: any = await Follow.find({ followId: userId })
     .skip(pageNo - 1)
     .limit(pageSize);
   let followingId = following.map((val: any) => val.userId);
-  
+
   let data: any = await CreateTweetCln.find({ userId: { $in: followingId } });
 
-  
   let followingIdRe = following.map((val: any) => val.userId.toString());
-  console.log(data,followingId,'ngfgbv nbvbn',followingIdRe);
-  let retweet:any =await CreateReTweet.find({ reTweeterId: { $in: followingIdRe } })
+  console.log(data, followingId, 'ngfgbv nbvbn', followingIdRe);
+  let retweet: any = await CreateReTweet.find({ reTweeterId: { $in: followingIdRe } });
 
-  let output: any = { following: followingId, tweet: data, retweet};
+  let output: any = { following: followingId, tweet: data, retweet };
   return output;
 }

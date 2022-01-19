@@ -10,9 +10,8 @@ try {
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_SECRET,
   });
-} catch (error:any) {
-  
-  console.error(error.message)
+} catch (error: any) {
+  console.error(error.message);
 }
 
 export default cloudinaryImage;

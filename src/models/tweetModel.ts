@@ -20,7 +20,6 @@ interface tweetIn {
  * let whoCanReply = mongoose.model
  ***********************************/
 
-
 const tweetSchema = new mongoose.Schema<tweetIn>(
   {
     userId: {
@@ -38,7 +37,7 @@ const tweetSchema = new mongoose.Schema<tweetIn>(
       type: String,
     },
     cloudinary_id: {
-      type:String,
+      type: String,
     },
   },
   { timestamps: true },
