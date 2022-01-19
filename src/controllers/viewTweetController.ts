@@ -3,6 +3,12 @@ import catchAsync from '../utils/catchAsync';
 import ErrorHandler from '../utils/appError';
 import { viewTweet } from '../models/viewtweetModel';
 
+/****************************************************************************
+ *                                                                           *
+ *               View Tweets and retweet of users I follow                   *
+ *                                                                           *
+/*****************************************************************************/
+
 export const viewTweetController = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     let userId: any = req.user._id;

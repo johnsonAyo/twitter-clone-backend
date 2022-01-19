@@ -1,7 +1,7 @@
 import express, { NextFunction, Response, Request } from 'express';
 import Joi from 'joi';
 
-export const getFollowerPolicy = (req: Request, res: Response, next: NextFunction) => {
+export const paginationPolicy = (req: Request, res: Response, next: NextFunction) => {
   const schema = Joi.object({
     // userId: Joi.string().min(24).max(24).required(),
     pageNo: Joi.number().min(1).required(),
