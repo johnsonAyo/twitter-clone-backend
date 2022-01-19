@@ -7,7 +7,7 @@ import mongoose, { mongo } from 'mongoose';
 interface tweetIn {
   messageBody: string;
   tweetImage: string;
-  userId: Number;
+  userId: any;
   whoCanReply: string;
   cloudinary_id: string;
 }
@@ -19,6 +19,7 @@ interface tweetIn {
 /***********************************
  * let whoCanReply = mongoose.model
  ***********************************/
+
 
 const tweetSchema = new mongoose.Schema<tweetIn>(
   {
@@ -37,7 +38,7 @@ const tweetSchema = new mongoose.Schema<tweetIn>(
       type: String,
     },
     cloudinary_id: {
-      String,
+      type:String,
     },
   },
   { timestamps: true },
