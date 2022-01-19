@@ -3,8 +3,10 @@ import CreateTweetCln from './tweetModel';
 import mongoose from 'mongoose';
 import CreateReTweet from './retweetModel';
 
-
-// view tweets of users I follow
+/***********************************
+ * Method to view tweets and retweets 
+ * for users a user follows
+ ***********************************/
 export async function viewTweet(userId: string, pageNo: number, pageSize: number): Promise<void> {
   let following: any = await Follow.find({ followId:userId  })
     .skip(pageNo - 1)

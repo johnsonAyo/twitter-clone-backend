@@ -1,7 +1,9 @@
 import mongoose, { Mongoose } from 'mongoose';
 import userModels from './userModels';
 
-// follow schema
+/***********************************
+ * schema for creating followers
+ ***********************************/
 const followSchema = new mongoose.Schema(
   {
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'userModels' },
@@ -11,11 +13,11 @@ const followSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-// followSchema.index({ userId: 1, followId: 1 }, { unique: true });
-
 export const Follow = mongoose.model('Follow', followSchema);
 
-// Create follow object
+/***********************************
+ * create follow Model
+ ***********************************/
 export const createFollowModel = async (userId: string, followerId: string) => {
   let newId = userId + followerId;
   const follow = new Follow({
@@ -26,8 +28,10 @@ export const createFollowModel = async (userId: string, followerId: string) => {
   const result = await follow.save();
   return result;
 };
-// Get follower list
 
+/***********************************
+ * Method to get all followers
+ ***********************************/
 export const getFollowersModel = async (userId: string, pageNo: number, pageSize: number) => {
   const followList = await Follow.find({ userId });
   const userIdArray = followList.map((val) => val['followId']);
@@ -41,6 +45,9 @@ export const getFollowersModel = async (userId: string, pageNo: number, pageSize
   return output;
 };
 
+/***********************************
+ * Method to get all users I follow
+ ***********************************/
 export const getFollowingModel = async (userId: string, pageNo: number, pageSize: number) => {
   const followList = await Follow.find({ followId: userId });
   console.log(followList);
@@ -56,11 +63,17 @@ export const getFollowingModel = async (userId: string, pageNo: number, pageSize
   return output;
 };
 
+/***********************************
+ * Method to unfollow user
+ ***********************************/
 export const unFollowModel = async (userId: string, followId: string) => {
   let result = await Follow.deleteOne({ userId, followId });
   return result;
 };
 
+/***********************************
+ * Method for suggesting followers
+ ***********************************/
 export const suggestFollowersModel = async (userId: string, pageNo: number, pageSize: number) => {
   let myFollowing = await Follow.find({ followId: userId }).select({ userId: 1 });
 
@@ -74,8 +87,12 @@ export const suggestFollowersModel = async (userId: string, pageNo: number, page
 
   console.log(data, 'find');
 
-  return suggestedConnection 
+  return suggestedConnection;
 };
+
+/***********************************
+ * Helper method for suggestFollowersModel
+ ***********************************/
 
 async function myFollowingsConnection(followingList: any) {
   let data = await Follow.find({ followId: { $in: followingList } });
@@ -89,6 +106,9 @@ async function myFollowingsConnection(followingList: any) {
   });
 }
 
+/***********************************
+ * Helper method for suggestFollowersModel
+ ***********************************/
 async function filterConnections(followingList: Array<string>, connectionList: Array<string>) {
   let ans = followingList.filter((val) => !connectionList.includes(val));
   console.log(ans);
