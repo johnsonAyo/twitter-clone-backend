@@ -16,4 +16,3 @@ const reTweetSchema = new mongoose.Schema(
 const CreateReTweet = mongoose.model('allReTweets', reTweetSchema);
 
 export default CreateReTweet;
-

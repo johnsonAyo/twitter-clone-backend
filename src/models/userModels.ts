@@ -48,4 +48,4 @@ UserSchema.methods.confirmPassword = async function (userPassword: string) {
   return isMatch;
 };
 
-export default  model<ISign>('User', UserSchema);
+export default model<ISign>('User', UserSchema);

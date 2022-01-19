@@ -7,7 +7,6 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import globalErrorHandler from './controllers/errorController';
 
-
 dotenv.config();
 
 import indexRouter from './routes/index';
@@ -15,7 +14,7 @@ import followRoutes from './routes/followRoute';
 import tweetRoute from './routes/tweetingRouting';
 import { connectDB, connectTestDB } from './database/mem';
 import usersRouter from './routes/users';
-import viewtweetRoute from './routes/viewTweetRoute'
+import viewtweetRoute from './routes/viewTweetRoute';
 const app = express();
 
 app.use(cors());
@@ -43,7 +42,7 @@ app.use('/', indexRouter);
 app.use('/api/follow', followRoutes);
 app.use('/tweet', tweetRoute);
 app.use('/users', usersRouter);
-app.use('/api/viewtweet',viewtweetRoute)
+app.use('/api/viewtweet', viewtweetRoute);
 
 app.all('*', (req, res) => {
   res.status(404).json({
