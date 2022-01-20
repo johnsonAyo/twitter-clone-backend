@@ -21,13 +21,14 @@ export const uploadProfilePicture = catchAsync(
 
       const path = req.file?.path;
       try {
+        const profile = await Profile.findOne({ user: req.user.id });
+        if (!profile) return next(new ErrorHandler(500, 'Profile does not exist'));
         const file = await cloudinaryImage.uploader.upload(path as string);
-        const profile = await Profile.findOne({ _id: req.params.id });
-        if (!profile) return next(new ErrorHandler(500, err.message));
         await profile.update({ profilePicture: file.url });
+        const updateProfile = await Profile.findOne({ user: req.user.id });
         return res.status(201).json({
           status: 'successful!',
-          profile,
+          profile: updateProfile,
         });
       } catch (error: any) {
         next(new ErrorHandler(500, error.message));
@@ -37,13 +38,12 @@ export const uploadProfilePicture = catchAsync(
 );
 
 export const createProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const profile = await Profile.findOne({ user: req.user.id });
+  if (profile) return next(new ErrorHandler(400, 'User can not create multiple profiles'));
   const newProfile = await Profile.create({
     user: req.user.id,
     name: req.body.name,
     bio: req.body.bio,
-    location: req.body.location,
-    birthday: req.body.birthday,
-    website: req.body.website,
   });
 
   return res.status(201).json({
@@ -53,16 +53,23 @@ export const createProfile = catchAsync(async (req: Request, res: Response, next
 });
 
 export const updateProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const profile = await Profile.findById(req.params.id);
-  await profile?.update({
+  const profile = await Profile.findOne({ user: req.user.id });
+  if (!profile) return next(new ErrorHandler(404, 'profile does not exist'));
+  await profile.update({
     name: req.body.name || profile.name,
     bio: req.body.bio || profile.bio,
-    location: req.body.location || profile.location,
-    birthday: req.body.birthday || profile.birthday,
-    website: req.body.website || profile.website,
   });
+  const updateProfile = await Profile.findOne({ user: req.user.id });
+  return res.status(201).json({
+    status: 'successful!',
+    profile: updateProfile,
+  });
+});
+
+export const userProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const profile = await Profile.findOne({ user: req.user.id });
   return res.status(201).json({
     status: 'successful!',
     profile,
   });
-});
+})

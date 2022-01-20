@@ -8,9 +8,6 @@ const ProfileSchema: mongoose.Schema<IProfile> = new mongoose.Schema(
   {
     name: { type: String },
     bio: { type: String, default: '' },
-    location: { type: String, default: '' },
-    birthday: Date,
-    website: { type: String, default: '' },
     profilePicture: { type: String, default: '' },
     user: { ref: 'User', type: mongoose.Types.ObjectId },
   },
