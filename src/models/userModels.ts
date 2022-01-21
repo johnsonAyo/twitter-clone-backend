@@ -30,6 +30,7 @@ const UserSchema = new Schema({
     enum: ['local', 'facebook', 'google'],
     default: 'local',
   },
+
 });
 
 UserSchema.pre<ISign>('save', async function (next) {

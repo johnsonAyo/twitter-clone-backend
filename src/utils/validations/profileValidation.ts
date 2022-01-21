@@ -1,10 +1,10 @@
 import Joi from 'joi';
-import { IProfile } from '../interfaces/profileInterface';
+import { ISign } from '../interfaces/userInterface';
 
-export const profileValidator = (profile: IProfile) => {
+export const profileValidator = (profile: ISign) => {
   const schema = Joi.object({
     name: Joi.string().min(3),
-    bio: Joi.string().min(7),
+    bioData: Joi.string().min(7),
   });
   return schema.validate(profile);
 };

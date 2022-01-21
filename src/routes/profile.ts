@@ -1,6 +1,5 @@
 import express from 'express';
 import {
-  createProfile,
   updateProfile,
   uploadProfilePicture,
   userProfile,
@@ -15,6 +14,6 @@ router
   .get('/', protectRoute, userProfile)
   .put('/', protectRoute, [middleware(profileValidator)], updateProfile);
 router.put('/picture', protectRoute, uploadProfilePicture);
-router.post('/create', protectRoute, [middleware(profileValidator)], createProfile);
+// router.post('/create', protectRoute, [middleware(profileValidator)], createProfile);
 
 export default router;
