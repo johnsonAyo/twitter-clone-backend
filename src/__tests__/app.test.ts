@@ -8,15 +8,15 @@ const userData = {
 
 let token: string;
 
-describe('Test for follow feature', () => {
-  test('login user', async () => {
-    const response = await supertest(app)
-    .post('/users/login')
-    .send(userData);
+// describe('Test for follow feature', () => {
+//   test('login user', async () => {
+//     const response = await supertest(app)
+//     .post('/users/login')
+//     .send(userData);
 
-    token = response.body.token;
-    console.log(response.body);
+//     token = response.body.token;
+//     console.log(response.body);
 
-    expect(response.status).toBe(200);
-  });
-});
+//     expect(response.status).toBe(200);
+//   });
+// });
