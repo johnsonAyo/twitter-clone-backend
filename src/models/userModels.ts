@@ -4,7 +4,8 @@ import validator from 'validator';
 import { ISign } from '../utils/interfaces/userInterface';
 
 const UserSchema = new Schema({
-  name: String,
+  firstName: String,
+  lastName: String,
   profilePic: String,
   bioData: String,
   email: {
@@ -30,7 +31,6 @@ const UserSchema = new Schema({
     enum: ['local', 'facebook', 'google'],
     default: 'local',
   },
-
 });
 
 UserSchema.pre<ISign>('save', async function (next) {
