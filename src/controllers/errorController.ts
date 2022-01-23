@@ -38,6 +38,7 @@ const sendErrorDev = (
 ) => {
   // A) API
   if (req.originalUrl.startsWith('/')) {
+    
     return res.status(err.statusCode).json({
       status: err.status,
       error: err,
@@ -83,7 +84,7 @@ const globalErrorHandler = (
   res: any,
   next: any,
 ) => {
-  console.log('err.stack');
+  console.log(err);
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
   if (process.env.NODE_ENV === 'development') {

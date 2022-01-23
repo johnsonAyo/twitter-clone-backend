@@ -81,7 +81,7 @@ const changePassword = catchAsync(async (req: Request, res: Response, next: Next
   const { newPassword, confirmNewPassword, previousPassword } = req.body;
 
   const isPreviousPasswordCorrect = await validatePassword(previousPassword, user.password);
-  console.log(isPreviousPasswordCorrect)
+  console.log(isPreviousPasswordCorrect);
 
   if (!isPreviousPasswordCorrect) return next(new ErrorHandler(400, 'incorrect'));
 
@@ -119,19 +119,23 @@ const forgotPassword = catchAsync(async (req: Request, res: Response, next: Next
   const url = `${req.protocol}://${req.get('host')}/resetPassword/${resetToken}`;
 
   try {
-    await sendEmail(req.body!.email)
+    await sendEmail(
+      req.body!.email,
+      'Reset Password',
+      `Forgot your password?, follow this link ${url} to reset your password
+    Kindly ignore this email if you did not request for a password reset`,
+    );
 
     return res.status(200).json({
       status: 'success',
-      message: `Forgot your password?, follow this link ${url} to reset your password\n
-      Kindly ignore this email if you did not request for a password reset`
+      message: 'check your email to reset your password',
     });
   } catch (e) {
     user.passwordExpires = undefined;
     user.passwordResetToken = undefined;
 
     await user.save({ validateBeforeSave: false });
-    console.log(e)
+    console.log(e);
 
     return next(
       new ErrorHandler(500, 'There was an error sending a password reset email, please try again'),
