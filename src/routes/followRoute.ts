@@ -5,9 +5,10 @@ import {
   getFollowersController,
   unFollowController,
   getFolloweringController,
+  suggestFollowersController,
 } from '../controllers/followController';
 import {
-  getFollowerPolicy,
+  paginationPolicy,
   postFollowerPolicy,
   unFollowPolicy,
 } from '../utils/validations/followerValidation';
@@ -17,8 +18,9 @@ router
   .route('/')
   .delete(unFollowPolicy, protectRoute, unFollowController) //delete followers or unfollow
   .post(postFollowerPolicy, protectRoute, postFollowerController) //post followers
-  .get(getFollowerPolicy, protectRoute, getFollowersController); // get followers
+  .get(paginationPolicy, protectRoute, getFollowersController); // get followers
 
-router.get('/following', getFollowerPolicy, protectRoute, getFolloweringController);
+router.get('/following', paginationPolicy, protectRoute, getFolloweringController);
+router.get('/suggest', paginationPolicy, protectRoute, suggestFollowersController);
 
 export default router;

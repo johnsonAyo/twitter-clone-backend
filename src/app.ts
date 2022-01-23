@@ -6,17 +6,35 @@ import logger from 'morgan';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import globalErrorHandler from './controllers/errorController';
-
-dotenv.config();
-
+import session from 'express-session';
+import passport from 'passport';
+import { googleStrategy, facebookStrategy } from './middleware/passport';
 import indexRouter from './routes/index';
 import followRoutes from './routes/followRoute';
 import tweetRoute from './routes/tweetingRouting';
 import { connectDB, connectTestDB } from './database/mem';
 import usersRouter from './routes/users';
 import viewtweetRoute from './routes/viewTweetRoute';
-import resetRouter from './routes/resetPassword'
+import resetRouter from './routes/resetPassword';
+import authRouter from './routes/auth';
+
+dotenv.config();
 const app = express();
+googleStrategy(passport);
+facebookStrategy(passport);
+app.use(
+  session({
+    secret: process.env.SECRET_SESSION as string,
+    resave: true,
+    saveUninitialized: true,
+  }),
+);
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+
+
 
 app.use(cors());
 
@@ -46,6 +64,7 @@ app.use('/users', usersRouter);
 app.use('/api/viewtweet', viewtweetRoute);
 
 app.use('/api/v1/reset', resetRouter)
+app.use('/auth', authRouter);
 
 app.all('*', (req, res) => {
   res.status(404).json({
