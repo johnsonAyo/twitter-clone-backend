@@ -34,8 +34,6 @@ app.use(passport.session());
 
 
 
-
-
 app.use(cors());
 
 // view engine setup

@@ -30,16 +30,20 @@ export const createFollowModel = async (userId: string, followerId: string) => {
  ***********************************/
 export const getFollowersModel = async (userId: string, pageNo: number, pageSize: number) => {
   const followList = await Follow.find({ userId });
+
   let currentPageSize;
+
   const userIdArray = followList.map((val) => val['followId']);
   const result = await userModels.find({ _id: { $in: userIdArray } }).select({ _id: 1, email: 1 });
   const resultWithPagno = await userModels
     .find({ _id: { $in: userIdArray } })
     .skip(pageNo - 1)
     .limit(pageSize);
+
   resultWithPagno.length < 5
     ? (currentPageSize = resultWithPagno.length)
     : (currentPageSize = pageSize);
+
   const output = {
     Totalfollowers: result.length,
     pageNo,
@@ -54,7 +58,9 @@ export const getFollowersModel = async (userId: string, pageNo: number, pageSize
 export const getFollowingModel = async (userId: string, pageNo: number, pageSize: number) => {
   const followList = await Follow.find({ followId: userId });
   console.log(followList);
+
   let currentPageSize;
+
   const userIdArray = followList.map((val) => val['userId']);
   const result = await userModels.find({ _id: { $in: userIdArray } }).select({ _id: 1, email: 1 });
   const resultWithPagno = await userModels
