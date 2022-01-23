@@ -38,11 +38,11 @@ const UserSchema = new Schema({
     type: String,
   },
   passwordExpires: {
-    type: String
+    type: String,
   },
-  passwordResetTokenExpires:{
-    type: Date
-  } 
+  passwordResetTokenExpires: {
+    type: Date,
+  },
 });
 
 UserSchema.pre<ISign>('save', async function (next) {

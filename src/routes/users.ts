@@ -9,6 +9,4 @@ router.post('/signup', [middleware(validateSignup)], signup);
 router.post('/login', [middleware(validateLogin)], login);
 router.get('/verify/:token', confirmEmail);
 
-
-
 export default router;

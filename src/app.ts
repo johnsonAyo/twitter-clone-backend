@@ -32,8 +32,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-
 app.use(cors());
 
 // view engine setup
@@ -61,7 +59,7 @@ app.use('/tweet', tweetRoute);
 app.use('/users', usersRouter);
 app.use('/api/viewtweet', viewtweetRoute);
 
-app.use('/api/v1/reset', resetRouter)
+app.use('/api/v1/reset', resetRouter);
 app.use('/auth', authRouter);
 
 app.all('*', (req, res) => {

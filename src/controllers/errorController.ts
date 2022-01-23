@@ -38,7 +38,6 @@ const sendErrorDev = (
 ) => {
   // A) API
   if (req.originalUrl.startsWith('/')) {
-    
     return res.status(err.statusCode).json({
       status: err.status,
       error: err,
