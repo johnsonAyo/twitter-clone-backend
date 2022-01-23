@@ -89,9 +89,11 @@ export const reTweeting = async (req: Request, res: Response) => {
 export const allUserRetweet = async (req: Request, res: Response) => {
   try {
     //get id of reweet and search the message body in tweet colltn using populate function
-    const userReTweet = await CreateRetTweet.find({ reTweeterId : req.user._id }).populate('tweetId');
+    const userReTweet = await CreateRetTweet.find({ reTweeterId: req.user._id }).populate(
+      'tweetId',
+    );
 
-    console.log(req.user._id)
+    console.log(req.user._id);
     if (userReTweet) return res.status(200).json({ AllUserLoginRetweet: userReTweet });
   } catch (error: any | undefined) {
     res.json({ msg: error.message });
@@ -108,7 +110,7 @@ export const allUserRetweet = async (req: Request, res: Response) => {
 export const allUserTweet = async (req: Request, res: Response) => {
   try {
     //All user tweet
-console.log(req.user._id)
+    console.log(req.user._id);
     CreateTweetCln.find({ userId: req.user._id }, (err: any, allTweets: any) => {
       if (err) return res.status(404).json({ msg: 'Error Occured in retweet fetching...' });
 
@@ -134,8 +136,6 @@ export const deleteTweet = async (req: Request, res: Response) => {
   try {
     const tweetId = req.params.id;
     CreateTweetCln.findById(tweetId, async (err: any, user: any) => {
-      console.log(user);
-
       if (err) {
         return res.status(404).json({ msg: 'Error occured in finding a particular tweet' });
       } else {
