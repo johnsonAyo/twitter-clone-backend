@@ -4,7 +4,8 @@ import validator from 'validator';
 import { ISign } from '../utils/interfaces/userInterface';
 
 const UserSchema = new Schema({
-  name: String,
+  firstName: String,
+  lastName: String,
   profilePic: String,
   bioData: String,
   email: {

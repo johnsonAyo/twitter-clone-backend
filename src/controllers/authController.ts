@@ -24,26 +24,37 @@ const generateEmailToken = (email: string) => {
 
 export const signup = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const newUser = await User.create({
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
     email: req.body.email,
     password: req.body.password,
   });
 
-  const token = generateToken(newUser._id);
+  
   const emailToken = generateEmailToken(newUser.email);
+  if(process.env.NODE_ENV === 'test'){
+    return res.status(200).json({
+      status: 'success',
+      newUser,
+      emailToken
+    })
+  }else{
+    await sendEmail(
+      newUser.email,
+      'Email Verification',
+      `<p>Hello ${newUser.firstName},</p><p>Thank you for signing up for a Twitter account.
+       In order to access your Twitter account,</p>
+       Click
+       <button><a href= http://localhost:3000/users/verify/${emailToken}>here</a></button> 
+       to verify your email. Thanks`,
+    );
+    res.status(200).json({
+      status: 'success',
+      message: 'Token sent to email',
+    });
+  }
 
-  await sendEmail(
-    newUser.email,
-    'Email Verification',
-    `<p>Thank you for signing up for a Twitter account</p>
-     <p>In order to access your Twitter account</p>
-     Click
-     <button><a href= http://localhost:3000/users/verify/${emailToken}>here</a></button> 
-     to verify your email. Thanks`,
-  );
-  res.status(200).json({
-    status: 'success',
-    message: 'Token sent to email',
-  });
+
 });
 
 export const confirmEmail = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -65,7 +76,16 @@ export const confirmEmail = catchAsync(async (req: Request, res: Response, next:
     await data.save();
   }
 
-  return res.redirect('back');
+  if(process.env.NODE_ENV === 'test'){
+    return res.status(201).json({
+      message: "success",
+      emailToken,
+      data
+    })
+  }else{
+    return res.redirect('back');
+  }
+  
 });
 
 export const login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -114,6 +134,7 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
 
   res.status(201).json({
     status: 'Login successful!',
+    user,
     token,
   });
 });
