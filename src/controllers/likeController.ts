@@ -2,11 +2,6 @@ import express, { Request, Response, NextFunction, urlencoded } from 'express';
 import Like from '../models/likeModel';
 import tweet from '../models/tweetModel';
 
-const app = express();
-
-app.use(express.json());
-app.use(urlencoded({ extended: true }));
-
 export const likeTweet = async (req: Request, res: Response, _next: NextFunction) => {
   const id = req.params.id;
   const userId = req.user._id;

@@ -4,7 +4,8 @@ import validator from 'validator';
 import { ISign } from '../utils/interfaces/userInterface';
 
 const UserSchema = new Schema({
-  name: String,
+  firstName: String,
+  lastName: String,
   profilePic: String,
   bioData: String,
   email: {
@@ -29,6 +30,18 @@ const UserSchema = new Schema({
     type: String,
     enum: ['local', 'facebook', 'google'],
     default: 'local',
+  },
+  passwordChangedAt: {
+    type: Date,
+  },
+  passwordResetToken: {
+    type: String,
+  },
+  passwordExpires: {
+    type: String,
+  },
+  passwordResetTokenExpires: {
+    type: Date,
   },
 });
 
