@@ -10,3 +10,8 @@ export interface ISign extends mongoose.Document {
   isActive: boolean;
   provider: string;
 }
+
+export interface ILogin {
+  email: string;
+  password: string;
+}

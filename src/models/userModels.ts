@@ -31,6 +31,18 @@ const UserSchema = new Schema({
     enum: ['local', 'facebook', 'google'],
     default: 'local',
   },
+  passwordChangedAt: {
+    type: Date,
+  },
+  passwordResetToken: {
+    type: String,
+  },
+  passwordExpires: {
+    type: String,
+  },
+  passwordResetTokenExpires: {
+    type: Date,
+  },
 });
 
 UserSchema.pre<ISign>('save', async function (next) {
