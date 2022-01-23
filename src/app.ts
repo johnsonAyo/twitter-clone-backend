@@ -10,9 +10,12 @@ import globalErrorHandler from './controllers/errorController';
 dotenv.config();
 
 import indexRouter from './routes/index';
+import followRoutes from './routes/followRoute';
+import tweetRoute from './routes/tweetingRouting';
 import { connectDB, connectTestDB } from './database/mem';
 import usersRouter from './routes/users';
-
+import viewtweetRoute from './routes/viewTweetRoute';
+import resetRouter from './routes/resetPassword'
 const app = express();
 
 app.use(cors());
@@ -37,7 +40,12 @@ if (process.env.NODE_ENV === 'test') {
 console.log(process.env.NODE_ENV);
 
 app.use('/', indexRouter);
+app.use('/api/follow', followRoutes);
+app.use('/tweet', tweetRoute);
 app.use('/users', usersRouter);
+app.use('/api/viewtweet', viewtweetRoute);
+
+app.use('/api/v1/reset', resetRouter)
 
 app.all('*', (req, res) => {
   res.status(404).json({
@@ -45,10 +53,10 @@ app.all('*', (req, res) => {
     message: `Can not find ${req.originalUrl} endpoint on this server`,
   });
 });
-// // catch 404 and forward to error handler
-// app.use(function (req, res, next) {
-//   next(createError(404));
-// });
+// catch 404 and forward to error handler
+app.use(function (req, res, next) {
+  next(createError(404));
+});
 
 app.set('views', path.join(`${__dirname}/../`, 'views'));
 app.set('view engine', 'ejs');
