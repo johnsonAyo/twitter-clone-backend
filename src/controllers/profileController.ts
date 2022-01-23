@@ -9,6 +9,7 @@ import cloudinaryImage from '../utils/tweet_utils/cloudinaryImageStorage';
 import User from '../models/userModels';
 import { getFollowersModel } from '../models/followModel';
 import { getFollowingModel } from '../models/followModel';
+import { ISign } from '../utils/interfaces/userInterface';
 
 const upload = imageMulter.single('profilePicture');
 
@@ -23,11 +24,12 @@ export const uploadProfilePicture = catchAsync(
 
       const path = req.file?.path;
       try {
-        const profile = await User.findOne({ user: req.user.id });
+        const profile = await User.findOne({ user: req.user.email });
+        console.log(profile, req.user)
         if (!profile) return next(new ErrorHandler(500, 'Profile does not exist'));
         const file = await cloudinaryImage.uploader.upload(path as string);
         await profile.update({ profilePicture: file.url });
-        const updateProfile = await User.findOne({ user: req.user.id });
+        const updateProfile = await User.findOne({ user: req.user.email });
         return res.status(201).json({
           status: 'successful!',
           profile: updateProfile,
@@ -40,10 +42,10 @@ export const uploadProfilePicture = catchAsync(
 );
 
 // export const createProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-//   const profile = await User.findOne({ user: req.user.id });
+//   const profile = await User.findOne({ user: req.user.email });
 //   if (profile) return next(new ErrorHandler(400, 'User can not create multiple profiles'));
 //   const newProfile = await User.create({
-//     user: req.user.id,
+//     user: req.user.email,
 //     name: req.body.name,
 //     bioData: req.body.bioData,
 //   });
@@ -54,36 +56,39 @@ export const uploadProfilePicture = catchAsync(
 //   });
 // });
 
-// export const updateProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-//   const profile = await User.findOne({ user: req.user.id });
-//   if (!profile) return next(new ErrorHandler(404, 'profile does not exist'));
-//   await profile.update({
-//     name: req.body.name || profile.name,
-//     bioData: req.body.bioData || profile.bioData,
-//   });
-//   const updateProfile = await User.findOne({ user: req.user.id });
-//   return res.status(201).json({
-//     status: 'successful!',
-//     profile: updateProfile,
-//   });
-// });
-
 export const updateProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const profile = await User.findOneAndUpdate({ _id: req.params.id }, req.body, {new: true});
-  res.status(201).json({
+  const profile = await User.findOneAndUpdate({ user: req.user.email });
+  if (!profile) return next(new ErrorHandler(404, 'profile does not exist'));
+  await profile.update({
+    firstName: req.body.name || profile.firstName,
+    lastName: req.body.name || profile.lastName,
+    bioData: req.body.bioData || profile.bioData,
+  });
+  const updateProfile = await User.findOne({ user: req.user.email });
+  return res.status(201).json({
     status: 'successful!',
-    message: 'profile updated',
-    profile,
+    profile: updateProfile,
   });
 });
 
+// export const updateProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+//   const profile = await User.findOneAndUpdate({ user: req.user.email });
+//   res.status(201).json({
+//     status: 'successful!',
+//     message: 'profile updated',
+//     profile,
+//   });
+// });
+
 export const getProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { page, size } = req.query as any;
-  const followers = await getFollowersModel(req.user._id, +page || 1, +size || 5);
-  const following = await getFollowingModel(req.user._id, +page || 1, +size || 5);
+  const user = await User.findOne({ email: req.user.email})
+  if (!user) return next(new ErrorHandler(404, 'User does not exist'));
+  const followers = await getFollowersModel(user._id, +page || 1, +size || 5);
+  const following = await getFollowingModel(user._id, +page || 1, +size || 5);
 
   return res.status(200).json({
-    user: req.user,
+    user,
     followers,
     following,
   });

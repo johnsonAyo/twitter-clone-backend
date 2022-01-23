@@ -6,8 +6,24 @@ import logger from 'morgan';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import globalErrorHandler from './controllers/errorController';
+import session from 'express-session';
+import passport from 'passport';
+import { googleStrategy, facebookStrategy } from './middleware/passport';
 
 dotenv.config();
+const app = express();
+googleStrategy(passport);
+facebookStrategy(passport);
+app.use(
+  session({
+    secret: process.env.SECRET_SESSION as string,
+    resave: true,
+    saveUninitialized: true,
+  }),
+);
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 import indexRouter from './routes/index';
 import followRoutes from './routes/followRoute';
@@ -16,7 +32,9 @@ import { connectDB, connectTestDB } from './database/mem';
 import usersRouter from './routes/users';
 import profileRouter from './routes/profile';
 import viewtweetRoute from './routes/viewTweetRoute';
-const app = express();
+
+import authRouter from './routes/auth';
+
 
 app.use(cors());
 
@@ -47,6 +65,7 @@ app.use('/users', usersRouter);
 app.use('/profile', profileRouter);
 
 app.use('/api/viewtweet', viewtweetRoute);
+app.use('/auth', authRouter);
 
 app.all('*', (req, res) => {
   res.status(404).json({
