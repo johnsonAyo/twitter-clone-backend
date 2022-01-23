@@ -7,6 +7,3 @@ const userData = {
 };
 
 let token: string;
-
-
-
