@@ -10,6 +10,7 @@ router.get('/bookmarks', getAllBookmarks);
 router.get('/bookmarks/:id', getSingleBookmark)
 router.get('/comments', getComments);
 
+
 //POST Request
 router.post('/:id/like', likeTweet);
 router.post('/:id/comment', commentTweet);
