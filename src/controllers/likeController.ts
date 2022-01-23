@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 app.use(urlencoded({ extended: true }));
 
-export const likePost = async (req: Request, res: Response, _next: NextFunction) => {
+export const likeTweet = async (req: Request, res: Response, _next: NextFunction) => {
     const id = req.params.id;
     const userId = req.user._id;
     
@@ -19,13 +19,13 @@ export const likePost = async (req: Request, res: Response, _next: NextFunction)
     }
 }
 
-export const unlikePost = async (req: Request, res: Response, _next: NextFunction) => {
+export const unlikeTweet = async (req: Request, res: Response, _next: NextFunction) => {
     const id = req.params.id;
     console.log(req.body)
-    const { userId } = req.body;
+    const userId = req.user._id;
 
     try {
-        const result = await Like.deleteOne({ postId: id, userId })
+        const result = await Like.deleteOne({ tweetId: id, userId })
         console.log(result)
         res.status(200).json("The post has been disliked")
     } catch (error) {
@@ -33,3 +33,13 @@ export const unlikePost = async (req: Request, res: Response, _next: NextFunctio
     }
 }
 
+export const getLikes = async (req: Request, res: Response, _next: NextFunction) => {
+
+    try {
+        const likes = await Like.find();
+        res.status(200).json({message: "All likes", data: likes})
+    } catch (error: any) {
+        res.status(400).json({message: error.message })
+    }
+
+}
