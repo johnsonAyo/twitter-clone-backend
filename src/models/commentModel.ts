@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 
 const commentSchema = new mongoose.Schema({
-    postId: {
-        type: String,
-        required: true
+    tweetId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tweet"
     },
     userId: {
-        type: String,
-        required: true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
     },
     content: {
         type: String,

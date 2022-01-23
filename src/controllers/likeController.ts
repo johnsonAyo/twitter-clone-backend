@@ -1,18 +1,17 @@
 import express, { Request, Response, NextFunction, urlencoded }from "express";
 import Like from "../models/likeModel";
-//import Post from "../model/postModel"
+import tweet from "../models/tweetModel"
 
 const app = express();
 
 app.use(express.json());
 app.use(urlencoded({ extended: true }));
 
-export const like_post = async (req: Request, res: Response, next: NextFunction) => {
+export const likePost = async (req: Request, res: Response, _next: NextFunction) => {
     const id = req.params.id;
-    const { userId } = req.body;
+    const userId = req.user._id;
     
     try {
-        //const post = await Post.findById(id);
         const like = await Like.create({id, userId})
         res.status(200).json({message:"The post has been liked", data: like})
     } catch (error) {
@@ -20,7 +19,7 @@ export const like_post = async (req: Request, res: Response, next: NextFunction)
     }
 }
 
-export const unlike_post = async (req: Request, res: Response, next: NextFunction) => {
+export const unlikePost = async (req: Request, res: Response, _next: NextFunction) => {
     const id = req.params.id;
     console.log(req.body)
     const { userId } = req.body;

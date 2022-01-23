@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const likeSchema = new mongoose.Schema({
+const bookmarkSchema = new mongoose.Schema({
     tweetId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Tweet"
@@ -11,6 +11,6 @@ const likeSchema = new mongoose.Schema({
     }
 })
 
-const Like = mongoose.model("Like", likeSchema);
+const Bookmark = mongoose.model("Bookmark", bookmarkSchema);
 
-export default Like;
+export default Bookmark;
