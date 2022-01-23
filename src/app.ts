@@ -9,6 +9,14 @@ import globalErrorHandler from './controllers/errorController';
 import session from 'express-session';
 import passport from 'passport';
 import { googleStrategy, facebookStrategy } from './middleware/passport';
+import indexRouter from './routes/index';
+import followRoutes from './routes/followRoute';
+import tweetRoute from './routes/tweetingRouting';
+import { connectDB, connectTestDB } from './database/mem';
+import usersRouter from './routes/users';
+import viewtweetRoute from './routes/viewTweetRoute';
+import resetRouter from './routes/resetPassword';
+import authRouter from './routes/auth';
 
 dotenv.config();
 const app = express();
@@ -24,14 +32,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-import indexRouter from './routes/index';
-import followRoutes from './routes/followRoute';
-import tweetRoute from './routes/tweetingRouting';
-import { connectDB, connectTestDB } from './database/mem';
-import usersRouter from './routes/users';
-import viewtweetRoute from './routes/viewTweetRoute';
 
-import authRouter from './routes/auth';
 
 app.use(cors());
 
@@ -59,6 +60,8 @@ app.use('/api/follow', followRoutes);
 app.use('/tweet', tweetRoute);
 app.use('/users', usersRouter);
 app.use('/api/viewtweet', viewtweetRoute);
+
+app.use('/api/v1/reset', resetRouter)
 app.use('/auth', authRouter);
 
 app.all('*', (req, res) => {

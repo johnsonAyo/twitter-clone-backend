@@ -1,6 +1,5 @@
 import mongoose, { Mongoose } from 'mongoose';
 import userModels from './userModels';
-
 /***********************************
  * schema for creating followers
  ***********************************/
@@ -12,9 +11,7 @@ const followSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
-
 export const Follow = mongoose.model('Follow', followSchema);
-
 /***********************************
  * create follow Model
  ***********************************/
@@ -28,7 +25,6 @@ export const createFollowModel = async (userId: string, followerId: string) => {
   const result = await follow.save();
   return result;
 };
-
 /***********************************
  * Method to get all followers
  ***********************************/
@@ -54,10 +50,8 @@ export const getFollowersModel = async (userId: string, pageNo: number, pageSize
     pageSize: currentPageSize,
     followers: resultWithPagno,
   };
-
   return output;
 };
-
 /***********************************
  * Method to get all users I follow
  ***********************************/
@@ -73,7 +67,6 @@ export const getFollowingModel = async (userId: string, pageNo: number, pageSize
     .find({ _id: { $in: userIdArray } })
     .skip(pageNo - 1)
     .limit(pageSize);
-
   resultWithPagno.length < 5
     ? (currentPageSize = resultWithPagno.length)
     : (currentPageSize = pageSize);
@@ -83,10 +76,8 @@ export const getFollowingModel = async (userId: string, pageNo: number, pageSize
     pageSize: currentPageSize,
     following: resultWithPagno,
   };
-
   return output;
 };
-
 /***********************************
  * Method to unfollow user
  ***********************************/
@@ -94,30 +85,21 @@ export const unFollowModel = async (userId: string, followId: string) => {
   let result = await Follow.deleteOne({ userId, followId });
   return result;
 };
-
 /***********************************
  * Method for suggesting followers
  ***********************************/
 export const suggestFollowersModel = async (userId: string, pageNo: number, pageSize: number) => {
   let myFollowing = await Follow.find({ followId: userId }).select({ userId: 1 });
-
   let myFollowingArr = myFollowing.map((item) => item.userId.toString());
-
   let myFollowingsNetwork: any = await myFollowingsConnection(myFollowingArr);
-
   let data = await filterConnections(myFollowingArr, myFollowingsNetwork);
-
   let suggestedConnection = await userModels.find({ _id: { $in: data } });
-
   console.log(data, 'find');
-
   return suggestedConnection;
 };
-
 /***********************************
  * Helper method for suggestFollowersModel
  ***********************************/
-
 async function myFollowingsConnection(followingList: any) {
   let data = await Follow.find({ followId: { $in: followingList } });
   let myNetwork = data.map((item) => item.userId.toString());
@@ -129,14 +111,12 @@ async function myFollowingsConnection(followingList: any) {
     }
   });
 }
-
 /***********************************
  * Helper method for suggestFollowersModel
  ***********************************/
 async function filterConnections(followingList: Array<string>, connectionList: Array<string>) {
   let ans = followingList.filter((val) => !connectionList.includes(val));
   console.log(ans);
-
   return new Promise((resolve, reject) => {
     if (ans) {
       resolve(ans);

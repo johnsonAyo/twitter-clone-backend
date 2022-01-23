@@ -1,7 +1,5 @@
 import nodemailer from 'nodemailer';
 
-
-
 let transporter:any;
 const sendEmail = async (email: string, subject: string, message: string) => {
   //1. create a transporter
@@ -47,8 +45,10 @@ else if(process.env.NODE_ENV === 'development'){
     } else {
       console.log('Message Sent');
     }
-  });
+  })
 };
-//3. actually send the email
-
 export default sendEmail;
+
+
+
+
