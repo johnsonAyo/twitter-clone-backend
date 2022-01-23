@@ -24,7 +24,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-
 import indexRouter from './routes/index';
 import followRoutes from './routes/followRoute';
 import tweetRoute from './routes/tweetingRouting';
@@ -33,7 +32,6 @@ import usersRouter from './routes/users';
 import viewtweetRoute from './routes/viewTweetRoute';
 
 import authRouter from './routes/auth';
-
 
 app.use(cors());
 
