@@ -7,9 +7,9 @@ import { protectRoute } from '../controllers/authController';
 const router = express.Router();
 
 // router.get('/', protectRoute, userProfile);
-//  router.put('/:id', protectRoute, [middleware(profileValidator)], updateProfile);
-//  router.get('/:id', protectRoute, getProfile)
-router.put('/picture', protectRoute, [middleware(profilePicValidator)], uploadProfilePicture);
+ router.get('/', protectRoute, getProfile)
+ router.put('/picture', protectRoute, uploadProfilePicture);
+ router.put('/:id', protectRoute, [middleware(profileValidator)], updateProfile);
 // router.post('/create', protectRoute, [middleware(profileValidator)], createProfile);
 
 export default router;

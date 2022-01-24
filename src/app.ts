@@ -17,6 +17,7 @@ import usersRouter from './routes/users';
 import viewtweetRoute from './routes/viewTweetRoute';
 import resetRouter from './routes/resetPassword';
 import authRouter from './routes/auth';
+import profileRouter from './routes/profile';
 
 dotenv.config();
 const app = express();
