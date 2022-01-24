@@ -6,7 +6,7 @@ export const createBookmark = async (req: Request, res: Response, _next: NextFun
   const userId = req.user._id;
 
   try {
-    const bookmark = await Bookmark.create({ id, userId });
+    const bookmark = await Bookmark.create({ tweetId: id, userId });
     res.status(200).json({ message: 'Bookmark created', data: bookmark });
   } catch (error: any) {
     res.status(400).json({ message: error.message });

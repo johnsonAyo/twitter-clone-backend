@@ -5,11 +5,11 @@ import Comment from '../models/commentModel';
 export const commentTweet = async (req: Request, res: Response, _next: NextFunction) => {
   const { id } = req.params;
   const userId = req.user._id;
-  const { value } = req.body;
+  const { content } = req.body;
 
   try {
-    const comment = await Comment.create({ id, userId, value });
-    res.status(200).json({ message: 'Comment successful' });
+    const comment = await Comment.create({ tweetId: id, userId, content });
+    res.status(200).json({ message: 'Comment successful', data: comment});
   } catch (error: any) {
     res.status(400).json({ message: error.message });
   }

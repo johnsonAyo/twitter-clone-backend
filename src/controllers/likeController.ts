@@ -7,7 +7,7 @@ export const likeTweet = async (req: Request, res: Response, _next: NextFunction
   const userId = req.user._id;
 
   try {
-    const like = await Like.create({ id, userId });
+    const like = await Like.create({ tweetId: id, userId });
     res.status(200).json({ message: 'The post has been liked', data: like });
   } catch (error) {
     res.status(500).json(error);
