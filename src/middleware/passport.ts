@@ -52,7 +52,7 @@ export const facebookStrategy = (passport: PassportStatic) =>
       {
         clientID: process.env.CLIENT_ID_FB as string,
         clientSecret: process.env.CLIENT_SECRET_FB as string,
-        callbackURL: 'http://localhost:3000/auth/facebook/callback',
+        callbackURL: '/auth/facebook/callback',
         profileFields: ['name', 'picture.type(large)', 'email'],
       }, // facebook will send back the token and profile
       async function (token: string, refreshToken: string, profile: any, done: any) {
@@ -82,6 +82,14 @@ export const facebookStrategy = (passport: PassportStatic) =>
     ),
   );
 
+// route middleware to make sure a user is logged in to access protected routes
+export function isLoggedIn(req: Request, res: Response, next: NextFunction) {
+  // if user is authenticated in the session, carry on
+  if (req.isAuthenticated()) return next();
+  // if they aren't redirect them to the home page
+  res.redirect('/');
+}
+
 passport.serializeUser((profile, done) => {
   done(null, profile);
 });
@@ -91,10 +99,10 @@ passport.deserializeUser((id, done) => {
 });
 
 // route middleware to make sure
-export function isLoggedIn(req: Request, res: any, next: NextFunction) {
-  // if user is authenticated in the session, carry on
-  if (req.isAuthenticated()) return next();
+// export function isLoggedIn(req: Request, res: any, next: NextFunction) {
+//   // if user is authenticated in the session, carry on
+//   if (req.isAuthenticated()) return next();
 
-  // if they aren't redirect them to the home page
-  res.redirect('/');
-}
+//   // if they aren't redirect them to the home page
+//   res.redirect('/');
+// }
