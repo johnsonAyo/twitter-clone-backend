@@ -13,8 +13,8 @@ const router = express.Router();
 
 router.use(protectRoute);
 //GET Request
-router.get('/bookmarks', getAllBookmarks);
-router.get('/bookmarks/:id', getSingleBookmark);
+router.get('/bookmark', getAllBookmarks);
+router.get('/bookmark/:id', getSingleBookmark);
 router.get('/:id/comment', getComments);
 router.get('/:id/like', getLikes);
 
