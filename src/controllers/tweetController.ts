@@ -4,6 +4,7 @@ import CreateTweetCln from '../models/tweetModel';
 import CreateRetTweet from '../models/retweetModel';
 import { tweetValidate } from '../utils/tweet_utils/tweetingValidation';
 import cloudinaryImage from '../utils/tweet_utils/cloudinaryImageStorage';
+import mongoose from "mongoose"
 
 /****************************************************************************
  *                                                                           *
@@ -34,7 +35,7 @@ export const userNewTweet = async (req: any, res: Response) => {
     if (createTweet) {
       await createTweet.save();
 
-      return res.json({ 'Tweet saved suucessfully...': createTweet });
+      return res.status(200).json({ 'Tweet saved successfully...': createTweet });
     } else {
       return res.status(404).json({ msg: 'Error  occur for file uploading' });
     }
@@ -53,18 +54,12 @@ export const userNewTweet = async (req: any, res: Response) => {
 
 export const reTweeting = async (req: Request, res: Response) => {
   try {
-    //Check if user has already retweet a particular tweet, if so undo reweet
 
-    // const checkRetweetId = await CreateRetTweet.findOne({$and:[{tweetId: req.params.id },{userId: req.user._id}]});
+      //check if objectId is valid or not
 
-    // if (checkRetweetId) {
-    //   return res.json({ msg: 'You already retweeted this tweet.. 😁' });
-    // }
-
-    //Get the tweet of the user you want to reweet his tweet
-
-    //save the retweet and the user id if not created..
-
+      if(!mongoose.Types.ObjectId.isValid(req.params.id)){
+        return res.status(404).send("Invalid id")
+      }
     const createReTweet = new CreateRetTweet({
       tweetId: req.params.id,
       reTweeterId: req.user._id,
@@ -72,7 +67,7 @@ export const reTweeting = async (req: Request, res: Response) => {
 
     if (createReTweet) {
       await createReTweet.save();
-      return res.status(201).json({ msg: 'Reweet created....' });
+      return res.status(201).json({ msg: 'Retweet created....' });
     }
   } catch (error: any) {
     return res.status(404).json({ msg: error.message });
@@ -110,9 +105,8 @@ export const allUserRetweet = async (req: Request, res: Response) => {
 export const allUserTweet = async (req: Request, res: Response) => {
   try {
     //All user tweet
-    console.log(req.user._id);
     CreateTweetCln.find({ userId: req.user._id }, (err: any, allTweets: any) => {
-      if (err) return res.status(404).json({ msg: 'Error Occured in retweet fetching...' });
+      if (err) return res.status(404).json({ msg: 'Error Occured in tweet fetching...' });
 
       if (allTweets == []) {
         return res.status(404).json({ msg: 'No tweet for this user' });
@@ -135,6 +129,9 @@ export const allUserTweet = async (req: Request, res: Response) => {
 export const deleteTweet = async (req: Request, res: Response) => {
   try {
     const tweetId = req.params.id;
+
+    
+
     CreateTweetCln.findById(tweetId, async (err: any, user: any) => {
       if (err) {
         return res.status(404).json({ msg: 'Error occured in finding a particular tweet' });
@@ -149,9 +146,11 @@ export const deleteTweet = async (req: Request, res: Response) => {
 
         // delete also the retweet which a user has deleted from retweet collection
 
-        await CreateRetTweet.deleteMany({ tweetId: tweetId });
+        let deletedTweet =  await CreateRetTweet.deleteMany({ tweetId: tweetId });
 
-        res.json({ msg: 'Tweet  Removed ...' });
+        if(deletedTweet){
+          res.status(200).json({ msg: 'Tweet  Removed ...' });
+        }
       }
     });
   } catch (error: any | undefined) {

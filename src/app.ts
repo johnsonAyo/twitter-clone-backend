@@ -18,6 +18,7 @@ import usersRouter from './routes/users';
 import viewtweetRoute from './routes/viewTweetRoute';
 import resetRouter from './routes/resetPassword';
 import authRouter from './routes/auth';
+import profileRouter from './routes/profile';
 
 dotenv.config();
 const app = express();
@@ -58,6 +59,9 @@ app.use('/', indexRouter);
 app.use('/api/follow', followRoutes);
 app.use('/tweet', tweetRoute);
 app.use('/users', usersRouter);
+
+app.use('/profile', profileRouter);
+
 app.use('/api/viewtweet', viewtweetRoute);
 app.use('/tweet', likeCommentBook);
 

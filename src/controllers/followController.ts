@@ -106,7 +106,9 @@ export const suggestFollowersController = catchAsync(
       let data: any = await suggestFollowersModel(userId, parseInt(pageNo), parseInt(pageSize));
       if (!data) return next(new ErrorHandler(401, 'Error occurred'));
 
-      return res.status(200).json({ message: 'success', 'suggested-connection': data });
+      return res
+        .status(200)
+        .json({ message: 'success', count: data.length, 'suggested-connection': data });
     }
   },
 );
