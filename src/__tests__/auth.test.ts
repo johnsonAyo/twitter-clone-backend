@@ -39,6 +39,4 @@ describe('Auth', () => {
     expect(response.status).toBe(201);
     expect(response.body.user.isActive).toBe(true);
   });
-
-  
 });

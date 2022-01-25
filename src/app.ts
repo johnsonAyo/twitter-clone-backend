@@ -17,6 +17,7 @@ import usersRouter from './routes/users';
 import viewtweetRoute from './routes/viewTweetRoute';
 import resetRouter from './routes/resetPassword';
 import authRouter from './routes/auth';
+import profileRouter from './routes/profile';
 
 dotenv.config();
 const app = express();
@@ -31,8 +32,6 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-
-
 
 app.use(cors());
 
@@ -59,9 +58,12 @@ app.use('/', indexRouter);
 app.use('/api/follow', followRoutes);
 app.use('/tweet', tweetRoute);
 app.use('/users', usersRouter);
+
+app.use('/profile', profileRouter);
+
 app.use('/api/viewtweet', viewtweetRoute);
 
-app.use('/api/v1/reset', resetRouter)
+app.use('/api/v1/reset', resetRouter);
 app.use('/auth', authRouter);
 
 app.all('*', (req, res) => {

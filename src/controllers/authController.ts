@@ -31,13 +31,13 @@ export const signup = catchAsync(async (req: Request, res: Response, next: NextF
   });
 
   const emailToken = generateEmailToken(newUser.email);
-  if(process.env.NODE_ENV === 'test'){
+  if (process.env.NODE_ENV === 'test') {
     return res.status(200).json({
       status: 'success',
       newUser,
-      emailToken
-    })
-  }else{
+      emailToken,
+    });
+  } else {
     await sendEmail(
       newUser.email,
       'Email Verification',
@@ -52,8 +52,6 @@ export const signup = catchAsync(async (req: Request, res: Response, next: NextF
       message: 'Token sent to email',
     });
   }
-
-
 });
 
 export const confirmEmail = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -75,16 +73,15 @@ export const confirmEmail = catchAsync(async (req: Request, res: Response, next:
     await data.save();
   }
 
-  if(process.env.NODE_ENV === 'test'){
+  if (process.env.NODE_ENV === 'test') {
     return res.status(201).json({
-      message: "success",
+      message: 'success',
       emailToken,
-      data
-    })
-  }else{
+      data,
+    });
+  } else {
     return res.redirect('back');
   }
-  
 });
 
 export const login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
