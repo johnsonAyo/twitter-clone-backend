@@ -4,34 +4,28 @@ import catchAsync from '../utils/catchAsync';
 import ErrorHandler from '../utils/appError';
 import tweet from '../models/tweetModel';
 
-export const likeTweet = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const id = req.params.id;
-    const userId = req.user._id;
-  
-    const like = await Like.create({ tweetId: id, userId });
-    if(!like) return next(new ErrorHandler(500, "Error occured"))
-    res.status(200).json({ message: 'The post has been liked', data: like });
-  }
-);
+export const likeTweet = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const id = req.params.id;
+  const userId = req.user._id;
 
-export const unlikeTweet = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const id = req.params.id;
-    console.log(req.body);
-    const userId = req.user._id;
-  
-    const result = await Like.deleteOne({ tweetId: id, userId });
-    console.log(result);
-    if(!result) return next(new ErrorHandler(500, "Error occured"))
-    res.status(200).json('The post has been disliked');
-  }
-);
+  const like = await Like.create({ tweetId: id, userId });
+  if (!like) return next(new ErrorHandler(500, 'Error occured'));
+  res.status(200).json({ message: 'The post has been liked', data: like });
+});
 
-export const getLikes = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const likes = await Like.find();
-    if(!likes) return next(new ErrorHandler(500, "Error occured"))
-    res.status(200).json({ message: 'All likes', data: likes });
-  }
-);
+export const unlikeTweet = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const id = req.params.id;
+  console.log(req.body);
+  const userId = req.user._id;
+
+  const result = await Like.deleteOne({ tweetId: id, userId });
+  console.log(result);
+  if (!result) return next(new ErrorHandler(500, 'Error occured'));
+  res.status(200).json('The post has been disliked');
+});
+
+export const getLikes = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const likes = await Like.find();
+  if (!likes) return next(new ErrorHandler(500, 'Error occured'));
+  res.status(200).json({ message: 'All likes', data: likes });
+});
