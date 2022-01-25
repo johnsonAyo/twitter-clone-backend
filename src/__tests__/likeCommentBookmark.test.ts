@@ -1,11 +1,10 @@
-import app from "../app";
-import supertest from "supertest";
+import app from '../app';
+import supertest from 'supertest';
 
 let token: string;
 let userId: string;
 let tweetId: string;
 let emailToken: string;
-
 
 describe('Auth', () => {
   const userData = {
@@ -60,86 +59,80 @@ describe('Auth', () => {
 //     })
 // })
 
-describe("comment", () => {
-    const data = {
-        content: "This is a comment"
-    }
+describe('comment', () => {
+  const data = {
+    content: 'This is a comment',
+  };
 
-    test("comment", async () => {
-        const response = await supertest(app)
-                                .post(`/tweet/${tweetId}/comment`)
-                                .set("Authorization", `Bearer ${token}`)
-                                .send(data)
-        console.log(response.body)
-        expect(response.status).toBe(200);
-    })
+  test('comment', async () => {
+    const response = await supertest(app)
+      .post(`/tweet/${tweetId}/comment`)
+      .set('Authorization', `Bearer ${token}`)
+      .send(data);
+    console.log(response.body);
+    expect(response.status).toBe(200);
+  });
 
-    test("get comments", async () => {
-        const response = await supertest(app)
-                                .get(`/tweet/${tweetId}/comment`)
-                                .set("Authorization", `Bearer ${token}`)
-                                .send(data)
-        console.log(response.body)
-        expect(response.status).toBe(200);
-    })
+  test('get comments', async () => {
+    const response = await supertest(app)
+      .get(`/tweet/${tweetId}/comment`)
+      .set('Authorization', `Bearer ${token}`)
+      .send(data);
+    console.log(response.body);
+    expect(response.status).toBe(200);
+  });
+});
 
-})
+describe('like', () => {
+  test('like', async () => {
+    const response = await supertest(app)
+      .post(`/tweet/${tweetId}/like`)
+      .set('Authorization', `Bearer ${token}`);
+    console.log(response.body);
+    expect(response.status).toBe(200);
+  });
 
-describe("like", () => {
+  test('get likes', async () => {
+    const response = await supertest(app)
+      .get(`/tweet/${tweetId}/like`)
+      .set('Authorization', `Bearer ${token}`);
+    console.log(response.body);
+    expect(response.status).toBe(200);
+  });
 
-    test("like", async () => {
-        const response = await supertest(app)
-                                .post(`/tweet/${tweetId}/like`)
-                                .set("Authorization", `Bearer ${token}`)
-        console.log(response.body)
-        expect(response.status).toBe(200);
-    })
+  test('dislike', async () => {
+    const response = await supertest(app)
+      .delete(`/tweet/${tweetId}/like`)
+      .set('Authorization', `Bearer ${token}`);
+    console.log(response.body);
+    expect(response.status).toBe(200);
+  });
+});
 
-    test("get likes", async () => {
-        const response = await supertest(app)
-                                .get(`/tweet/${tweetId}/like`)
-                                .set("Authorization", `Bearer ${token}`)
-        console.log(response.body)
-        expect(response.status).toBe(200);
-    })
+describe('bookmark', () => {
+  test('bookmark', async () => {
+    const response = await supertest(app)
+      .post(`/tweet/${tweetId}/bookmark`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.status).toBe(200);
+  });
 
-    test("dislike", async () => {
-        const response = await supertest(app)
-                                .delete(`/tweet/${tweetId}/like`)
-                                .set("Authorization", `Bearer ${token}`)
-        console.log(response.body)
-        expect(response.status).toBe(200);
-    })
-})
+  test('get all bookmarks', async () => {
+    const response = await supertest(app).get(`/bookmarks`).set('Authorization', `Bearer ${token}`);
+    expect(response.status).toBe(200);
+  });
 
-describe("bookmark", () => {
+  test('get single bookmark', async () => {
+    const response = await supertest(app)
+      .get(`/bookmarks/id`) //fix
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.statusCode).toEqual(200);
+  });
 
-    test("bookmark", async () => {
-        const response = await supertest(app)
-                                .post(`/tweet/${tweetId}/bookmark`)
-                                .set("Authorization", `Bearer ${token}`)
-        expect(response.status).toBe(200)
-    })
-
-    test("get all bookmarks", async () => {
-        const response = await supertest(app)
-                                .get(`/bookmarks`)
-                                .set("Authorization", `Bearer ${token}`)
-        expect(response.status).toBe(200)
-    })
-
-    test("get single bookmark", async () => {
-        const response = await supertest(app)
-                                .get(`/bookmarks/id`) //fix
-                                .set("Authorization", `Bearer ${token}`)
-        expect(response.statusCode).toEqual(200);
-        
-    })
-
-    test("delete bookmark", async () => {
-        const response = await supertest(app)
-                                .delete(`/tweet/${tweetId}/bookmark`)
-                                .set("Authorization", `Bearer ${token}`)
-        expect(response.status).toBe(200)
-    })
-})
+  test('delete bookmark', async () => {
+    const response = await supertest(app)
+      .delete(`/tweet/${tweetId}/bookmark`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.status).toBe(200);
+  });
+});

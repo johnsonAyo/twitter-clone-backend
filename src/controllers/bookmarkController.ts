@@ -36,16 +36,13 @@ export const deleteBookmark = async (req: Request, res: Response, _next: NextFun
 };
 
 export const getSingleBookmark = async (req: Request, res: Response, _next: NextFunction) => {
-    const id = req.params.id;
-    const userId = req.user._id;
+  const id = req.params.id;
+  const userId = req.user._id;
 
-    try {
-        
-        const bookmark = await Bookmark.findOne({ id, userId });
-        res.status(200).json({ message: 'Single bookmark', data: bookmark });
-
-    } catch (error: any) {
-        res.status(400).json({ message: error.message });
-    }
-
-}
+  try {
+    const bookmark = await Bookmark.findOne({ id, userId });
+    res.status(200).json({ message: 'Single bookmark', data: bookmark });
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
+  }
+};

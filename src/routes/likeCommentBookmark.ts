@@ -1,18 +1,22 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { createBookmark, deleteBookmark, getAllBookmarks, getSingleBookmark } from '../controllers/bookmarkController';
+import {
+  createBookmark,
+  deleteBookmark,
+  getAllBookmarks,
+  getSingleBookmark,
+} from '../controllers/bookmarkController';
 import { commentTweet, getComments } from '../controllers/commentController';
 import { getLikes, likeTweet, unlikeTweet } from '../controllers/likeController';
 import { protectRoute } from '../controllers/authController';
 
 const router = express.Router();
 
-router.use(protectRoute)
+router.use(protectRoute);
 //GET Request
 router.get('/bookmarks', getAllBookmarks);
-router.get('/bookmarks/:id', getSingleBookmark)
+router.get('/bookmarks/:id', getSingleBookmark);
 router.get('/:id/comment', getComments);
-router.get('/:id/like', getLikes)
-
+router.get('/:id/like', getLikes);
 
 //POST Request
 router.post('/:id/like', likeTweet);
