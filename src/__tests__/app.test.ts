@@ -1,5 +1,5 @@
-import supertest from 'supertest';
-import app from '../app';
+// import supertest from 'supertest';
+// import app from '../app';
 
 const userData = {
   email: 'notVery@yahoo.com',
