@@ -3,17 +3,16 @@ import Joi from 'joi';
 
 export const profileValidator = (profile: any) => {
   const schema = Joi.object({
-  firstName: Joi.string().min(2).max(20),
-  lastName: Joi.string().min(2).max(20),
-  bioData: Joi.string()
+    firstName: Joi.string().min(2).max(20),
+    lastName: Joi.string().min(2).max(20),
+    bioData: Joi.string(),
   });
   return schema.validate(profile);
 };
 
-
-export const profilePicValidator = (profile: any)=>{
+export const profilePicValidator = (profile: any) => {
   const schema = Joi.object({
-    profilePic: Joi.string()
-  })
-  return schema.validate(profile)
-}
+    profilePic: Joi.string(),
+  });
+  return schema.validate(profile);
+};

@@ -22,7 +22,7 @@ export const uploadProfilePicture = catchAsync(
         return next(new ErrorHandler(500, err.message));
       }
 
-      console.log(req.file, 'lll')
+      console.log(req.file, 'lll');
       const path = req.file?.path;
       try {
         const profile = await User.findOne({ email: req.user.email });
@@ -82,7 +82,7 @@ export const updateProfile = catchAsync(async (req: Request, res: Response, next
 
 export const getProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { page, size } = req.query as any;
-  const user = await User.findOne({ email: req.user.email})
+  const user = await User.findOne({ email: req.user.email });
   if (!user) return next(new ErrorHandler(404, 'User does not exist'));
   const followers = await getFollowersModel(user._id, +page || 1, +size || 5);
   const following = await getFollowingModel(user._id, +page || 1, +size || 5);
@@ -99,5 +99,5 @@ export const getProfile = catchAsync(async (req: Request, res: Response, next: N
 //   res.status(201).json({
 //     status: 'successful!',
 //     profile
-//   });  
+//   });
 // })

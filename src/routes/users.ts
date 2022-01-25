@@ -1,6 +1,6 @@
 import express, { Response } from 'express';
 import { signup, login, confirmEmail, protectRoute } from '../controllers/authController';
-import {updateProfile, getProfile, uploadProfilePicture} from '../controllers/profileController'
+import { updateProfile, getProfile, uploadProfilePicture } from '../controllers/profileController';
 import middleware from '../middleware/middleware';
 import { validateSignup, validateLogin } from '../utils/validations/userValidation';
 
@@ -11,4 +11,3 @@ router.post('/login', [middleware(validateLogin)], login);
 router.get('/verify/:token', confirmEmail);
 
 export default router;
-
