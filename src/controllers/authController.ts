@@ -30,7 +30,6 @@ export const signup = catchAsync(async (req: Request, res: Response, next: NextF
     password: req.body.password,
   });
 
-  
   const emailToken = generateEmailToken(newUser.email);
   if(process.env.NODE_ENV === 'test'){
     return res.status(200).json({

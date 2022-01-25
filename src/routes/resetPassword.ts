@@ -5,8 +5,8 @@ const router = express.Router();
 
 const { resetPassword, forgotPassword, changePassword } = resetRouter
 
-router.post("/changePassword", protectRoute, changePassword);
-router.post("/forgotPassword", forgotPassword);
-router.post("/resetPassword/:token", resetPassword);
+router.post("/changepassword", protectRoute, changePassword);
+router.post("/forgotpassword", forgotPassword);
+router.post("/resetpassword/:token", resetPassword);
 
 export default router;

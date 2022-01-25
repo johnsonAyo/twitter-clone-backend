@@ -1,5 +1,5 @@
-import supertest from 'supertest';
 import app from '../app';
+import supertest from 'supertest';
 
 let emailToken: string;
 let token: string;
@@ -40,5 +40,31 @@ describe('Auth', () => {
     expect(response.body.user.isActive).toBe(true);
   });
 
-  
+  const changePassword = {
+    previousPassword: 'testing',
+    newPassword: 'passpass',
+    confirmNewPassword: 'passpass',
+  };
+
+  const reset = {
+    newPassword: 'testing',
+    passwordConfirm: 'testing',
+  };
+
+  it('forgets password', async () => {
+    const response = await supertest(app)
+      .post('/api/v1/reset/forgotpassword')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ email: 'tolz@yahoo.com' });
+    expect(response.status).toBe(200);
+  });
+
+  test('change password', async () => {
+    const response = await supertest(app)
+      .post('/api/v1/reset/changepassword')
+      .set('Authorization', `Bearer ${token}`)
+
+      .send(changePassword);
+    expect(response.status).toBe(200);
+  });
 });
