@@ -9,7 +9,9 @@ import crypto from 'crypto';
 
 import validators from '../utils/validations/passwordValidation';
 import { ISign } from '../utils/interfaces/userInterface';
+import Responses from '../utils/response';
 
+const resData = new Responses()
 interface IUser {
   _id?: string;
   email?: string;
@@ -54,6 +56,8 @@ const sendToken = (res: Response, statusCode: number, user: IUser) => {
       expires,
     },
   });
+  // resData.setSuccess(200, 'success', {user, token: {token, expires}})
+  // resData.send(res)
 };
 
 const createPasswordResetToken = () => {
@@ -122,7 +126,8 @@ const forgotPassword = catchAsync(async (req: Request, res: Response, next: Next
     if (process.env.NODE_ENV === 'test') {
       return res.status(200).json({
         status: 'success',
-        message: 'check your mail to reset your password'
+        message: 'check your mail to reset your password',
+        resetToken,
       });
     }
     await sendEmail(
@@ -132,10 +137,13 @@ const forgotPassword = catchAsync(async (req: Request, res: Response, next: Next
     Kindly ignore this email if you did not request for a password reset`,
     );
 
-    return res.status(200).json({
-      status: 'success',
-      message: 'check your email to reset your password',
-    });
+    // return res.status(200).json({
+    //   status: 'success',
+    //   message: 'check your email to reset your password',
+    // });
+
+    resData.setSuccess(200, 'check your email to reset your password', {})
+    return resData.send(res)
   } catch (e) {
     user.passwordExpires = undefined;
     user.passwordResetToken = undefined;
