@@ -2,7 +2,7 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as FBStrategy } from 'passport-facebook';
 import User from '../models/userModels';
 import passport, { PassportStatic, Profile } from 'passport';
-import { Request } from 'express';
+import { Request, Response, NextFunction } from 'express';
 
 export const googleStrategy = (passport: PassportStatic) =>
   passport.use(
@@ -52,7 +52,7 @@ export const facebookStrategy = (passport: PassportStatic) =>
       {
         clientID: process.env.CLIENT_ID_FB as string,
         clientSecret: process.env.CLIENT_SECRET_FB as string,
-        callbackURL: 'http://localhost:3000/auth/facebook/callback',
+        callbackURL: '/auth/facebook/callback',
         profileFields: ['name', 'picture.type(large)', 'email'],
       }, // facebook will send back the token and profile
       async function (token: string, refreshToken: string, profile: any, done: any) {
@@ -82,6 +82,14 @@ export const facebookStrategy = (passport: PassportStatic) =>
     ),
   );
 
+// route middleware to make sure a user is logged in to access protected routes
+export function isLoggedIn(req: Request, res: Response, next: NextFunction) {
+  // if user is authenticated in the session, carry on
+  if (req.isAuthenticated()) return next();
+  // if they aren't redirect them to the home page
+  res.redirect('/');
+}
+
 passport.serializeUser((profile, done) => {
   done(null, profile);
 });
@@ -89,3 +97,12 @@ passport.serializeUser((profile, done) => {
 passport.deserializeUser((id, done) => {
   User.findById(id, (err: any, user: any) => done(err, user));
 });
+
+// route middleware to make sure
+// export function isLoggedIn(req: Request, res: any, next: NextFunction) {
+//   // if user is authenticated in the session, carry on
+//   if (req.isAuthenticated()) return next();
+
+//   // if they aren't redirect them to the home page
+//   res.redirect('/');
+// }
