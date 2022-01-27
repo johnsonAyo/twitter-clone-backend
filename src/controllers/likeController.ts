@@ -27,5 +27,5 @@ export const unlikeTweet = catchAsync(async (req: Request, res: Response, next: 
 export const getLikes = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const likes = await Like.find();
   if (!likes) return next(new ErrorHandler(500, 'Error occured'));
-  res.status(200).json({ message: 'All likes', data: likes });
+  res.status(200).json({ message: 'All likes', data: likes, number: likes.length });
 });

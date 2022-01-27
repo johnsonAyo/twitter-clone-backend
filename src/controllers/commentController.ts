@@ -16,5 +16,5 @@ export const commentTweet = catchAsync(async (req: Request, res: Response, next:
 export const getComments = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const comments = await Comment.find();
   if (!comments) return next(new ErrorHandler(400, 'Error occurred'));
-  res.status(200).json({ message: 'All comments', data: comments });
+  res.status(200).json({ message: 'All comments', data: comments, number: comments.length });
 });
