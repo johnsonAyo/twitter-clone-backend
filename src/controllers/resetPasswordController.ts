@@ -119,6 +119,12 @@ const forgotPassword = catchAsync(async (req: Request, res: Response, next: Next
   const url = `${req.protocol}://${req.get('host')}/resetPassword/${resetToken}`;
 
   try {
+    if (process.env.NODE_ENV === 'test') {
+      return res.status(200).json({
+        status: 'success',
+        message: 'check your mail to reset your password',
+      });
+    }
     await sendEmail(
       req.body!.email,
       'Reset Password',

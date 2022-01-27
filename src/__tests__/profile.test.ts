@@ -1,8 +1,11 @@
 import supertest from 'supertest';
 import app from '../app';
+import mongoose from 'mongoose';
+import fs from 'fs';
 
 let emailToken: string;
 let token: string;
+let id: string;
 
 describe('Auth', () => {
   const userData = {
@@ -35,22 +38,74 @@ describe('Auth', () => {
       .send({ email: userData.email, password: userData.password });
 
     token = response.body.token;
+    id = response.body.user._id;
 
     expect(response.status).toBe(201);
     expect(response.body.user.isActive).toBe(true);
   });
+
+  it('should update a profile', async () => {
+    const newProfile = {
+      firstName: 'Ewa',
+      lastName: 'Deola',
+      bioData: 'awesome bio',
+    };
+    const response = await supertest(app)
+      .put(`/profile`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .send(newProfile);
+    expect(response.status).toBe(201);
+    expect(response.body.status).toBe('successful!');
+  });
+
+  it('should upload a profile picture', async () => {
+    const response = await supertest(app)
+      .put('/profile/picture')
+      .set(`Authorization`, `Bearer ${token}`)
+      .attach('profilePicture', `${__dirname}/file/122.png`);
+    expect(response.status).toBe(201);
+  }, 60000);
+
+  it('should get user', async () => {
+    const response = await supertest(app).get('/profile').set(`Authorization`, `Bearer ${token}`);
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        user: {
+          _id: expect.any(String),
+          firstName: expect.any(String),
+          lastName: expect.any(String),
+          email: expect.any(String),
+          isActive: expect.any(Boolean),
+          provider: expect.any(String),
+          __v: expect.any(Number),
+          bioData: expect.any(String),
+          profilePic: expect.any(String),
+        },
+        followers: {
+          Totalfollowers: expect.any(Number),
+          pageNo: expect.any(Number),
+          pageSize: expect.any(Number),
+          followers: expect.any(Array),
+        },
+        following: {
+          Totalfollowing: expect.any(Number),
+          pageNo: expect.any(Number),
+          pageSize: expect.any(Number),
+          following: expect.any(Array),
+        },
+      }),
+    );
+  });
 });
 
-describe('profile', ()=>{
-    const ProfileData = {
-        firstName: "Ewa",
-        lastName: "olamide",
-        email: "tolc@yahoo.com",
-        password: "testing",
-    }
-    test('update profile', async()=>{
-        const result = await supertest(app).put('/profile/').send(ProfileData)
-        .send({ email: ProfileData.email, password: ProfileData.password });
-        
-    })
-})
+// describe('Profile', () => {
+//     const newProfile = {
+//       id: '61eb05b8780febeb556508d1',
+//       firstName: 'Ewa',
+//       lastName: 'Deola',
+//       email: "tolc@yahoo.com",
+//       bioData: "awesome bio",
+//       cloudinary_id: 'http://res.cloudinary.com/du2j5rypm/image/upload/v1643056328/xcxdumuypemx0glxm2fk.png',
+//     };
+
+// )

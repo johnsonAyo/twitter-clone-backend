@@ -9,7 +9,6 @@ import cloudinaryImage from '../utils/tweet_utils/cloudinaryImageStorage';
 import User from '../models/userModels';
 import { getFollowersModel } from '../models/followModel';
 import { getFollowingModel } from '../models/followModel';
-import { ISign } from '../utils/interfaces/userInterface';
 
 const upload = imageMulter.single('profilePicture');
 
@@ -22,7 +21,6 @@ export const uploadProfilePicture = catchAsync(
         return next(new ErrorHandler(500, err.message));
       }
 
-      console.log(req.file, 'lll')
       const path = req.file?.path;
       try {
         const profile = await User.findOne({ email: req.user.email });
@@ -59,7 +57,7 @@ export const uploadProfilePicture = catchAsync(
 export const updateProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const profile = await User.findOne({ email: req.user.email });
   if (!profile) return next(new ErrorHandler(404, 'profile does not exist'));
-  await profile.update({
+  await profile.updateOne({
     firstName: req.body.firstName || profile.firstName,
     lastName: req.body.lastName || profile.lastName,
     bioData: req.body.bioData || profile.bioData,
@@ -82,7 +80,7 @@ export const updateProfile = catchAsync(async (req: Request, res: Response, next
 
 export const getProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { page, size } = req.query as any;
-  const user = await User.findOne({ email: req.user.email})
+  const user = await User.findOne({ email: req.user.email });
   if (!user) return next(new ErrorHandler(404, 'User does not exist'));
   const followers = await getFollowersModel(user._id, +page || 1, +size || 5);
   const following = await getFollowingModel(user._id, +page || 1, +size || 5);
@@ -99,5 +97,5 @@ export const getProfile = catchAsync(async (req: Request, res: Response, next: N
 //   res.status(201).json({
 //     status: 'successful!',
 //     profile
-//   });  
+//   });
 // })
