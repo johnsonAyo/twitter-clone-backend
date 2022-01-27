@@ -11,6 +11,7 @@ import passport from 'passport';
 import { googleStrategy, facebookStrategy } from './middleware/passport';
 import indexRouter from './routes/index';
 import followRoutes from './routes/followRoute';
+import likeCommentBook from './routes/likeCommentBookmark';
 import tweetRoute from './routes/tweetingRouting';
 import { connectDB, connectTestDB } from './database/mem';
 import usersRouter from './routes/users';
@@ -62,6 +63,7 @@ app.use('/users', usersRouter);
 app.use('/profile', profileRouter);
 
 app.use('/api/viewtweet', viewtweetRoute);
+app.use('/tweet', likeCommentBook);
 
 app.use('/api/v1/reset', resetRouter);
 app.use('/auth', authRouter);
