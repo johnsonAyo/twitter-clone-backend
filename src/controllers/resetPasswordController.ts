@@ -127,7 +127,10 @@ const forgotPassword = catchAsync(async (req: Request, res: Response, next: Next
       return res.status(200).json({
         status: 'success',
         message: 'check your mail to reset your password',
+<<<<<<< HEAD
+=======
         resetToken,
+>>>>>>> 5e508e0e14c12e9eca5d8b731c17ba2ada2725dd
       });
     }
     await sendEmail(
@@ -137,6 +140,12 @@ const forgotPassword = catchAsync(async (req: Request, res: Response, next: Next
     Kindly ignore this email if you did not request for a password reset`,
     );
 
+<<<<<<< HEAD
+    return res.status(200).json({
+      status: 'success',
+      message: 'check your email to reset your password',
+    });
+=======
     // return res.status(200).json({
     //   status: 'success',
     //   message: 'check your email to reset your password',
@@ -144,6 +153,7 @@ const forgotPassword = catchAsync(async (req: Request, res: Response, next: Next
 
     resData.setSuccess(200, 'check your email to reset your password', {})
     return resData.send(res)
+>>>>>>> 5e508e0e14c12e9eca5d8b731c17ba2ada2725dd
   } catch (e) {
     user.passwordExpires = undefined;
     user.passwordResetToken = undefined;

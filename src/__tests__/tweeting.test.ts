@@ -42,7 +42,7 @@ describe('Auth', () => {
 });
 
 /**************************************************************************|
-| Test that handle  tweet, retweet operation by a login user                               *|
+| Test that handle  tweet, retweet operation by a login user              *|
  /**************************************************************************/
 
 describe('Tweet by authorised user', () => {
@@ -87,6 +87,7 @@ describe('Tweet by authorised user', () => {
       .send(newData);
 
     expect(res.status).toBe(201);
+    expect(res.body.msg).toBe('Retweet created....');
   });
 
   //return 404 error if tweet id you want to retweet is invalid
