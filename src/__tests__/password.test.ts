@@ -54,7 +54,6 @@ describe('Auth', () => {
   it('forgets password', async () => {
     const response = await supertest(app)
       .post('/api/v1/reset/forgotpassword')
-      .set('Authorization', `Bearer ${token}`)
       .send({ email: 'tolz@yahoo.com' });
     expect(response.status).toBe(200);
   });

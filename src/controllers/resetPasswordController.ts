@@ -122,7 +122,7 @@ const forgotPassword = catchAsync(async (req: Request, res: Response, next: Next
     if (process.env.NODE_ENV === 'test') {
       return res.status(200).json({
         status: 'success',
-        message: 'check your mail to reset your password',
+        message: 'check your mail to reset your password'
       });
     }
     await sendEmail(
