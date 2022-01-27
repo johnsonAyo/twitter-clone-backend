@@ -11,7 +11,7 @@ import validators from '../utils/validations/passwordValidation';
 import { ISign } from '../utils/interfaces/userInterface';
 import Responses from '../utils/response';
 
-const resData = new Responses()
+const resData = new Responses();
 interface IUser {
   _id?: string;
   email?: string;
@@ -142,8 +142,8 @@ const forgotPassword = catchAsync(async (req: Request, res: Response, next: Next
     //   message: 'check your email to reset your password',
     // });
 
-    resData.setSuccess(200, 'check your email to reset your password', {})
-    return resData.send(res)
+    resData.setSuccess(200, 'check your email to reset your password', {});
+    return resData.send(res);
   } catch (e) {
     user.passwordExpires = undefined;
     user.passwordResetToken = undefined;

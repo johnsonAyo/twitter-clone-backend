@@ -27,4 +27,4 @@ router.post('/:id/bookmark', createBookmark);
 router.delete('/:id/like', unlikeTweet);
 router.delete('/:id/bookmark', deleteBookmark);
 
-export default router;  
+export default router;
