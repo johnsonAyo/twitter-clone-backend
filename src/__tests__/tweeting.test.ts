@@ -42,7 +42,7 @@ describe('Auth', () => {
 });
 
 /**************************************************************************|
-| Test that handle  tweet, retweet operation by a login user                               *|
+| Test that handle  tweet, retweet operation by a login user              *|
  /**************************************************************************/
 
 describe('Tweet by authorised user', () => {
@@ -63,36 +63,31 @@ describe('Tweet by authorised user', () => {
     expect(res.status).toBe(200);
   });
 
-
-  // All user tweet 
+  // All user tweet
 
   it(' A user can view all his tweet', async () => {
-    const res = await request(app)
-      .get('/tweet/alltweet')
-      .set(`Authorization`, `Bearer ${token}`)
-      
+    const res = await request(app).get('/tweet/alltweet').set(`Authorization`, `Bearer ${token}`);
+
     expect(res.status).toBe(200);
   });
 
   // a user can view all his retweet
 
   it(' A user can view all his retweet', async () => {
-    const res = await request(app)
-      .get('/tweet/allretweet')
-      .set(`Authorization`, `Bearer ${token}`)
-      
+    const res = await request(app).get('/tweet/allretweet').set(`Authorization`, `Bearer ${token}`);
+
     expect(res.status).toBe(200);
   });
 
-
-
-    //retweet a tweet
+  //retweet a tweet
   it(' Retweet a tweet using valid tweet id', async () => {
     const res = await request(app)
       .post('/tweet/retweet/61e6c6ef532239cbd186ac4f')
-      .set(`Authorization`, `Bearer ${token}`).send(newData);
-    
-      expect(res.status).toBe(201)
+      .set(`Authorization`, `Bearer ${token}`)
+      .send(newData);
+
+    expect(res.status).toBe(201);
+    expect(res.body.msg).toBe('Retweet created....');
   });
 
   //return 404 error if tweet id you want to retweet is invalid
@@ -100,23 +95,19 @@ describe('Tweet by authorised user', () => {
   it(' Return 404 error during retweet using invalid tweet id,', async () => {
     const res = await request(app)
       .post('/tweet/retweet/1')
-      .set(`Authorization`, `Bearer ${token}`).send(newData);
-    
-      expect(res.status).toBe(404)
-      
+      .set(`Authorization`, `Bearer ${token}`)
+      .send(newData);
+
+    expect(res.status).toBe(404);
   });
 
-
-// delete a tweet using a valid tweet id
+  // delete a tweet using a valid tweet id
 
   it(' return 404 if id is not available for delete', async () => {
     const res = await request(app)
       .delete('/tweet/deletetweet/61e6c6ef532239cbd186ac4f')
-      
+
       .set(`Authorization`, `Bearer ${token}`);
-      expect(res.status).toBe(404)
+    expect(res.status).toBe(404);
   });
 });
-
-
-

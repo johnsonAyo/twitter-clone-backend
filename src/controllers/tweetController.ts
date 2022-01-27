@@ -4,7 +4,7 @@ import CreateTweetCln from '../models/tweetModel';
 import CreateRetTweet from '../models/retweetModel';
 import { tweetValidate } from '../utils/tweet_utils/tweetingValidation';
 import cloudinaryImage from '../utils/tweet_utils/cloudinaryImageStorage';
-import mongoose from "mongoose"
+import mongoose from 'mongoose';
 
 /****************************************************************************
  *                                                                           *
@@ -54,12 +54,11 @@ export const userNewTweet = async (req: any, res: Response) => {
 
 export const reTweeting = async (req: Request, res: Response) => {
   try {
+    //check if objectId is valid or not
 
-      //check if objectId is valid or not
-
-      if(!mongoose.Types.ObjectId.isValid(req.params.id)){
-        return res.status(404).send("Invalid id")
-      }
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(404).send('Invalid id');
+    }
     const createReTweet = new CreateRetTweet({
       tweetId: req.params.id,
       reTweeterId: req.user._id,
@@ -130,8 +129,6 @@ export const deleteTweet = async (req: Request, res: Response) => {
   try {
     const tweetId = req.params.id;
 
-    
-
     CreateTweetCln.findById(tweetId, async (err: any, user: any) => {
       if (err) {
         return res.status(404).json({ msg: 'Error occured in finding a particular tweet' });
@@ -146,9 +143,9 @@ export const deleteTweet = async (req: Request, res: Response) => {
 
         // delete also the retweet which a user has deleted from retweet collection
 
-        let deletedTweet =  await CreateRetTweet.deleteMany({ tweetId: tweetId });
+        let deletedTweet = await CreateRetTweet.deleteMany({ tweetId: tweetId });
 
-        if(deletedTweet){
+        if (deletedTweet) {
           res.status(200).json({ msg: 'Tweet  Removed ...' });
         }
       }
