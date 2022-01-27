@@ -97,12 +97,3 @@ passport.serializeUser((profile, done) => {
 passport.deserializeUser((id, done) => {
   User.findById(id, (err: any, user: any) => done(err, user));
 });
-
-// route middleware to make sure
-// export function isLoggedIn(req: Request, res: any, next: NextFunction) {
-//   // if user is authenticated in the session, carry on
-//   if (req.isAuthenticated()) return next();
-
-//   // if they aren't redirect them to the home page
-//   res.redirect('/');
-// }
