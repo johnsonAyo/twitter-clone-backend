@@ -1,8 +1,14 @@
 import request from 'supertest';
 import app from '../app';
+import {Request} from 'express'
+
 
 let emailToken: string;
+let cloudinary_id: string;
+let req:Request;
+
 let token: string;
+let userId:String;
 
 describe('Auth', () => {
   const userData = {
@@ -35,6 +41,7 @@ describe('Auth', () => {
       .send({ email: userData.email, password: userData.password });
 
     token = response.body.token;
+    userId = response.body._id;
 
     expect(response.status).toBe(201);
     expect(response.body.user.isActive).toBe(true);
@@ -42,25 +49,25 @@ describe('Auth', () => {
 });
 
 /**************************************************************************|
-| Test that handle  tweet, retweet operation by a login user                               *|
+| Test that handle  tweet, retweet operation by a login user              *|
  /**************************************************************************/
 
 describe('Tweet by authorised user', () => {
   const newData = {
-    userId: '61e5ba1ca9dd9f3f16df5389',
+    userId: userId,
     messageBody: 'Message here',
-    tweetImage: 'cloudImage.secure_url here',
+    tweetImage: req.file?.path,
     whoCanReply: 'Everyone',
-    cloudinary_id: 'cloudImage.public_id here',
+    cloudinary_id: cloudinary_id,
   };
 
   // check if a user is not authorised
-  it(' Authorised user for tweeting', async () => {
+  it(' Authorised user  can tweet', async () => {
     const res = await request(app)
-      .post('/tweet/')
+      .post('/tweet')
       .set(`Authorization`, `Bearer ${token}`)
       .send(newData);
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(201);
   });
 
   // All user tweet
@@ -71,7 +78,7 @@ describe('Tweet by authorised user', () => {
     expect(res.status).toBe(200);
   });
 
-  // a user can view all his retweet
+  // // a user can view all his retweet
 
   it(' A user can view all his retweet', async () => {
     const res = await request(app).get('/tweet/allretweet').set(`Authorization`, `Bearer ${token}`);
@@ -82,11 +89,12 @@ describe('Tweet by authorised user', () => {
   //retweet a tweet
   it(' Retweet a tweet using valid tweet id', async () => {
     const res = await request(app)
-      .post('/tweet/retweet/61e6c6ef532239cbd186ac4f')
+      .post('/tweet/retweet/61f30abeebd814cae89b69b0')
       .set(`Authorization`, `Bearer ${token}`)
       .send(newData);
 
     expect(res.status).toBe(201);
+    // expect(res.body.msg).toBe('Retweet created....');
   });
 
   //return 404 error if tweet id you want to retweet is invalid
@@ -102,11 +110,11 @@ describe('Tweet by authorised user', () => {
 
   // delete a tweet using a valid tweet id
 
-  it(' return 404 if id is not available for delete', async () => {
+  it(' Return 200 for deleting a particular tweet via a valid id', async () => {
     const res = await request(app)
-      .delete('/tweet/deletetweet/61e6c6ef532239cbd186ac4f')
+      .delete('/tweet/deletetweet/61e6c6eb532239cbd186ac4c')
 
       .set(`Authorization`, `Bearer ${token}`);
-    expect(res.status).toBe(404);
+    expect(res.status).toBe(200);
   });
 });

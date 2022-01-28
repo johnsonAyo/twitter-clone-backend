@@ -18,7 +18,7 @@ class Responses {
   }
 
   setSuccess(statusCode: number, message: string, data: ResponseData) {
-    this.statusCode = 200;
+    this.statusCode = statusCode;
     this.message = message;
     this.data = data;
     this.status = 'successful';
