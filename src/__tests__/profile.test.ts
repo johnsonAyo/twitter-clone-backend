@@ -70,17 +70,7 @@ describe('Auth', () => {
     const response = await supertest(app).get('/profile').set(`Authorization`, `Bearer ${token}`);
     expect(response.body).toEqual(
       expect.objectContaining({
-        user: {
-          _id: expect.any(String),
-          firstName: expect.any(String),
-          lastName: expect.any(String),
-          email: expect.any(String),
-          isActive: expect.any(Boolean),
-          provider: expect.any(String),
-          __v: expect.any(Number),
-          bioData: expect.any(String),
-          profilePic: expect.any(String),
-        },
+        user: expect.any(Object),
         followers: {
           Totalfollowers: expect.any(Number),
           pageNo: expect.any(Number),

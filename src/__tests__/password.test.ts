@@ -3,6 +3,8 @@ import supertest from 'supertest';
 
 let emailToken: string;
 let token: string;
+let resetToken: string;
+
 
 describe('Auth', () => {
   const userData = {
@@ -54,17 +56,26 @@ describe('Auth', () => {
   it('forgets password', async () => {
     const response = await supertest(app)
       .post('/api/v1/reset/forgotpassword')
-      .set('Authorization', `Bearer ${token}`)
-      .send({ email: 'tolz@yahoo.com' });
-    expect(response.status).toBe(200);
+      .send({ email: 'tolz@yahoo.com' })
+      console.log(response)
+      resetToken = response.body.resetToken
+    expect(response.status).toBe(200)
+
   });
 
   test('change password', async () => {
     const response = await supertest(app)
       .post('/api/v1/reset/changepassword')
       .set('Authorization', `Bearer ${token}`)
-
       .send(changePassword);
     expect(response.status).toBe(200);
   });
+
+  it('resets password', async () => {
+      const response = await supertest(app)
+      .post(`/api/v1/reset/resetpassword/${resetToken}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send(reset)
+    expect(response.status).toBe(200)
+  })
 });
