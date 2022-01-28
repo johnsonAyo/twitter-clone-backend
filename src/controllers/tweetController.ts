@@ -1,48 +1,50 @@
-import express, { Request, Response } from 'express';
-
+import express, { Request, Response, NextFunction } from 'express';
 import CreateTweetCln from '../models/tweetModel';
 import CreateRetTweet from '../models/retweetModel';
 import { tweetValidate } from '../utils/tweet_utils/tweetingValidation';
 import cloudinaryImage from '../utils/tweet_utils/cloudinaryImageStorage';
 import mongoose from 'mongoose';
+import catchAsync from '../utils/catchAsync';
+import ErrorHandler from '../utils/appError';
+import Responses from '../utils/response';
 
+const responseStatus = new Responses();
 /****************************************************************************
  *                                                                           *
  *               Creation of new Tweet by the user                           *
  *                                                                           *
 /*****************************************************************************/
 
-export const userNewTweet = async (req: any, res: Response) => {
+export const userNewTweet = catchAsync(async (req: any, res: Response, next: NextFunction) => {
   //check error for incoming request
 
   const { error } = tweetValidate(req.body);
 
-  if (error) return res.json({ msg: error.message });
+  if (error) return next(new ErrorHandler(404, error.message));
 
   const { messageBody, whoCanReply } = req.body;
 
-  try {
-    let cloudImage = await cloudinaryImage.uploader.upload(req.file.path);
+  let cloudImage = await cloudinaryImage.uploader.upload(req.file.path);
 
-    let createTweet = new CreateTweetCln({
-      userId: req.user._id,
-      messageBody,
-      tweetImage: cloudImage.secure_url,
-      whoCanReply,
-      cloudinary_id: cloudImage.public_id,
-    });
+  let createTweet = new CreateTweetCln({
+    userId: req.user._id,
+    messageBody,
+    tweetImage: cloudImage.secure_url,
+    whoCanReply,
+    cloudinary_id: cloudImage.public_id,
+  });
 
-    if (createTweet) {
-      await createTweet.save();
+  if (createTweet) {
+    await createTweet.save();
 
-      return res.status(200).json({ 'Tweet saved successfully...': createTweet });
-    } else {
-      return res.status(404).json({ msg: 'Error  occur for file uploading' });
-    }
-  } catch (error: any) {
-    console.error(error.message);
+    responseStatus.setSuccess(201, 'Tweet saved successfully...', createTweet);
+
+    return responseStatus.send(res)
+
+  } else {
+    return res.status(404).json({ msg: 'Error  occur for file uploading' });
   }
-};
+});
 
 /****************************************************************************
  *                 
@@ -52,26 +54,27 @@ export const userNewTweet = async (req: any, res: Response) => {
  *                                                                           *
 /*****************************************************************************/
 
-export const reTweeting = async (req: Request, res: Response) => {
-  try {
-    //check if objectId is valid or not
+export const reTweeting = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  //check if objectId is valid or not
 
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(404).send('Invalid id');
-    }
-    const createReTweet = new CreateRetTweet({
-      tweetId: req.params.id,
-      reTweeterId: req.user._id,
-    });
-
-    if (createReTweet) {
-      await createReTweet.save();
-      return res.status(201).json({ msg: 'Retweet created....' });
-    }
-  } catch (error: any) {
-    return res.status(404).json({ msg: error.message });
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return next(new ErrorHandler(404, 'Invalid id'));
   }
-};
+  const createReTweet = new CreateRetTweet({
+    tweetId: req.params.id,
+    reTweeterId: req.user._id,
+  });
+
+  if (createReTweet) {
+    await createReTweet.save();
+
+    responseStatus.setSuccess(201,"You just retweeted...", createReTweet)
+    return responseStatus.send(res);
+  }else{
+    responseStatus.setSuccess(404,"Retweet not made", createReTweet)
+    return responseStatus.send(res);
+  }
+});
 
 /****************************************************************************
  *                 
@@ -80,20 +83,16 @@ export const reTweeting = async (req: Request, res: Response) => {
  *                                                                           *
 /*****************************************************************************/
 
-export const allUserRetweet = async (req: Request, res: Response) => {
-  try {
-    //get id of reweet and search the message body in tweet colltn using populate function
-    const userReTweet = await CreateRetTweet.find({ reTweeterId: req.user._id }).populate(
-      'tweetId',
-    );
+export const allUserRetweet = catchAsync(async (req: Request, res: Response) => {
+  //get id of reweet and search the message body in tweet colltn using populate function
+  const userReTweet = await CreateRetTweet.find({ reTweeterId: req.user._id }).populate('tweetId');
 
-    console.log(req.user._id);
-    if (userReTweet) return res.status(200).json({ AllUserLoginRetweet: userReTweet });
-  } catch (error: any | undefined) {
-    res.json({ msg: error.message });
+  if (userReTweet) {
+
+    responseStatus.setSuccess(200, 'Retweet created', userNewTweet);
+    return responseStatus.send(res)
   }
-};
-
+});
 /****************************************************************************
  *                 
  *                     Show All user Tweet                                 *                  
@@ -101,22 +100,19 @@ export const allUserRetweet = async (req: Request, res: Response) => {
  *                                                                           *
 /*****************************************************************************/
 
-export const allUserTweet = async (req: Request, res: Response) => {
-  try {
-    //All user tweet
-    CreateTweetCln.find({ userId: req.user._id }, (err: any, allTweets: any) => {
-      if (err) return res.status(404).json({ msg: 'Error Occured in tweet fetching...' });
+export const allUserTweet = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  //All user tweet
+  CreateTweetCln.find({ userId: req.user._id }, (err: any, allTweets: any) => {
+    if (err) return next(new ErrorHandler(404, 'Error Occured in tweet fetching...'));
 
-      if (allTweets == []) {
-        return res.status(404).json({ msg: 'No tweet for this user' });
-      } else {
-        return res.status(200).json(allTweets);
-      }
-    });
-  } catch (error: any | undefined) {
-    res.json({ msg: error.message });
-  }
-};
+    if (allTweets == null) {
+      return next(new ErrorHandler(404, 'Error Occured in tweet fetching...'));
+    } else {
+       responseStatus.setSuccess(200, "All user tweet", allTweets);
+       return responseStatus.send(res)
+    }
+  });
+});
 
 /****************************************************************************
  *                 
@@ -125,52 +121,51 @@ export const allUserTweet = async (req: Request, res: Response) => {
  *                                                                           *
 /*****************************************************************************/
 
-export const deleteTweet = async (req: Request, res: Response) => {
-  try {
-    const tweetId = req.params.id;
+export const deleteTweet = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const tweetId = req.params.id;
 
-    CreateTweetCln.findById(tweetId, async (err: any, user: any) => {
-      if (err) {
-        return res.status(404).json({ msg: 'Error occured in finding a particular tweet' });
-      } else {
-        //delete image from cloudinary according to post id
+  CreateTweetCln.findById(tweetId, async (err: any, user: any) => {
+    if (err) {
+      return next(new ErrorHandler(404, 'Error occured in finding a particular tweet'));
+    } else {
+      //delete image from cloudinary according to post id
 
-        if (!user) return res.status(404).json({ msg: 'The document you want is not found...' });
-        await cloudinaryImage.uploader.destroy(user.cloudinary_id);
+      if (!user) return next(new ErrorHandler(404, 'The document you want is not found...'));
+      await cloudinaryImage.uploader.destroy(user.cloudinary_id);
 
-        //delete user tweet
-        await user.remove();
+      //delete user tweet
+      await user.remove();
 
-        // delete also the retweet which a user has deleted from retweet collection
+      // delete also the retweet which a user has deleted from retweet collection
 
-        let deletedTweet = await CreateRetTweet.deleteMany({ tweetId: tweetId });
+      let deletedTweet = await CreateRetTweet.deleteMany({ tweetId: tweetId });
 
-        if (deletedTweet) {
-          res.status(200).json({ msg: 'Tweet  Removed ...' });
-        }
+      if (deletedTweet) {
+        responseStatus.setSuccess(200, "This tweet was removed", deletedTweet)
+        return responseStatus.send(res);
       }
-    });
-  } catch (error: any | undefined) {
-    res.json({ msg: error.message });
-  }
-};
+    }
+  });
+});
 
 /****************************************************************************
  *                 
  *                   Undo a particular tweet you reweeted.                            *                  
  /*****************************************************************************/
 
-export const undoUserReweet = async (req: Request, res: Response) => {
-  try {
+export const undoUserReweet = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
     await CreateRetTweet.deleteOne({ tweetId: req.params.id }, (err: any, content: any) => {
-      if (err) return res.status(404).json({ msg: err.message });
+      if (err) return next(new ErrorHandler(404, err.message));
 
-      if (content) return res.status(200).json({ msg: 'Reweet is been undo successfully...' });
+      if (content){
+
+         responseStatus.setSuccess(200, 'Reweet is been undo successfully...', content);
+        return responseStatus.send(res)
+      } 
     });
-  } catch (err: any) {
-    console.error(err.message);
-  }
-};
+  },
+);
 
 /****************************************************************************
  *                 
@@ -178,27 +173,23 @@ export const undoUserReweet = async (req: Request, res: Response) => {
  *                    their page                                              *                  
  /*****************************************************************************/
 
-export const getAllUserTweetNRetweet = async (req: Request, res: Response) => {
-  try {
-    //get other user retweet and and combine it with his tweet
+export const getAllUserTweetNRetweet = catchAsync(async (req: Request, res: Response) => {
+  //get other user retweet and and combine it with his tweet
 
-    const otherUserId = req.params.id;
+  const otherUserId = req.params.id;
 
-    console.log(otherUserId);
+  const otherUserReTweetDetail = await CreateRetTweet.find({ reTweeterId: otherUserId }).populate(
+    'tweetId',
+  );
 
-    const otherUserReTweetDetail = await CreateRetTweet.find({ reTweeterId: otherUserId }).populate(
-      'tweetId',
-    );
+  const allOtherUserTweet = await CreateTweetCln.find({ userId: otherUserId });
 
-    const allOtherUserTweet = await CreateTweetCln.find({ userId: otherUserId });
+  const allOtherUserChat = [
+    { otherUserRetweet: otherUserReTweetDetail },
+    { OtherUserTweet: allOtherUserTweet },
+  ];
 
-    const allOtherUserChat = [
-      { otherRetweetUser: otherUserReTweetDetail },
-      { OtherUserTweet: allOtherUserTweet },
-    ];
+   responseStatus.setSuccess(200, 'getAllUserTweetNRetweet', allOtherUserChat);
 
-    return res.status(200).json(allOtherUserChat);
-  } catch (error: any) {
-    console.error(error.message);
-  }
-};
+   return responseStatus.send(res);
+});
