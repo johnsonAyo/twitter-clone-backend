@@ -81,7 +81,7 @@ export const reTweeting = catchAsync(async (req: Request, res: Response, next: N
   //check if objectId is valid or not
 
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-    return res.status(404).json({msg:"Invalid tweet id"})
+    return res.status(404).json({msg:"Invalid tweet Id "})
   }
   const createReTweet = new CreateRetTweet({
     tweetId: req.params.id,
@@ -112,7 +112,7 @@ export const allUserRetweet = catchAsync(async (req: Request, res: Response) => 
 
   if (userReTweet) {
 
-    responseStatus.setSuccess(200, 'Retweet created', userNewTweet);
+    responseStatus.setSuccess(200, 'Retweet created', userReTweet);
     return responseStatus.send(res)
   }
 });
