@@ -24,26 +24,49 @@ export const userNewTweet = catchAsync(async (req: any, res: Response, next: Nex
 
   const { messageBody, whoCanReply } = req.body;
 
-  let cloudImage = await cloudinaryImage.uploader.upload(req.file.path);
+  if(req.file == undefined){
 
-  let createTweet = new CreateTweetCln({
-    userId: req.user._id,
-    messageBody,
-    tweetImage: cloudImage.secure_url,
-    whoCanReply,
-    cloudinary_id: cloudImage.public_id,
-  });
+    let createTweet = new CreateTweetCln({
+      userId: req.user._id,
+      messageBody,
+      tweetImage: "cloudImage.secure_url",
+      whoCanReply,
+      cloudinary_id: "cloudImage.public_id"
+    }); 
 
-  if (createTweet) {
-    await createTweet.save();
+    if (createTweet) {
+      await createTweet.save();
+  
+      responseStatus.setSuccess(201, 'Tweet saved successfully...', createTweet);
+  
+      return responseStatus.send(res)
+  
+    } else {
+      return res.status(404).json({ msg: 'Error  occur for file uploading' });
+    }
+  }else{
 
-    responseStatus.setSuccess(201, 'Tweet saved successfully...', createTweet);
+    let cloudImage = await cloudinaryImage.uploader.upload(req.file.path);
+    let createTweet = new CreateTweetCln({
+      userId: req.user._id,
+      messageBody,
+      tweetImage: cloudImage.secure_url,
+      whoCanReply,
+      cloudinary_id: cloudImage.public_id
+    }); 
 
-    return responseStatus.send(res)
-
-  } else {
-    return res.status(404).json({ msg: 'Error  occur for file uploading' });
+    if (createTweet) {
+      await createTweet.save();
+  
+      responseStatus.setSuccess(201, 'Tweet saved successfully...', createTweet);
+  
+      return responseStatus.send(res)
+  
+    } else {
+      return res.status(404).json({ msg: 'Error  occur for file uploading' });
+    }
   }
+
 });
 
 /****************************************************************************
@@ -58,7 +81,7 @@ export const reTweeting = catchAsync(async (req: Request, res: Response, next: N
   //check if objectId is valid or not
 
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-    return next(new ErrorHandler(404, 'Invalid id'));
+    return res.status(404).json({msg:"Invalid tweet id"})
   }
   const createReTweet = new CreateRetTweet({
     tweetId: req.params.id,
