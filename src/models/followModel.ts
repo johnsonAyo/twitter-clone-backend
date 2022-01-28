@@ -94,8 +94,8 @@ export const suggestFollowersModel = async (userId: string, pageNo: number, page
   let myFollowingsNetwork: any = await myFollowingsConnection(myFollowingArr);
   let data = await filterConnections(myFollowingArr, myFollowingsNetwork);
   let suggestedConnection = await userModels.find({ _id: { $in: data } });
-
-  return { suggestedConnection, count: suggestedConnection.length };
+  
+  return {suggestedConnection,count:suggestedConnection.length};
 };
 /***********************************
  * Helper method for suggestFollowersModel

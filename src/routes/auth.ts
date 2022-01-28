@@ -2,7 +2,6 @@ import express, { NextFunction, Request, Response } from 'express';
 import passport from 'passport';
 const router = express.Router();
 
-
 // @desc    Auth with Google
 // @route   GET /auth/google
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));

@@ -1,1 +1,1 @@
-export type ResponseData = Record<string, any> | Record<string, any>[]
+export type ResponseData = Record<string, any> | Record<string, any>[];

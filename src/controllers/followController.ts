@@ -26,11 +26,13 @@ export const postFollowerController = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     let followId: any = req.user._id;
     followId = followId.toString();
-
+    let data: any
     let { userId } = req.body;
-    let data: any = await createFollowModel(userId, followId);
-    if (!data) return next(new ErrorHandler(401, 'error occurred'));
-
+    try {
+      data= await createFollowModel(userId, followId);
+    } catch (error) {
+      return next(new ErrorHandler(401, 'Already following user'));  
+    }
     responseClass.setSuccess(200,'success',data)
     return responseClass.send(res)
   },

@@ -5,7 +5,6 @@ let emailToken: string;
 let token: string;
 let resetToken: string;
 
-
 describe('Auth', () => {
   const userData = {
     firstName: 'Tolu',
@@ -56,11 +55,10 @@ describe('Auth', () => {
   it('forgets password', async () => {
     const response = await supertest(app)
       .post('/api/v1/reset/forgotpassword')
-      .send({ email: 'tolz@yahoo.com' })
-      console.log(response)
-      resetToken = response.body.resetToken
-    expect(response.status).toBe(200)
-
+      .send({ email: 'tolz@yahoo.com' });
+    console.log(response);
+    resetToken = response.body.resetToken;
+    expect(response.status).toBe(200);
   });
 
   test('change password', async () => {
@@ -72,10 +70,10 @@ describe('Auth', () => {
   });
 
   it('resets password', async () => {
-      const response = await supertest(app)
+    const response = await supertest(app)
       .post(`/api/v1/reset/resetpassword/${resetToken}`)
       .set('Authorization', `Bearer ${token}`)
-      .send(reset)
-    expect(response.status).toBe(200)
-  })
+      .send(reset);
+    expect(response.status).toBe(200);
+  });
 });
