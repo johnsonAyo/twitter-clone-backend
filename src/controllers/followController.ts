@@ -115,6 +115,11 @@ export const suggestFollowersController = catchAsync(
       return res
         .status(200)
         .json({ message: 'success', count: data.length, 'suggested-connection': data });
+
+
+        responseClass.setSuccess(200,'success',data)
+        return responseClass.send(res)
+  
     }
   },
 );
