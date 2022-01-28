@@ -15,8 +15,11 @@ export const createBookmark = catchAsync(
 );
 
 export const getAllBookmarks = catchAsync(
-  async (_req: Request, res: Response, next: NextFunction) => {
-    const bookmarks = await Bookmark.find();
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.id;
+    const userId = req.user._id;
+
+    const bookmarks = await Bookmark.find({ tweetId: id, userId });
     if (!bookmarks) return next(new ErrorHandler(404, 'Error occurred'));
     res.status(200).json({ message: 'All bookmarks', data: bookmarks });
   },
