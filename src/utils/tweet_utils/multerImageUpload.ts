@@ -8,7 +8,12 @@ import path from 'path';
 // })
 
 const imageMulter = multer({
-  storage: multer.diskStorage({}),
+  storage: multer.diskStorage({
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      cb(null, file.fieldname + '-' + uniqueSuffix);
+    },
+  }),
   fileFilter: (req: any, file: any, cb: any) => {
     let extn = path.extname(file.originalname);
 
@@ -16,7 +21,6 @@ const imageMulter = multer({
       cb(new Error('File type is not supported...'), false);
       return;
     }
-
     cb(null, true);
   },
 });

@@ -3,34 +3,52 @@ import bcrypt from 'bcrypt';
 import validator from 'validator';
 import { ISign } from '../utils/interfaces/userInterface';
 
-const UserSchema = new Schema({
-  name: String,
-  profilePic: String,
-  bioData: String,
-  email: {
-    type: String,
-    required: [true, 'Please provide your email address'],
-    unique: true,
-    validate: {
-      validator: validator.isEmail,
-      message: 'Please provide valid email',
+const UserSchema = new Schema(
+  {
+    firstName: String,
+    lastName: String,
+    profilePic: String,
+    bioData: String,
+    email: {
+      type: String,
+      required: [true, 'Please provide your email address'],
+      unique: true,
+      validate: {
+        validator: validator.isEmail,
+        message: 'Please provide valid email',
+      },
+    },
+    password: {
+      type: String,
+      select: false,
+    },
+    isActive: {
+      type: Boolean,
+      default: false,
+    },
+
+    provider: {
+      type: String,
+      enum: ['local', 'facebook', 'google'],
+      default: 'local',
+    },
+    passwordChangedAt: {
+      type: Date,
+    },
+    passwordResetToken: {
+      type: String,
+    },
+    passwordExpires: {
+      type: String,
+    },
+    passwordResetTokenExpires: {
+      type: Date,
     },
   },
-  password: {
-    type: String,
-    select: false,
+  {
+    timestamps: true,
   },
-  isActive: {
-    type: Boolean,
-    default: false,
-  },
-
-  provider: {
-    type: String,
-    enum: ['local', 'facebook', 'google'],
-    default: 'local',
-  },
-});
+);
 
 UserSchema.pre<ISign>('save', async function (next) {
   const user = this;
