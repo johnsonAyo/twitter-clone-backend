@@ -1,12 +1,11 @@
 import request from 'supertest';
 import app from '../app';
 
-
 let emailToken: string;
 let cloudinary_id: string;
-let tweetId:string
+let tweetId: string;
 let token: string;
-let userId:string;
+let userId: string;
 
 describe('Auth', () => {
   const userData = {
@@ -46,9 +45,7 @@ describe('Auth', () => {
   });
 });
 
-
 // Another user sign up and login. Then he can retweet my tweet
-
 
 /**************************************************************************|
 | Test that handle  tweet, retweet operation by a login user              *|
@@ -58,7 +55,7 @@ describe('Tweet by authorised user', () => {
   const newData = {
     userId: userId,
     messageBody: 'Message here',
-    tweetImage: "image Url",
+    tweetImage: 'image Url',
     whoCanReply: 'Everyone',
     cloudinary_id: cloudinary_id,
   };
