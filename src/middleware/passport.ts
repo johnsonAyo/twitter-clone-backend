@@ -61,9 +61,10 @@ export const facebookStrategy = (passport: PassportStatic) =>
         console.log(profile);
         const newUser = {
           isActive: true,
-          name: profile.name.givenName + ' ' + profile.name.familyName, // look at the passport user profile to see how names are returned
-          profilePic: profile.photos ? profile.photos[0].value : null,
           email: profile.emails[0].value,
+          firstName: profile.name.givenName,
+          lastName: profile.name.familyName,
+          profilePic: profile.photos ? profile.photos[0].value : null,
           provider: profile.provider,
         };
         try {
