@@ -1,14 +1,13 @@
 import request from 'supertest';
 import app from '../app';
-import {Request} from 'express'
-
+import { Request } from 'express';
 
 let emailToken: string;
 let cloudinary_id: string;
-let req:Request;
+let req: Request;
 
 let token: string;
-let userId:String;
+let userId: String;
 
 describe('Auth', () => {
   const userData = {
