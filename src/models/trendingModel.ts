@@ -12,65 +12,162 @@ const hashtagSchema = new mongoose.Schema({
 
 const Hashtag = mongoose.model('Hashtag', hashtagSchema);
 
-export async function createHashtag(data: string) {
-  let hashtag;
-  let hashtagArr = await extractHashtag(data);
-  let currentData = await Hashtag.find({ hashtag: hashtagArr });
-  let result: ResultTypes;
-  if (currentData) {
-    currentData.map(async (val: any) => {
-      if (hashtagArr.includes(val.hashtag)) {
-        if (Date.now() >= val.expiryDate) {
-          result = await Hashtag.updateOne(
-            { _id: val._id },
-            { $set: { totalCount: val.totalCount + 1, hourlyCount: 0 + 1 } },
-          );
-        } else {
-          result = await Hashtag.updateOne(
-            { _id: val._id },
-            { $set: { totalCount: val.totalCount + 1, hourlyCount: val.hourlyCount + 1 } },
-          );
-        }
-      }
-    });
-  } else {
-    let expiryDate = addHoursToDate(3);
-    hashtagArr.map(async (val: string) => {
-      hashtag = new Hashtag({
-        hashtag: val,
-        totalCount: 1,
-        hourlyCount: 1,
-        expiryDate: expiryDate,
-      });
-      result = await hashtag.save();
-    });
-  }
-}
+/************************************************************
+ *           helper method for create newhashtag
+ ************************************************************/
 
-/***********************************
+async function createNewHashtag(hashtagArr: string[]) {
+  let expiryDate = addHoursToDate(3);
+  let hashtag;
+  let data: any = {};
+  hashtagArr.map(async (val) => {
+    hashtag = new Hashtag({
+      hashtag: val,
+      totalCount: 1,
+      hourlyCount: 1,
+      expiryDate: expiryDate,
+    });
+    let result = await hashtag.save();
+    data.val = result;
+  });
+  return new Promise((resolve: any, reject: any) => {
+    data ? resolve(data) : reject(data);
+  });
+}
+/************************************************************
+ *           helper method for create Temphashtag
+ ************************************************************/
+
+async function createTempHashtag(hashtagArr: string[]) {
+  let expiryDate = addHoursToDate(3);
+  let hashtag;
+  let data: any = {};
+  hashtagArr.map(async (val) => {
+    hashtag = new Hashtag({
+      hashtag: val,
+      totalCount: 1,
+      hourlyCount: 1,
+      expiryDate: expiryDate,
+    });
+    let result = await hashtag.save();
+    data.val = result;
+  });
+  return new Promise((resolve: any, reject: any) => {
+    data ? resolve(data) : reject(data);
+  });
+}
+/************************************************************
  * helper method to extract hashtag
- ***********************************/
-async function extractHashtag(str: string) {
-  let PATTERN = /#([a-z0-9]+)/gi,
+ ************************************************************/
+export async function extractHashtag(str: string) {
+  let PATTERN = /(?<!\w)#\w+/,
     hashTagsArr = str.split(' ').filter(function (str) {
       return PATTERN.test(str);
     });
   let uniqueHashtag = [...new Set(hashTagsArr)];
-  return uniqueHashtag;
+  return new Promise((resolve, reject) => {
+    uniqueHashtag ? resolve(uniqueHashtag) : reject(uniqueHashtag);
+  });
 }
 
-/***********************************
- * helper method to add hours
- ***********************************/
+/************************************************************
+ *              helper method to add hours
+ ************************************************************/
 
 function addHoursToDate(hours: number) {
   let expiryDate = new Date();
   expiryDate.setHours(expiryDate.getHours() + hours);
-  console.log(expiryDate);
-
   return expiryDate;
 }
 
-// let word = `#chima we are the best #cima`;
+/************************************************************
+ * helper method to compare input with existing harshtag
+ ************************************************************/
+async function compareArrayReturnDiff(arr1: string[], arr2: string[]) {
+  let notExist: any;
+  let existing: any;
+  console.log('step1', arr1, arr2);
 
-// console.log(extractHashtag(word));
+  if (arr1.length > arr2.length) {
+    notExist = arr1.filter((val) => !arr2.includes(val));
+    existing = arr1.filter((val) => arr2.includes(val));
+    console.log('step2', notExist, existing);
+  } else {
+    notExist = arr2.filter((val) => !arr1.includes(val));
+    existing = arr2.filter((val) => arr1.includes(val));
+    console.log('step3', notExist, existing);
+  }
+  let result = { notExist, existing };
+  return new Promise((resolve, reject) => {
+    result ? resolve(result) : reject(result);
+  });
+}
+
+/************************************************************
+ * helper method to increment count of hashtag if they exist
+ ************************************************************/
+async function incrementHashtagCount(existingHashtag: any) {
+  let output: any = [];
+  let resultData: any = {
+    acknowledged: false,
+    modifiedCount: 0,
+    upsertedId: null,
+    upsertedCount: 0,
+    matchedCount: 0,
+  };
+  let currentData = await Hashtag.find();
+  currentData.map(async (val: any, index: number) => {
+    if (existingHashtag.includes(val.hashtag)) {
+      if (Date.now() >= val.expiryDate) {
+        let newExpiryDate = addHoursToDate(3);
+        let result = await Hashtag.updateOne(
+          { _id: val._id },
+          {
+            $set: { totalCount: val.totalCount + 1, hourlyCount: 0 + 1, expiryDate: newExpiryDate },
+          },
+        );
+        resultData.modifiedCount = +result.modifiedCount;
+        resultData.matchedCount = +result.matchedCount;
+        resultData.acknowledged = result.acknowledged;
+      } else {
+        let result = await Hashtag.updateOne(
+          { _id: val._id },
+          { $set: { totalCount: val.totalCount + 1, hourlyCount: val.hourlyCount + 1 } },
+        );
+        resultData.modifiedCount = +result.modifiedCount;
+        resultData.matchedCount = +result.matchedCount;
+        resultData.acknowledged = result.acknowledged;
+      }
+    }
+  });
+  return new Promise((resolve, reject) => {
+    output ? resolve(resultData) : reject(output);
+  });
+}
+
+/************************************************************
+ *           Create Hashtag Main Method
+ ************************************************************/
+export async function createHashtag(data: string) {
+  let newHashtagRes;
+  let hashtagArr: any = await extractHashtag(data);
+  let currentData: string[] = await Hashtag.find();
+  let detectedTag: any = await Hashtag.find({ hashtag: { $in: hashtagArr } });
+  let mapData = detectedTag.map((val: any) => val.hashtag);
+  let newHashtag: any = await compareArrayReturnDiff(hashtagArr, mapData);
+
+  if (newHashtag['notExist'].length > 0) {
+    newHashtagRes = await createNewHashtag(newHashtag['notExist']);
+  }
+
+  let dataResponse;
+  if (detectedTag.length > 0) {
+    dataResponse = await incrementHashtagCount(mapData);
+  }
+  return { newHashtag, dataResponse };
+}
+
+/************************************************************
+ *           Get top 6 Hashtag Main Method
+ ************************************************************/
+

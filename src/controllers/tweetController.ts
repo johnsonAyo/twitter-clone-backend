@@ -8,6 +8,7 @@ import catchAsync from '../utils/catchAsync';
 import ErrorHandler from '../utils/appError';
 import Responses from '../utils/response';
 import Comment from '../models/commentModel';
+import { createHashtag, extractHashtag } from '../models/trendingModel';
 
 const responseStatus = new Responses();
 /****************************************************************************
@@ -24,7 +25,8 @@ export const userNewTweet = catchAsync(async (req: any, res: Response, next: Nex
   if (error) return next(new ErrorHandler(404, error.message));
 
   const { messageBody, whoCanReply } = req.body;
-
+  let hashtag = await createHashtag(messageBody);
+  extractHashtag(messageBody);
   if (req.file == undefined) {
     let createTweet = new CreateTweetCln({
       userId: req.user._id,
@@ -36,8 +38,9 @@ export const userNewTweet = catchAsync(async (req: any, res: Response, next: Nex
 
     if (createTweet) {
       await createTweet.save();
+      console.log('dfdfdfdfd', hashtag);
 
-      responseStatus.setSuccess(201, 'Tweet saved successfully...', createTweet);
+      responseStatus.setSuccess(201, 'Tweet saved successfully...', { createTweet, hashtag });
 
       return responseStatus.send(res);
     } else {
