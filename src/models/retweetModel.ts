@@ -11,41 +11,35 @@ const reTweetSchema = new mongoose.Schema(
       ref: 'users',
     },
   },
-  { timestamps: true, toJSON:{virtuals:true},toObject:{virtuals:true} },
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } },
 );
-
-
 
 // If you retweet other user's tweet, it should show on your timeline  with comments, likes
 // This is enable by using virtual fields
 
-
-reTweetSchema.virtual("noOfLikes",{
-  ref:"Like",
-  localField:'tweetId',
-  foreignField:'tweetId',
-  count:true
-})
-
-
+reTweetSchema.virtual('noOfLikes', {
+  ref: 'Like',
+  localField: 'tweetId',
+  foreignField: 'tweetId',
+  count: true,
+});
 
 //count comment
 
-reTweetSchema.virtual('commentCount',{
-  ref:'Comment' ,
-  localField:'tweetId',
-  foreignField:'tweetId',
-  count:true
-})
+reTweetSchema.virtual('commentCount', {
+  ref: 'Comment',
+  localField: 'tweetId',
+  foreignField: 'tweetId',
+  count: true,
+});
 
 //name of the person that you reweet his tweet
 
-
-reTweetSchema.virtual("retweeter_name",{
-  ref:"User",
-  localField:'reTweeterId',
-  foreignField:'_id'
-})
+reTweetSchema.virtual('retweeter_name', {
+  ref: 'User',
+  localField: 'reTweeterId',
+  foreignField: '_id',
+});
 
 const CreateReTweet = mongoose.model('allReTweets', reTweetSchema);
 
