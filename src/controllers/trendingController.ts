@@ -9,6 +9,7 @@ import {
 import catchAsync from '../utils/catchAsync';
 import ErrorHandler from '../utils/appError';
 import Responses from '../utils/response';
+import { getTrendingHashtag } from '../models/trendingModel';
 
 const responseClass = new Responses();
 
@@ -19,21 +20,17 @@ const responseClass = new Responses();
 /*****************************************************************************/
 
 /***********************************
- * create a harsh controller
+ * get trending harshtag
  ***********************************/
 
-export const postFollowerController = catchAsync(
+export const viewTrendsController = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    let followId: any = req.user._id;
-    followId = followId.toString();
-    let data: any;
-    let { userId } = req.body;
     try {
-      data = await createFollowModel(userId, followId);
+      let data: any = await getTrendingHashtag();
+      responseClass.setSuccess(200, 'success', data);
+      return responseClass.send(res);
     } catch (error) {
       return next(new ErrorHandler(401, 'Already following user'));
     }
-    responseClass.setSuccess(200, 'success', data);
-    return responseClass.send(res);
   },
 );

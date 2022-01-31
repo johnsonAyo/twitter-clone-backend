@@ -34,28 +34,7 @@ async function createNewHashtag(hashtagArr: string[]) {
     data ? resolve(data) : reject(data);
   });
 }
-/************************************************************
- *           helper method for create Temphashtag
- ************************************************************/
 
-async function createTempHashtag(hashtagArr: string[]) {
-  let expiryDate = addHoursToDate(3);
-  let hashtag;
-  let data: any = {};
-  hashtagArr.map(async (val) => {
-    hashtag = new Hashtag({
-      hashtag: val,
-      totalCount: 1,
-      hourlyCount: 1,
-      expiryDate: expiryDate,
-    });
-    let result = await hashtag.save();
-    data.val = result;
-  });
-  return new Promise((resolve: any, reject: any) => {
-    data ? resolve(data) : reject(data);
-  });
-}
 /************************************************************
  * helper method to extract hashtag
  ************************************************************/
@@ -171,3 +150,11 @@ export async function createHashtag(data: string) {
  *           Get top 6 Hashtag Main Method
  ************************************************************/
 
+export async function getTrendingHashtag() {
+  let trendingHashtag = await Hashtag.find().sort({ hourlyCount: 1 }).select({ hashtag: 1 });
+
+  console.log(trendingHashtag);
+  return new Promise((resolve, reject) => {
+    trendingHashtag ? resolve(trendingHashtag) : reject(trendingHashtag);
+  });
+}
