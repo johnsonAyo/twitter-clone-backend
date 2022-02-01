@@ -10,7 +10,7 @@ export const createConversation = catchAsync(
     let user = req.user._id.toString();
 
     const existingCOnversation = await Conversation.findOne({
-      members: [user, req.body.receiverId],
+      $and: [{ members: user }, { members: req.body.receiverId }],
     });
 
     if (existingCOnversation) {
@@ -32,7 +32,21 @@ export const createConversation = catchAsync(
 
 export const getConversation = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const data = await Conversation.find();
+    const data = await Conversation.find({ members: { $in: [req.params.id] } });
+    if (!data) {
+      return next(new ErrorHandler(401, 'You have no chat records. Start by typing hello!'));
+    }
+    res.status(200).json({
+      status: 'Successful',
+      message: 'Users conversations',
+      data,
+    });
+  },
+);
+
+export const getUsersConversation = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const data = await Conversation.find({members: { $all: [req.params.firstUserId, req.params.secondUserId] }});
     if (!data) {
       return next(new ErrorHandler(401, 'You have no chat records. Start by typing hello!'));
     }
@@ -44,30 +58,4 @@ export const getConversation = catchAsync(
   },
 );
 
-// export const getAllAuthors = async (req: Request, res: Response) => {
-//     try {
-//       const features = new APIFeatures(Author.find(), req.query)
-//         .limitFields()
-//         .paginate();
-//       const author = await features.query;
-//       const total = await Author.countDocuments();
-//       let page = parseInt(req.query.page as string);
-//       let limit = parseInt(req.query.limit as string);
-//       let noOfPages = Math.ceil(total / limit);
-//       let previous = page === 1 || page >= noOfPages ? null : page - 1;
-//       let next = page >= noOfPages ? null : page + 1;
 
-//       res.status(200).json({
-//         status: "successful!",
-//         //results: total,
-//         //page: `${page}`,
-//         previous: previous,
-//         next: next,
-//         //size: author.length,
-//         author,
-//       });
-//     } catch (err) {
-//       console.log(err);
-//       res.status(500).json({ status: "Failed!", message: "An Error Occurred!" });
-//     }
-//   };
