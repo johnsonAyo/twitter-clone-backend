@@ -39,8 +39,7 @@ export const userNewTweet = catchAsync(async (req: any, res: Response, next: Nex
 
     responseStatus.setSuccess(201, 'Tweet saved successfully...', createTweet);
 
-    return responseStatus.send(res)
-
+    return responseStatus.send(res);
   } else {
     return res.status(404).json({ msg: 'Error  occur for file uploading' });
   }
@@ -68,10 +67,10 @@ export const reTweeting = catchAsync(async (req: Request, res: Response, next: N
   if (createReTweet) {
     await createReTweet.save();
 
-    responseStatus.setSuccess(201,"You just retweeted...", createReTweet)
+    responseStatus.setSuccess(201, 'You just retweeted...', createReTweet);
     return responseStatus.send(res);
-  }else{
-    responseStatus.setSuccess(404,"Retweet not made", createReTweet)
+  } else {
+    responseStatus.setSuccess(404, 'Retweet not made', createReTweet);
     return responseStatus.send(res);
   }
 });
@@ -88,9 +87,8 @@ export const allUserRetweet = catchAsync(async (req: Request, res: Response) => 
   const userReTweet = await CreateRetTweet.find({ reTweeterId: req.user._id }).populate('tweetId');
 
   if (userReTweet) {
-
     responseStatus.setSuccess(200, 'Retweet created', userNewTweet);
-    return responseStatus.send(res)
+    return responseStatus.send(res);
   }
 });
 /****************************************************************************
@@ -108,8 +106,8 @@ export const allUserTweet = catchAsync(async (req: Request, res: Response, next:
     if (allTweets == null) {
       return next(new ErrorHandler(404, 'Error Occured in tweet fetching...'));
     } else {
-       responseStatus.setSuccess(200, "All user tweet", allTweets);
-       return responseStatus.send(res)
+      responseStatus.setSuccess(200, 'All user tweet', allTweets);
+      return responseStatus.send(res);
     }
   });
 });
@@ -141,7 +139,7 @@ export const deleteTweet = catchAsync(async (req: Request, res: Response, next: 
       let deletedTweet = await CreateRetTweet.deleteMany({ tweetId: tweetId });
 
       if (deletedTweet) {
-        responseStatus.setSuccess(200, "This tweet was removed", deletedTweet)
+        responseStatus.setSuccess(200, 'This tweet was removed', deletedTweet);
         return responseStatus.send(res);
       }
     }
@@ -158,11 +156,10 @@ export const undoUserReweet = catchAsync(
     await CreateRetTweet.deleteOne({ tweetId: req.params.id }, (err: any, content: any) => {
       if (err) return next(new ErrorHandler(404, err.message));
 
-      if (content){
-
-         responseStatus.setSuccess(200, 'Reweet is been undo successfully...', content);
-        return responseStatus.send(res)
-      } 
+      if (content) {
+        responseStatus.setSuccess(200, 'Reweet is been undo successfully...', content);
+        return responseStatus.send(res);
+      }
     });
   },
 );
@@ -189,7 +186,7 @@ export const getAllUserTweetNRetweet = catchAsync(async (req: Request, res: Resp
     { OtherUserTweet: allOtherUserTweet },
   ];
 
-   responseStatus.setSuccess(200, 'getAllUserTweetNRetweet', allOtherUserChat);
+  responseStatus.setSuccess(200, 'getAllUserTweetNRetweet', allOtherUserChat);
 
-   return responseStatus.send(res);
+  return responseStatus.send(res);
 });
