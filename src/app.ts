@@ -20,7 +20,7 @@ import resetRouter from './routes/resetPassword';
 import authRouter from './routes/auth';
 import profileRouter from './routes/profile';
 import conversationRouter from './routes/conversation';
-import messageRouter from './routes/message'
+import messageRouter from './routes/message';
 
 dotenv.config();
 const app = express();
@@ -66,9 +66,8 @@ app.use('/tweet', likeCommentBook);
 app.use('/api/v1/reset', resetRouter);
 app.use('/auth', authRouter);
 
-app.use('/conversation', conversationRouter)
-app.use('/message', messageRouter)
-
+app.use('/conversation', conversationRouter);
+app.use('/message', messageRouter);
 
 app.all('*', (req, res) => {
   res.status(404).json({

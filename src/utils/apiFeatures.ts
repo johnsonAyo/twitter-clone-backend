@@ -1,11 +1,10 @@
 class APIFeatures {
-    query: any;
-    queryString: any
-    constructor(query: any, queryString: any) {
-      this.query = query;
-      this.queryString = queryString;
-    }
-
+  query: any;
+  queryString: any;
+  constructor(query: any, queryString: any) {
+    this.query = query;
+    this.queryString = queryString;
+  }
 
   paginate() {
     const page = this.queryString.page * 1 || 1;
