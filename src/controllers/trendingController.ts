@@ -9,7 +9,7 @@ import {
 import catchAsync from '../utils/catchAsync';
 import ErrorHandler from '../utils/appError';
 import Responses from '../utils/response';
-import { getTrendingHashtag } from '../models/trendingModel';
+import {  getTrendingHashtagwithTweet, getTrendingHashtagWithTweetCount} from '../models/trendingModel';
 
 const responseClass = new Responses();
 
@@ -26,7 +26,18 @@ const responseClass = new Responses();
 export const viewTrendsController = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      let data: any = await getTrendingHashtag();
+      let data: any = await getTrendingHashtagwithTweet();
+      responseClass.setSuccess(200, 'success', data);
+      return responseClass.send(res);
+    } catch (error) {
+      return next(new ErrorHandler(401, 'Already following user'));
+    }
+  },
+);
+export const trendsTweetCountController = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      let data: any = await getTrendingHashtagWithTweetCount();
       responseClass.setSuccess(200, 'success', data);
       return responseClass.send(res);
     } catch (error) {

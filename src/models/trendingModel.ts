@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import CreateTweetCln from './tweetModel';
 type ResultTypes = object;
 /***********************************
  * schema for trending Hashtags
@@ -143,18 +144,52 @@ export async function createHashtag(data: string) {
   if (detectedTag.length > 0) {
     dataResponse = await incrementHashtagCount(mapData);
   }
-  return { newHashtag, dataResponse };
+  return hashtagArr;
 }
 
 /************************************************************
  *           Get top 6 Hashtag Main Method
  ************************************************************/
 
-export async function getTrendingHashtag() {
-  let trendingHashtag = await Hashtag.find().sort({ hourlyCount: 1 }).select({ hashtag: 1 });
+export async function getTrendingHashtagwithTweet() {
+  let trendingHashtag = await Hashtag.find().sort({ hourlyCount: -1 });
+  let hashtagArr = trendingHashtag.map((val) => val.hashtag);
+  let trending=hashtagArr.reduce((a, v) => ({ ...a, [v]: v}), {}) 
 
+  let data: any;
+    data = await CreateTweetCln.find({ hashtag: {$in: hashtagArr } });
+
+  data.map((val:any)=>{
+    for (let i = 0; i < val.hashtag.length; i++) {
+      if (hashtagArr.includes(val.hashtag[0])) {
+        trending[val.hashtag[i]]=val
+        console.log(trending[val.hashtag[i]]);
+      }        
+    }
+  })
   console.log(trendingHashtag);
   return new Promise((resolve, reject) => {
-    trendingHashtag ? resolve(trendingHashtag) : reject(trendingHashtag);
+    hashtagArr ? resolve({trending }) : reject(hashtagArr);
+  });
+}
+export async function getTrendingHashtagWithTweetCount() {
+  let trendingHashtag = await Hashtag.find().sort({ hourlyCount: -1 });
+  let hashtagArr = trendingHashtag.map((val) => val.hashtag);
+  let trending=hashtagArr.reduce((a, v) => ({ ...a, [v]: v}), {}) 
+
+  let data: any;
+    data = await CreateTweetCln.find({ hashtag: {$in: hashtagArr } });
+
+  data.map((val:any)=>{
+    for (let i = 0; i < val.hashtag.length; i++) {
+      if (hashtagArr.includes(val.hashtag[0])) {
+        trending[val.hashtag[i]]=val
+        console.log(trending[val.hashtag[i]]);
+      }        
+    }
+  })
+  console.log(trendingHashtag);
+  return new Promise((resolve, reject) => {
+    hashtagArr ? resolve({trending }) : reject(hashtagArr);
   });
 }

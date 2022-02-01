@@ -10,6 +10,7 @@ interface tweetIn {
   userId: any;
   whoCanReply: string;
   cloudinary_id: string;
+  hashtag:any;
 }
 
 // /***********************************
@@ -39,6 +40,7 @@ const tweetSchema = new mongoose.Schema<tweetIn>(
     cloudinary_id: {
       type: String,
     },
+    hashtag:[String],
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } },
 );

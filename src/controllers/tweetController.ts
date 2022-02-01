@@ -25,7 +25,7 @@ export const userNewTweet = catchAsync(async (req: any, res: Response, next: Nex
   if (error) return next(new ErrorHandler(404, error.message));
 
   const { messageBody, whoCanReply } = req.body;
-  let hashtag = await createHashtag(messageBody);
+  let hashtags = await createHashtag(messageBody);
   extractHashtag(messageBody);
   if (req.file == undefined) {
     let createTweet = new CreateTweetCln({
@@ -34,13 +34,14 @@ export const userNewTweet = catchAsync(async (req: any, res: Response, next: Nex
       tweetImage: 'cloudImage.secure_url',
       whoCanReply,
       cloudinary_id: 'cloudImage.public_id',
+      hashtag:hashtags
     });
 
     if (createTweet) {
       await createTweet.save();
-      console.log('dfdfdfdfd', hashtag);
+      console.log('dfdfdfdfd', hashtags);
 
-      responseStatus.setSuccess(201, 'Tweet saved successfully...', { createTweet, hashtag });
+      responseStatus.setSuccess(201, 'Tweet saved successfully...', { createTweet, hashtags });
 
       return responseStatus.send(res);
     } else {
