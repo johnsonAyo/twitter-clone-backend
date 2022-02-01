@@ -15,3 +15,12 @@ export const getLatestTweet = catchAsync(async (req: Request, res: Response, nex
 
 });
 
+export const getMediaTweet = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+    const mediaTweet = await CreateTweetCln
+                                        .find({ tweetImage: /.+/i })
+                                        .sort({
+                                            updatedAt: -1
+                                        }).populate("tweetId")
+
+})
