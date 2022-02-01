@@ -3,7 +3,7 @@ import CreateTweetCln from '../models/tweetModel';
 import catchAsync from '../utils/catchAsync';
 import ErrorHandler from '../utils/appError';
 
-export const getLatest = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+export const getLatestTweet = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
     const tweets = await CreateTweetCln
                                 .find()
@@ -13,5 +13,5 @@ export const getLatest = catchAsync(async (req: Request, res: Response, next: Ne
     if(!tweets) return next(new ErrorHandler(400, "Error occurred"));
     res.status(200).json({message: "Latest tweets", data: tweets})
 
-})
+});
 
