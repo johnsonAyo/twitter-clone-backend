@@ -22,10 +22,10 @@ const MessageSchema = new Schema(
       required: true,
     },
     deleted: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
-   
+
     text: {
       type: String,
     },
@@ -33,9 +33,9 @@ const MessageSchema = new Schema(
       type: String,
     },
     media: {
-      media:{
+      media: {
         type: String,
-        data: URL
+        data: URL,
       },
       enums: ['Document', 'Audio', 'Picture', 'Video'],
     },

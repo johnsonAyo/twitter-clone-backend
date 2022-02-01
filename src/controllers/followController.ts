@@ -26,15 +26,15 @@ export const postFollowerController = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     let followId: any = req.user._id;
     followId = followId.toString();
-    let data: any
+    let data: any;
     let { userId } = req.body;
     try {
-      data= await createFollowModel(userId, followId);
+      data = await createFollowModel(userId, followId);
     } catch (error) {
-      return next(new ErrorHandler(401, 'Already following user'));  
+      return next(new ErrorHandler(401, 'Already following user'));
     }
-    responseClass.setSuccess(200,'success',data)
-    return responseClass.send(res)
+    responseClass.setSuccess(200, 'success', data);
+    return responseClass.send(res);
   },
 );
 
@@ -117,10 +117,8 @@ export const suggestFollowersController = catchAsync(
         .status(200)
         .json({ message: 'success', count: data.length, 'suggested-connection': data });
 
-
-        responseClass.setSuccess(200,'success',data)
-        return responseClass.send(res)
-  
+      responseClass.setSuccess(200, 'success', data);
+      return responseClass.send(res);
     }
   },
 );

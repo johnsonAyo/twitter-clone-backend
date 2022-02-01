@@ -4,40 +4,45 @@ import catchAsync from '../utils/catchAsync';
 import ErrorHandler from '../utils/appError';
 // import APIFeatures from '../utils/apiFeatures'
 
-export const createConversation = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const data = new Conversation({
-    user1: req.body.user1,
-    user2: req.body.user2
-  });
-  const {user1, user2} = req.body
-  let user = (req.user._id).toString();
+export const createConversation = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { senderId, receiverId } = req.body;
+    let user = req.user._id.toString();
 
+    const existingCOnversation = await Conversation.findOne({
+      members: [user, req.body.receiverId],
+    });
 
-  if(user === user1 || user === user2 ){
+    if (existingCOnversation) {
+      return next(new ErrorHandler(400, 'conversation already exist'));
+    }
+
+    const data = new Conversation({
+      members: [user, req.body.receiverId],
+    });
+
     await data.save();
     res.status(200).json({
-        status: 'Successful',
-        message: 'Chat was created',
-        data,
-      });
-  }
-  else{
-    return next(new ErrorHandler(401, "You are not logged in!")) 
-  }
- 
-});
+      status: 'Successful',
+      message: 'Chat was created',
+      data,
+    });
+  },
+);
 
-export const getConversation = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+export const getConversation = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
     const data = await Conversation.find();
-    if(!data){
-        return next(new ErrorHandler(401, "You have no chat records. Start by typing hello!"))
+    if (!data) {
+      return next(new ErrorHandler(401, 'You have no chat records. Start by typing hello!'));
     }
     res.status(200).json({
-        status: 'Successful',
-        message: 'Chat was created',
-        data,
+      status: 'Successful',
+      message: 'Chat was created',
+      data,
     });
-})
+  },
+);
 
 // export const getAllAuthors = async (req: Request, res: Response) => {
 //     try {
@@ -51,7 +56,7 @@ export const getConversation = catchAsync(async (req: Request, res: Response, ne
 //       let noOfPages = Math.ceil(total / limit);
 //       let previous = page === 1 || page >= noOfPages ? null : page - 1;
 //       let next = page >= noOfPages ? null : page + 1;
-  
+
 //       res.status(200).json({
 //         status: "successful!",
 //         //results: total,

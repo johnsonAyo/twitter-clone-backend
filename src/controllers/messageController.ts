@@ -17,15 +17,14 @@ export const createMessage = catchAsync(async (req: Request, res: Response, next
   });
 });
 
-
 export const getMessages = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const data = await Message.find();
-    if(!data){
-        return next(new ErrorHandler(401, "You have no chat records. Start by typing hello!"))
-    }
-    res.status(200).json({
-        status: 'Successful',
-        message: 'message was created',
-        data,
-    });
+  const data = await Message.find();
+  if (!data) {
+    return next(new ErrorHandler(401, 'You have no chat records. Start by typing hello!'));
+  }
+  res.status(200).json({
+    status: 'Successful',
+    message: 'message was created',
+    data,
+  });
 });
