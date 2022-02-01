@@ -29,12 +29,5 @@ export async function viewTweetofFriend(userId: string, pageNo: number, pageSize
   let followingId = following.map((val: any) => val.userId);
 
   let data: any = await CreateTweetCln.find({ userId: { $in: followingId } });
-  let dataCheck: any = await CreateTweetCln.find({ userId: userId });
-
-  let followingIdRe = following.map((val: any) => val.userId.toString());
-  // console.log(data, followingId, 'ngfgbv nbvbn', followingIdRe);
-  let retweet: any = await CreateReTweet.find({ reTweeterId: { $in: followingIdRe } });
-
-  let output: any = { following: followingId, tweet: data, retweet };
   return dataCheck;
 }
