@@ -18,7 +18,7 @@ export const createMessage = catchAsync(async (req: Request, res: Response, next
 });
 
 export const getMessages = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const data = await Message.find();
+  const data = await Message.find({conversationId: req.params.conversationId});
   if (!data) {
     return next(new ErrorHandler(401, 'You have no chat records. Start by typing hello!'));
   }
