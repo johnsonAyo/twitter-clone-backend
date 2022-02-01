@@ -22,12 +22,14 @@ export async function viewTweet(userId: string, pageNo: number, pageSize: number
   let output: any = { following: followingId, tweet: data, retweet };
   return output;
 }
-export async function viewTweetofFriend(userId: string, pageNo: number, pageSize: number): Promise<void> {
-  let following: any = await Follow.find({ followId: userId })
+export async function viewTweetofFriend(
+  userId: string,
+  pageNo: number,
+  pageSize: number,
+): Promise<void> {
+  let data: any = await CreateTweetCln.find({ userId: userId })
     .skip(pageNo - 1)
     .limit(pageSize);
-  let followingId = following.map((val: any) => val.userId);
 
-  let data: any = await CreateTweetCln.find({ userId: { $in: followingId } });
-  return dataCheck;
+  return data;
 }
