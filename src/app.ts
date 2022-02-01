@@ -1,5 +1,5 @@
-import createError, { HttpError } from 'http-errors';
-import express, { NextFunction, Request, Response } from 'express';
+import createError from 'http-errors';
+import express from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
@@ -20,6 +20,8 @@ import resetRouter from './routes/resetPassword';
 import authRouter from './routes/auth';
 import profileRouter from './routes/profile';
 import trendingRoutes from './routes/trendingRoute';
+import conversationRouter from './routes/conversation';
+import messageRouter from './routes/message';
 
 dotenv.config();
 const app = express();
@@ -67,6 +69,8 @@ app.use('/auth', authRouter);
 
 app.use('/api/trends', trendingRoutes);
 
+app.use('/conversation', conversationRouter);
+app.use('/message', messageRouter);
 
 app.all('*', (req, res) => {
   res.status(404).json({
