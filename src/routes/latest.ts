@@ -7,8 +7,10 @@ const router = express.Router();
 
 router.use(protectRoute);
 
-//GET Request
+//GET Request Lastest Tweet
 router.get("/latest", getLatestTweet);
 
+//Get Request Tweet with Media
+router.get("/media")
 
 export default router;
