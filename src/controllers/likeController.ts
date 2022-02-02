@@ -28,7 +28,7 @@ export const getLikes = catchAsync(async (req: Request, res: Response, next: Nex
   const id = req.params.id;
   const userId = req.user._id;
 
-  const likes = await Like.find({ tweetId: id, userId }).populate('id');
+  const likes = await Like.find({ tweetId: id, userId }).populate('tweetId').populate('userId');
   if (!likes) return next(new ErrorHandler(500, 'Error occured'));
   res.status(200).json({ message: 'All likes', data: likes, number: likes.length });
 });
