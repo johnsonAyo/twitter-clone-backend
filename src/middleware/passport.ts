@@ -25,7 +25,7 @@ export const googleStrategy = (passport: PassportStatic) =>
         const newUser = {
           isActive: true,
           email: profile.emails[0].value,
-          firstname: profile.name!.givenName,
+          firstName: profile.name!.givenName,
           lastName: profile.name!.familyName, // look at the passport user profile to see how names are returned
           profilePic: profile.photos ? profile.photos[0].value : null,
           provider: profile.provider,
@@ -61,9 +61,10 @@ export const facebookStrategy = (passport: PassportStatic) =>
         console.log(profile);
         const newUser = {
           isActive: true,
-          name: profile.name.givenName + ' ' + profile.name.familyName, // look at the passport user profile to see how names are returned
-          profilePic: profile.photos ? profile.photos[0].value : null,
           email: profile.emails[0].value,
+          firstName: profile.name.givenName,
+          lastName: profile.name.familyName,
+          profilePic: profile.photos ? profile.photos[0].value : null,
           provider: profile.provider,
         };
         try {
@@ -97,12 +98,3 @@ passport.serializeUser((profile, done) => {
 passport.deserializeUser((id, done) => {
   User.findById(id, (err: any, user: any) => done(err, user));
 });
-
-// route middleware to make sure
-// export function isLoggedIn(req: Request, res: any, next: NextFunction) {
-//   // if user is authenticated in the session, carry on
-//   if (req.isAuthenticated()) return next();
-
-//   // if they aren't redirect them to the home page
-//   res.redirect('/');
-// }

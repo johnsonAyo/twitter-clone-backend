@@ -1,5 +1,5 @@
-import createError, { HttpError } from 'http-errors';
-import express, { NextFunction, Request, Response } from 'express';
+import createError from 'http-errors';
+import express from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
@@ -11,6 +11,7 @@ import passport from 'passport';
 import { googleStrategy, facebookStrategy } from './middleware/passport';
 import indexRouter from './routes/index';
 import followRoutes from './routes/followRoute';
+import likeCommentBook from './routes/likeCommentBookmark';
 import tweetRoute from './routes/tweetingRouting';
 import { connectDB, connectTestDB } from './database/mem';
 import usersRouter from './routes/users';
@@ -18,6 +19,9 @@ import viewtweetRoute from './routes/viewTweetRoute';
 import resetRouter from './routes/resetPassword';
 import authRouter from './routes/auth';
 import profileRouter from './routes/profile';
+import trendingRoutes from './routes/trendingRoute';
+import conversationRouter from './routes/conversation';
+import messageRouter from './routes/message';
 
 dotenv.config();
 const app = express();
@@ -34,10 +38,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(cors());
-
-// view engine setup
-// app.set('views', path.join(__dirname, '../views'));
-// app.set('view engine', 'jade');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -62,9 +62,15 @@ app.use('/users', usersRouter);
 app.use('/profile', profileRouter);
 
 app.use('/api/viewtweet', viewtweetRoute);
+app.use('/tweet', likeCommentBook);
 
 app.use('/api/v1/reset', resetRouter);
 app.use('/auth', authRouter);
+
+app.use('/api/trends', trendingRoutes);
+
+app.use('/conversation', conversationRouter);
+app.use('/message', messageRouter);
 
 app.all('*', (req, res) => {
   res.status(404).json({
@@ -79,18 +85,6 @@ app.use(function (req, res, next) {
 
 app.set('views', path.join(`${__dirname}/../`, 'views'));
 app.set('view engine', 'ejs');
-
-// // error handler
-// app.use(function (err: HttpError, req: Request, res: Response, next: NextFunction) {
-//   // set locals, only providing error in development
-//   res.locals.message = err.message;
-//   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-//   // render the error page
-//   res.status(err.status || 500);
-
-//   res.send(err);
-// });
 
 app.use(globalErrorHandler);
 

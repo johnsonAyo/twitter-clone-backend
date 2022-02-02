@@ -1,35 +1,34 @@
-import express, { Request, Response, NextFunction, urlencoded } from 'express';
+import express, { Request, Response, NextFunction, urlencoded, json } from 'express';
 import Like from '../models/likeModel';
-//import Post from "../model/postModel"
+import catchAsync from '../utils/catchAsync';
+import ErrorHandler from '../utils/appError';
+import tweet from '../models/tweetModel';
 
-const app = express();
-
-app.use(express.json());
-app.use(urlencoded({ extended: true }));
-
-export const like_post = async (req: Request, res: Response, next: NextFunction) => {
+export const likeTweet = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const id = req.params.id;
-  const { userId } = req.body;
+  const userId = req.user._id;
 
-  try {
-    //const post = await Post.findById(id);
-    const like = await Like.create({ id, userId });
-    res.status(200).json({ message: 'The post has been liked', data: like });
-  } catch (error) {
-    res.status(500).json(error);
-  }
-};
+  const like = await Like.create({ tweetId: id, userId });
+  if (!like) return next(new ErrorHandler(500, 'Error occured'));
+  res.status(200).json({ message: 'The post has been liked', data: like });
+});
 
-export const unlike_post = async (req: Request, res: Response, next: NextFunction) => {
+export const unlikeTweet = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const id = req.params.id;
   console.log(req.body);
-  const { userId } = req.body;
+  const userId = req.user._id;
 
-  try {
-    const result = await Like.deleteOne({ postId: id, userId });
-    console.log(result);
-    res.status(200).json('The post has been disliked');
-  } catch (error) {
-    res.status(500).json(error);
-  }
-};
+  const result = await Like.deleteOne({ tweetId: id, userId });
+  console.log(result);
+  if (!result) return next(new ErrorHandler(500, 'Error occured'));
+  res.status(200).json('The post has been disliked');
+});
+
+export const getLikes = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const id = req.params.id;
+  const userId = req.user._id;
+
+  const likes = await Like.find({ tweetId: id, userId });
+  if (!likes) return next(new ErrorHandler(500, 'Error occured'));
+  res.status(200).json({ message: 'All likes', data: likes, number: likes.length });
+});

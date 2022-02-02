@@ -11,7 +11,7 @@ import validators from '../utils/validations/passwordValidation';
 import { ISign } from '../utils/interfaces/userInterface';
 import Responses from '../utils/response';
 
-const resData = new Responses()
+const resData = new Responses();
 interface IUser {
   _id?: string;
   email?: string;
