@@ -13,7 +13,7 @@ import { Schema, model } from 'mongoose';
 
 const MessageSchema = new Schema(
   {
-    chatId: {
+    conversationId: {
       type: String,
       required: true,
     },

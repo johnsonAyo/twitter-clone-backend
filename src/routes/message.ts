@@ -5,6 +5,6 @@ import { protectRoute } from '../controllers/authController';
 const router = express.Router();
 
 router.post('/', protectRoute, createMessage);
-router.get('/', protectRoute, getMessages);
+router.get('/:conversationId', protectRoute, getMessages);
 
 export default router;
