@@ -25,7 +25,7 @@ async function createNewHashtag(hashtagArr: string[]) {
     hashtag = new Hashtag({
       hashtag: val,
       totalCount: 1,
-      hourlyCount: 1,
+      hourlyCount: 10,
       expiryDate: expiryDate,
     });
     let result = await hashtag.save();
@@ -103,7 +103,7 @@ async function incrementHashtagCount(existingHashtag: any) {
         let result = await Hashtag.updateOne(
           { _id: val._id },
           {
-            $set: { totalCount: val.totalCount + 1, hourlyCount: 0 + 1, expiryDate: newExpiryDate },
+            $set: { totalCount: val.totalCount + 1, hourlyCount: 0 + 10, expiryDate: newExpiryDate },
           },
         );
         resultData.modifiedCount = +result.modifiedCount;
@@ -112,7 +112,7 @@ async function incrementHashtagCount(existingHashtag: any) {
       } else {
         let result = await Hashtag.updateOne(
           { _id: val._id },
-          { $set: { totalCount: val.totalCount + 1, hourlyCount: val.hourlyCount + 1 } },
+          { $set: { totalCount: val.totalCount + 1, hourlyCount: val.hourlyCount + (1*10) } },
         );
         resultData.modifiedCount = +result.modifiedCount;
         resultData.matchedCount = +result.matchedCount;
@@ -153,45 +153,51 @@ export async function createHashtag(data: string) {
 export async function getTrendingHashtagwithTweet() {
   let trendingHashtag = await Hashtag.find().sort({ hourlyCount: -1 });
   let hashtagArr = trendingHashtag.map((val) => val.hashtag);
-  let trending=hashtagArr.reduce((a, v) => ({ ...a, [v]: v}), {}) 
+  let trending = hashtagArr.reduce((a, v) => ({ ...a, [v]: [] }), {});
 
   let data: any;
-    data = await CreateTweetCln.find({ hashtag: {$in: hashtagArr } });
+  data = await CreateTweetCln.find({ hashtag: { $in: hashtagArr } });
 
-  data.map((val:any)=>{
+
+  // { $project : {
+  //   // 'totalA' : '$totalA',
+  //   // 'totalB' : '$totalB',
+  //   // 'totalSum' : { '$add' : [ '$totalA', '$totalB' ] }
+  //  }
+
+  data.map((val: any) => {
     for (let i = 0; i < val.hashtag.length; i++) {
       if (hashtagArr.includes(val.hashtag[i])) {
-        trending[val.hashtag[i]]=val
-        console.log(trending[val.hashtag[i]]);
-      }        
+        for (let x = 0; x < val.hashtag.length; x++) {
+          trending[val.hashtag[i]].push(val)
+          // trending[val.hashtag[i]].push(val)
+        }
+      }
     }
-  })
-  console.log(trendingHashtag);
+  });
   return new Promise((resolve, reject) => {
-    hashtagArr ? resolve({trending }) : reject(hashtagArr);
+    hashtagArr ? resolve({ trending }) : reject(hashtagArr);
   });
 }
+
 export async function getTrendingHashtagWithTweetCount() {
   let trendingHashtag = await Hashtag.find().sort({ hourlyCount: -1 });
   let hashtagArr = trendingHashtag.map((val) => val.hashtag);
-  let trending=hashtagArr.reduce((a, v) => ({ ...a, [v]: 0}), {}) 
+  let trending = hashtagArr.reduce((a, v) => ({ ...a, [v]: 0 }), {});
 
   let data: any;
-    data = await CreateTweetCln.find({ hashtag: {$in: hashtagArr } });
+  data = await CreateTweetCln.find({ hashtag: { $in: hashtagArr } });
 
-  data.map((val:any)=>{
+  data.map((val: any) => {
     for (let i = 0; i < val.hashtag.length; i++) {
       if (hashtagArr.includes(val.hashtag[i])) {
-        trending[val.hashtag[i]]=trending[val.hashtag[i]]+1
+        trending[val.hashtag[i]] = trending[val.hashtag[i]] + 1;
         console.log(trending[val.hashtag[i]]);
-      }        
+      }
     }
-  })
+  });
   console.log(trendingHashtag);
   return new Promise((resolve, reject) => {
-    hashtagArr ? resolve({trending}) : reject(hashtagArr);
+    hashtagArr ? resolve({ trending }) : reject(hashtagArr);
   });
 }
-
-
-
