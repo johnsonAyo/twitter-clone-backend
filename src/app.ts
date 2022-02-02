@@ -19,6 +19,7 @@ import viewtweetRoute from './routes/viewTweetRoute';
 import resetRouter from './routes/resetPassword';
 import authRouter from './routes/auth';
 import profileRouter from './routes/profile';
+import trendingRoutes from './routes/trendingRoute';
 import conversationRouter from './routes/conversation';
 import messageRouter from './routes/message';
 
@@ -65,6 +66,8 @@ app.use('/tweet', likeCommentBook);
 
 app.use('/api/v1/reset', resetRouter);
 app.use('/auth', authRouter);
+
+app.use('/api/trends', trendingRoutes);
 
 app.use('/conversation', conversationRouter);
 app.use('/message', messageRouter);
