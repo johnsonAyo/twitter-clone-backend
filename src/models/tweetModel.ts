@@ -1,4 +1,4 @@
-import mongoose, { mongo } from 'mongoose';
+import mongoose from 'mongoose';
 
 /***********************************
  * tweet content interface
@@ -10,6 +10,7 @@ interface tweetIn {
   userId: any;
   whoCanReply: string;
   cloudinary_id: string;
+  hashtag: any;
 }
 
 // /***********************************
@@ -24,7 +25,7 @@ const tweetSchema = new mongoose.Schema<tweetIn>(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'userCollection',
+      ref: 'users',
     },
     messageBody: {
       type: String,
@@ -39,9 +40,36 @@ const tweetSchema = new mongoose.Schema<tweetIn>(
     cloudinary_id: {
       type: String,
     },
+    hashtag: [String],
   },
-  { timestamps: true },
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } },
 );
+
+// count likes
+
+tweetSchema.virtual('noOfLikes', {
+  ref: 'Like',
+  localField: '_id',
+  foreignField: 'tweetId',
+  count: true,
+});
+
+//count comment
+
+tweetSchema.virtual('commentCount', {
+  ref: 'Comment',
+  localField: '_id',
+  foreignField: 'tweetId',
+  count: true,
+});
+
+//return comments
+
+tweetSchema.virtual('allComment', {
+  ref: 'Comment',
+  localField: '_id',
+  foreignField: 'tweetId',
+});
 
 const CreateTweetCln = mongoose.model('allCreatedTweets', tweetSchema);
 
