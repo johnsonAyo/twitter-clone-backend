@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import catchAsync from '../utils/catchAsync';
 import ErrorHandler from '../utils/appError';
-import { viewTweet,viewTweetofFriend } from '../models/viewtweetModel';
+import { viewTweet, viewTweetofFriend } from '../models/viewtweetModel';
 
 /****************************************************************************
  *                                                                           *

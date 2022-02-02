@@ -34,7 +34,7 @@ export const userNewTweet = catchAsync(async (req: any, res: Response, next: Nex
       tweetImage: null,
       whoCanReply,
       cloudinary_id: null,
-      hashtag:hashtags
+      hashtag: hashtags,
     });
 
     if (createTweet) {
@@ -55,7 +55,7 @@ export const userNewTweet = catchAsync(async (req: any, res: Response, next: Nex
       tweetImage: cloudImage.secure_url,
       whoCanReply,
       cloudinary_id: cloudImage.public_id,
-      hashtag:hashtags,
+      hashtag: hashtags,
     });
 
     if (createTweet) {

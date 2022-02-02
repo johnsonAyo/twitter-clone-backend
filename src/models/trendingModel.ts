@@ -14,7 +14,7 @@ const hashtagSchema = new mongoose.Schema({
 const Hashtag = mongoose.model('Hashtag', hashtagSchema);
 
 /************************************************************
- *           helper method for create newhashtag
+ *           Create new Hashtag (HELPER METHOD)
  ************************************************************/
 
 async function createNewHashtag(hashtagArr: string[]) {
@@ -37,7 +37,7 @@ async function createNewHashtag(hashtagArr: string[]) {
 }
 
 /************************************************************
- * helper method to extract hashtag
+ *              Extract hashtag(HELPER METHOD)
  ************************************************************/
 export async function extractHashtag(str: string) {
   let PATTERN = /(?<!\w)#\w+/,
@@ -51,7 +51,7 @@ export async function extractHashtag(str: string) {
 }
 
 /************************************************************
- *              helper method to add hours
+ *              Add hours to Time (HELPER METHOD)
  ************************************************************/
 
 function addHoursToDate(hours: number) {
@@ -61,7 +61,7 @@ function addHoursToDate(hours: number) {
 }
 
 /************************************************************
- * helper method to compare input with existing harshtag
+ * Compare input with existing harshtag (HELPER METHOD)
  ************************************************************/
 async function compareArrayReturnDiff(arr1: string[], arr2: string[]) {
   let notExist: any;
@@ -84,7 +84,7 @@ async function compareArrayReturnDiff(arr1: string[], arr2: string[]) {
 }
 
 /************************************************************
- * helper method to increment count of hashtag if they exist
+ * Increment count of hashtag if they exist (HELPER METHOD)
  ************************************************************/
 async function incrementHashtagCount(existingHashtag: any) {
   let output: any = [];
@@ -103,7 +103,11 @@ async function incrementHashtagCount(existingHashtag: any) {
         let result = await Hashtag.updateOne(
           { _id: val._id },
           {
-            $set: { totalCount: val.totalCount + 1, hourlyCount: 0 + 10, expiryDate: newExpiryDate },
+            $set: {
+              totalCount: val.totalCount + 1,
+              hourlyCount: 0 + 10,
+              expiryDate: newExpiryDate,
+            },
           },
         );
         resultData.modifiedCount = +result.modifiedCount;
@@ -112,7 +116,7 @@ async function incrementHashtagCount(existingHashtag: any) {
       } else {
         let result = await Hashtag.updateOne(
           { _id: val._id },
-          { $set: { totalCount: val.totalCount + 1, hourlyCount: val.hourlyCount + (1*10) } },
+          { $set: { totalCount: val.totalCount + 1, hourlyCount: val.hourlyCount + 1 * 10 } },
         );
         resultData.modifiedCount = +result.modifiedCount;
         resultData.matchedCount = +result.matchedCount;
@@ -126,7 +130,7 @@ async function incrementHashtagCount(existingHashtag: any) {
 }
 
 /************************************************************
- *           Create Hashtag Main Method
+ *           Create Hashtag (MAIN METHOD)
  ************************************************************/
 export async function createHashtag(data: string) {
   let newHashtagRes;
@@ -147,30 +151,30 @@ export async function createHashtag(data: string) {
 }
 
 /************************************************************
- *           Get top 6 Hashtag Main Method
+ *           Get top trending Hashtag (MAIN METHOD)
  ************************************************************/
 
 export async function getTrendingHashtagwithTweet() {
-  let trendingHashtag = await Hashtag.find().sort({ hourlyCount: -1 });
+  let trendingHashtag = await Hashtag.aggregate([
+    {
+      $project: {
+        hashtag: 1,
+        expiryDate: 1,
+        totalmetrics: { $add: ['$totalCount', '$hourlyCount'] },
+      },
+    },
+  ]).sort({ totalmetrics: -1 });
+
   let hashtagArr = trendingHashtag.map((val) => val.hashtag);
   let trending = hashtagArr.reduce((a, v) => ({ ...a, [v]: [] }), {});
 
   let data: any;
-  data = await CreateTweetCln.find({ hashtag: { $in: hashtagArr } });
-
-
-  // { $project : {
-  //   // 'totalA' : '$totalA',
-  //   // 'totalB' : '$totalB',
-  //   // 'totalSum' : { '$add' : [ '$totalA', '$totalB' ] }
-  //  }
-
+  data = await CreateTweetCln.find({ hashtag: { $in: hashtagArr } }).sort({ createdAt: -1 });
   data.map((val: any) => {
     for (let i = 0; i < val.hashtag.length; i++) {
       if (hashtagArr.includes(val.hashtag[i])) {
         for (let x = 0; x < val.hashtag.length; x++) {
-          trending[val.hashtag[i]].push(val)
-          // trending[val.hashtag[i]].push(val)
+          trending[val.hashtag[i]].push(val);
         }
       }
     }
@@ -179,6 +183,10 @@ export async function getTrendingHashtagwithTweet() {
     hashtagArr ? resolve({ trending }) : reject(hashtagArr);
   });
 }
+
+/************************************************************
+ *           Get trending Hashtag tweet count (MAIN METHOD)
+ ************************************************************/
 
 export async function getTrendingHashtagWithTweetCount() {
   let trendingHashtag = await Hashtag.find().sort({ hourlyCount: -1 });

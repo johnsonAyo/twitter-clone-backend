@@ -9,7 +9,10 @@ import {
 import catchAsync from '../utils/catchAsync';
 import ErrorHandler from '../utils/appError';
 import Responses from '../utils/response';
-import {  getTrendingHashtagwithTweet, getTrendingHashtagWithTweetCount} from '../models/trendingModel';
+import {
+  getTrendingHashtagwithTweet,
+  getTrendingHashtagWithTweetCount,
+} from '../models/trendingModel';
 
 const responseClass = new Responses();
 
