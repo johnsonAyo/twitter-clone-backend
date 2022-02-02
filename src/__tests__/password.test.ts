@@ -49,7 +49,7 @@ describe('Auth', () => {
   };
 
   const reset = {
-    newPassword: 'testing',
+    password: 'testing',
     passwordConfirm: 'testing',
   };
 
@@ -57,13 +57,22 @@ describe('Auth', () => {
     const response = await supertest(app)
       .post('/api/v1/reset/forgotpassword')
       .send({ email: 'tolz@yahoo.com' })
-      console.log(response)
+      
       resetToken = response.body.resetToken
     expect(response.status).toBe(200)
-
+    // console.log(resetToken)
   });
 
-  test('change password', async () => {
+  it('resets password', async () => {
+    const response = await supertest(app)
+      .post(`/api/v1/reset/resetpassword/${resetToken}`)
+      .send(reset)
+    expect(response.status).toBe(200)
+    console.log(response.body);
+    
+  })
+
+  it('change password', async () => {
     const response = await supertest(app)
       .post('/api/v1/reset/changepassword')
       .set('Authorization', `Bearer ${token}`)
@@ -71,11 +80,5 @@ describe('Auth', () => {
     expect(response.status).toBe(200);
   });
 
-  it('resets password', async () => {
-      const response = await supertest(app)
-      .post(`/api/v1/reset/resetpassword/${resetToken}`)
-      .set('Authorization', `Bearer ${token}`)
-      .send(reset)
-    expect(response.status).toBe(200)
-  })
+  
 });
