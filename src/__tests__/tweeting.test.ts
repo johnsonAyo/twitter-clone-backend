@@ -1,13 +1,11 @@
 import request from 'supertest';
 import app from '../app';
-import { Request } from 'express';
 
 let emailToken: string;
 let cloudinary_id: string;
-let req: Request;
-
+let tweetId: string;
 let token: string;
-let userId: String;
+let userId: string;
 
 describe('Auth', () => {
   const userData = {
@@ -47,6 +45,8 @@ describe('Auth', () => {
   });
 });
 
+// Another user sign up and login. Then he can retweet my tweet
+
 /**************************************************************************|
 | Test that handle  tweet, retweet operation by a login user              *|
  /**************************************************************************/
@@ -55,7 +55,7 @@ describe('Tweet by authorised user', () => {
   const newData = {
     userId: userId,
     messageBody: 'Message here',
-    tweetImage: req.file?.path,
+    tweetImage: 'image Url',
     whoCanReply: 'Everyone',
     cloudinary_id: cloudinary_id,
   };
@@ -63,10 +63,12 @@ describe('Tweet by authorised user', () => {
   // check if a user is not authorised
   it(' Authorised user  can tweet', async () => {
     const res = await request(app)
-      .post('/tweet')
+      .post('/tweet/')
       .set(`Authorization`, `Bearer ${token}`)
       .send(newData);
     expect(res.status).toBe(201);
+
+    tweetId = res.body.data._id;
   });
 
   // All user tweet
@@ -77,7 +79,7 @@ describe('Tweet by authorised user', () => {
     expect(res.status).toBe(200);
   });
 
-  // // a user can view all his retweet
+  // a user can view all his retweet
 
   it(' A user can view all his retweet', async () => {
     const res = await request(app).get('/tweet/allretweet').set(`Authorization`, `Bearer ${token}`);
@@ -88,7 +90,7 @@ describe('Tweet by authorised user', () => {
   //retweet a tweet
   it(' Retweet a tweet using valid tweet id', async () => {
     const res = await request(app)
-      .post('/tweet/retweet/61f30abeebd814cae89b69b0')
+      .post(`/tweet/retweet/${tweetId}`)
       .set(`Authorization`, `Bearer ${token}`)
       .send(newData);
 
@@ -111,7 +113,7 @@ describe('Tweet by authorised user', () => {
 
   it(' Return 200 for deleting a particular tweet via a valid id', async () => {
     const res = await request(app)
-      .delete('/tweet/deletetweet/61e6c6eb532239cbd186ac4c')
+      .delete(`/tweet/deletetweet/${tweetId}`)
 
       .set(`Authorization`, `Bearer ${token}`);
     expect(res.status).toBe(200);

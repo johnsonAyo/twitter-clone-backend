@@ -7,6 +7,8 @@ import mongoose from 'mongoose';
 import catchAsync from '../utils/catchAsync';
 import ErrorHandler from '../utils/appError';
 import Responses from '../utils/response';
+import Comment from '../models/commentModel';
+import { createHashtag, extractHashtag } from '../models/trendingModel';
 
 const responseStatus = new Responses();
 /****************************************************************************
@@ -23,25 +25,48 @@ export const userNewTweet = catchAsync(async (req: any, res: Response, next: Nex
   if (error) return next(new ErrorHandler(404, error.message));
 
   const { messageBody, whoCanReply } = req.body;
+  let hashtags = await createHashtag(messageBody);
+  extractHashtag(messageBody);
+  if (req.file == undefined) {
+    let createTweet = new CreateTweetCln({
+      userId: req.user._id,
+      messageBody,
+      tweetImage: null,
+      whoCanReply,
+      cloudinary_id: null,
+      hashtag: hashtags,
+    });
 
-  let cloudImage = await cloudinaryImage.uploader.upload(req.file.path);
+    if (createTweet) {
+      await createTweet.save();
+      console.log('dfdfdfdfd', hashtags);
 
-  let createTweet = new CreateTweetCln({
-    userId: req.user._id,
-    messageBody,
-    tweetImage: cloudImage.secure_url,
-    whoCanReply,
-    cloudinary_id: cloudImage.public_id,
-  });
+      responseStatus.setSuccess(201, 'Tweet saved successfully...', { createTweet, hashtags });
 
-  if (createTweet) {
-    await createTweet.save();
-
-    responseStatus.setSuccess(201, 'Tweet saved successfully...', createTweet);
-
-    return responseStatus.send(res);
+      return responseStatus.send(res);
+    } else {
+      return res.status(404).json({ msg: 'Error  occur for file uploading' });
+    }
   } else {
-    return res.status(404).json({ msg: 'Error  occur for file uploading' });
+    let cloudImage = await cloudinaryImage.uploader.upload(req.file.path);
+    let createTweet = new CreateTweetCln({
+      userId: req.user._id,
+      messageBody,
+      tweetImage: cloudImage.secure_url,
+      whoCanReply,
+      cloudinary_id: cloudImage.public_id,
+      hashtag: hashtags,
+    });
+
+    if (createTweet) {
+      await createTweet.save();
+
+      responseStatus.setSuccess(201, 'Tweet saved successfully...', createTweet);
+
+      return responseStatus.send(res);
+    } else {
+      return res.status(404).json({ msg: 'Error  occur for file uploading' });
+    }
   }
 });
 
@@ -57,7 +82,7 @@ export const reTweeting = catchAsync(async (req: Request, res: Response, next: N
   //check if objectId is valid or not
 
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-    return next(new ErrorHandler(404, 'Invalid id'));
+    return res.status(404).json({ msg: 'Invalid tweet Id ' });
   }
   const createReTweet = new CreateRetTweet({
     tweetId: req.params.id,
@@ -84,10 +109,12 @@ export const reTweeting = catchAsync(async (req: Request, res: Response, next: N
 
 export const allUserRetweet = catchAsync(async (req: Request, res: Response) => {
   //get id of reweet and search the message body in tweet colltn using populate function
-  const userReTweet = await CreateRetTweet.find({ reTweeterId: req.user._id }).populate('tweetId');
+  const userReTweet = await CreateRetTweet.find({ reTweeterId: req.user._id }).populate(
+    'noOfLikes commentCount tweetId retweeter_name',
+  );
 
   if (userReTweet) {
-    responseStatus.setSuccess(200, 'Retweet created', userNewTweet);
+    responseStatus.setSuccess(200, 'All your Retweet', userReTweet);
     return responseStatus.send(res);
   }
 });
@@ -100,16 +127,17 @@ export const allUserRetweet = catchAsync(async (req: Request, res: Response) => 
 
 export const allUserTweet = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   //All user tweet
-  CreateTweetCln.find({ userId: req.user._id }, (err: any, allTweets: any) => {
-    if (err) return next(new ErrorHandler(404, 'Error Occured in tweet fetching...'));
 
-    if (allTweets == null) {
-      return next(new ErrorHandler(404, 'Error Occured in tweet fetching...'));
-    } else {
-      responseStatus.setSuccess(200, 'All user tweet', allTweets);
-      return responseStatus.send(res);
-    }
-  });
+  let allTweets = await CreateTweetCln.find({ userId: req.user._id }).populate(
+    'noOfLikes commentCount allComment',
+  );
+
+  if (allTweets == null) {
+    return next(new ErrorHandler(404, 'Error Occured in tweet fetching...'));
+  } else {
+    responseStatus.setSuccess(200, 'All your  tweet and comments', allTweets);
+    return responseStatus.send(res);
+  }
 });
 
 /****************************************************************************
