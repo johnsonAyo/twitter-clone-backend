@@ -232,14 +232,14 @@ export const getUserTweetByTime = catchAsync(
     const otherUserTweet = await CreateTweetCln.find({
       createdAt: { $gte: new Date(new Date(createdAt).setHours(0, 0, 0)) },
       userId: req.params.userId,
-    })
+    }).select(['-userId', '-_id'])
       .skip(page - 1)
       .limit(size);
 
     const otherUserRetweet = await CreateRetTweet.find({
       createdAt: { $gte: new Date(new Date(createdAt).setHours(0, 0, 0)) },
       userId: req.params.userId,
-    })
+    }).select(['-userId', '-_id'])
       .skip(page - 1)
       .limit(size);
 
@@ -270,7 +270,7 @@ export const getPopularTweets = catchAsync(
       { $sort: { count: -1 } },
     ]);
 
-    const tweets = await CreateTweetCln.find();
+    const tweets = await CreateTweetCln.find().select(['-userId']);
 
     // console.log(tweets)
 
