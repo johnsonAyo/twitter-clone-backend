@@ -22,6 +22,7 @@ import profileRouter from './routes/profile';
 import trendingRoutes from './routes/trendingRoute';
 import conversationRouter from './routes/conversation';
 import messageRouter from './routes/message';
+import searchRouter from './routes/search'
 
 dotenv.config();
 const app = express();
@@ -71,6 +72,7 @@ app.use('/api/trends', trendingRoutes);
 
 app.use('/conversation', conversationRouter);
 app.use('/message', messageRouter);
+app.use('/api/v1/search', searchRouter);
 
 app.all('*', (req, res) => {
   res.status(404).json({
