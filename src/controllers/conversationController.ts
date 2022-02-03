@@ -46,7 +46,9 @@ export const getConversation = catchAsync(
 
 export const getUsersConversation = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const data = await Conversation.find({members: { $all: [req.params.firstUserId, req.params.secondUserId] }});
+    const data = await Conversation.find({
+      members: { $all: [req.params.firstUserId, req.params.secondUserId] },
+    });
     if (!data) {
       return next(new ErrorHandler(401, 'You have no chat records. Start by typing hello!'));
     }
@@ -57,5 +59,3 @@ export const getUsersConversation = catchAsync(
     });
   },
 );
-
-
