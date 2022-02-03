@@ -7,6 +7,7 @@ import mongoose from 'mongoose';
 import catchAsync from '../utils/catchAsync';
 import ErrorHandler from '../utils/appError';
 import Responses from '../utils/response';
+import User from '../models/userModels';
 import Comment from '../models/commentModel';
 import { createHashtag, extractHashtag } from '../models/trendingModel';
 
@@ -102,13 +103,14 @@ export const reTweeting = catchAsync(async (req: Request, res: Response, next: N
 
 /****************************************************************************
  *                 
- *                     Show All user reTweet                                 *                  
+ *                     Show All your reTweet                                 *                  
  *                                                                           *
  *                                                                           *
 /*****************************************************************************/
 
 export const allUserRetweet = catchAsync(async (req: Request, res: Response) => {
-  //get id of reweet and search the message body in tweet colltn using populate function
+  // get id of reweet and search the message body in tweet colltn using populate function
+
   const userReTweet = await CreateRetTweet.find({ reTweeterId: req.user._id }).populate(
     'noOfLikes commentCount tweetId retweeter_name',
   );
@@ -129,7 +131,7 @@ export const allUserTweet = catchAsync(async (req: Request, res: Response, next:
   //All user tweet
 
   let allTweets = await CreateTweetCln.find({ userId: req.user._id }).populate(
-    'noOfLikes commentCount allComment',
+    'noOfLikes commentCount allComment createdBy',
   );
 
   if (allTweets == null) {
@@ -195,7 +197,7 @@ export const undoUserReweet = catchAsync(
 /****************************************************************************
  *                 
  *                   Get All tweet and retweet of other user you visit 
- *                    their page                                              *                  
+ *                    their page/profile                                      *                  
  /*****************************************************************************/
 
 export const getAllUserTweetNRetweet = catchAsync(async (req: Request, res: Response) => {
@@ -204,10 +206,13 @@ export const getAllUserTweetNRetweet = catchAsync(async (req: Request, res: Resp
   const otherUserId = req.params.id;
 
   const otherUserReTweetDetail = await CreateRetTweet.find({ reTweeterId: otherUserId }).populate(
-    'tweetId',
+    'tweetId retweeter_name bioData noOfLikes commentCount',
   );
 
-  const allOtherUserTweet = await CreateTweetCln.find({ userId: otherUserId });
+
+  const allOtherUserTweet = await CreateTweetCln.find({ userId: otherUserId }).populate(
+    'noOfLikes commentCount',
+  );
 
   const allOtherUserChat = [
     { otherUserRetweet: otherUserReTweetDetail },
@@ -215,6 +220,85 @@ export const getAllUserTweetNRetweet = catchAsync(async (req: Request, res: Resp
   ];
 
   responseStatus.setSuccess(200, 'getAllUserTweetNRetweet', allOtherUserChat);
+
+  return responseStatus.send(res);
+});
+
+// Sprint Two \\
+/****************************************************************************
+ *                 
+ *                  Get Single tweet and it comment                           *                  
+ /*****************************************************************************/
+
+export const singleTweetAndComment = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const tweetId = req.params.id;
+
+    // const {contentLimit, pageNo} =  req.query;
+
+    let numObj = { contentLimit: 2, pageNo: 1 };
+
+    let { contentLimit, pageNo } = numObj;
+
+    console.log(contentLimit, pageNo);
+
+    let singleTweet = await CreateTweetCln.find({ _id: tweetId }).populate([
+      {
+        path: 'retweetCount commentCount noOfLikes allComment createdBy',
+        select: 'content userId tweetId firstName lastName email profilePic bioData',
+        model: 'allCreatedTweets',
+        options: {
+          sort: { createdAt: -1 },
+        },
+
+        skip: (Number(pageNo) - 1) * Number(contentLimit),
+        limit: Number(contentLimit),
+      },
+    ]);
+
+    responseStatus.setSuccess(200, 'Single tweet and it comment', singleTweet);
+
+    return responseStatus.send(res);
+  },
+);
+
+/***********************************************************************
+ *
+ *
+ *
+ *  As a login user, you can access other person profile
+ * This function handle that
+ *
+ *************************************************************************/
+
+export const singleUserProfile = catchAsync(async (req: Request, res: Response) => {
+  const otherUserId = req.params.id;
+
+  const otherUserDetails = await User.find({ _id: otherUserId }).select({
+    firstName: 1,
+    lastName: 1,
+    email: 1,
+    profilePic: 1,
+  });
+
+  responseStatus.setSuccess(200, 'Bio data', otherUserDetails);
+
+  return responseStatus.send(res);
+});
+
+/***********************************************************************
+ *
+ *
+ *
+ *  As a login user, i want to get the list of people that are the user of the app
+ * This function handle that
+ *
+ *************************************************************************/
+
+export const listOfAppUser = catchAsync(async (req: Request, res: Response) => {
+  const userList = await User.find({}).select({ firstName: 1, lastName: 1 });
+
+  responseStatus.setSuccess(200, 'List Of Users In the App', userList);
 
   return responseStatus.send(res);
 });
