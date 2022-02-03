@@ -7,6 +7,7 @@ import mongoose from 'mongoose';
 import catchAsync from '../utils/catchAsync';
 import ErrorHandler from '../utils/appError';
 import Responses from '../utils/response';
+import User from '../models/userModels';
 import Comment from '../models/commentModel';
 import { createHashtag, extractHashtag } from '../models/trendingModel';
 import Like from '../models/likeModel';
@@ -104,13 +105,14 @@ export const reTweeting = catchAsync(async (req: Request, res: Response, next: N
 
 /****************************************************************************
  *                 
- *                     Show All user reTweet                                 *                  
+ *                     Show All your reTweet                                 *                  
  *                                                                           *
  *                                                                           *
 /*****************************************************************************/
 
 export const allUserRetweet = catchAsync(async (req: Request, res: Response) => {
-  //get id of reweet and search the message body in tweet colltn using populate function
+  // get id of reweet and search the message body in tweet colltn using populate function
+
   const userReTweet = await CreateRetTweet.find({ reTweeterId: req.user._id }).populate(
     'noOfLikes commentCount tweetId retweeter_name',
   );
@@ -131,7 +133,7 @@ export const allUserTweet = catchAsync(async (req: Request, res: Response, next:
   //All user tweet
 
   let allTweets = await CreateTweetCln.find({ userId: req.user._id }).populate(
-    'noOfLikes commentCount allComment',
+    'noOfLikes commentCount allComment createdBy',
   );
 
   if (allTweets == null) {
@@ -200,7 +202,7 @@ export const undoUserReweet = catchAsync(
 /****************************************************************************
  *                 
  *                   Get All tweet and retweet of other user you visit 
- *                    their page                                              *                  
+ *                    their page/profile                                      *                  
  /*****************************************************************************/
 
 export const getAllUserTweetNRetweet = catchAsync(async (req: Request, res: Response) => {
@@ -209,10 +211,13 @@ export const getAllUserTweetNRetweet = catchAsync(async (req: Request, res: Resp
   const otherUserId = req.params.id;
 
   const otherUserReTweetDetail = await CreateRetTweet.find({ reTweeterId: otherUserId }).populate(
-    'tweetId',
+    'tweetId retweeter_name bioData noOfLikes commentCount',
   );
 
-  const allOtherUserTweet = await CreateTweetCln.find({ userId: otherUserId });
+
+  const allOtherUserTweet = await CreateTweetCln.find({ userId: otherUserId }).populate(
+    'noOfLikes commentCount',
+  );
 
   const allOtherUserChat = [
     { otherUserRetweet: otherUserReTweetDetail },

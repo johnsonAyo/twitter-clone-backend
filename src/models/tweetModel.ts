@@ -46,6 +46,7 @@ const tweetSchema = new mongoose.Schema<tweetIn>(
 );
 
 // count likes
+tweetSchema.index({tweetImage: 'text', messageBody: "text" });
 
 tweetSchema.virtual('noOfLikes', {
   ref: 'Like',
@@ -63,12 +64,29 @@ tweetSchema.virtual('commentCount', {
   count: true,
 });
 
+//count the number of retweet a particular tweet has
+
+tweetSchema.virtual('retweetCount', {
+  ref: 'allReTweets',
+  localField: '_id',
+  foreignField: 'tweetId',
+  count: true,
+});
+
 //return comments
 
 tweetSchema.virtual('allComment', {
   ref: 'Comment',
   localField: '_id',
   foreignField: 'tweetId',
+});
+
+//name of person that created the tweet
+
+tweetSchema.virtual('createdBy', {
+  ref: 'User',
+  localField: 'userId',
+  foreignField: '_id',
 });
 
 const CreateTweetCln = mongoose.model('allCreatedTweets', tweetSchema);

@@ -19,9 +19,11 @@ import viewtweetRoute from './routes/viewTweetRoute';
 import resetRouter from './routes/resetPassword';
 import authRouter from './routes/auth';
 import profileRouter from './routes/profile';
+import latest from './routes/latest';
 import trendingRoutes from './routes/trendingRoute';
 import conversationRouter from './routes/conversation';
 import messageRouter from './routes/message';
+import searchRouter from './routes/search'
 
 dotenv.config();
 const app = express();
@@ -63,6 +65,7 @@ app.use('/profile', profileRouter);
 
 app.use('/api/viewtweet', viewtweetRoute);
 app.use('/tweet', likeCommentBook);
+app.use('/', latest);
 
 app.use('/api/v1/reset', resetRouter);
 app.use('/auth', authRouter);
@@ -71,6 +74,7 @@ app.use('/api/trends', trendingRoutes);
 
 app.use('/conversation', conversationRouter);
 app.use('/message', messageRouter);
+app.use('/api/v1/search', searchRouter);
 
 app.all('*', (req, res) => {
   res.status(404).json({

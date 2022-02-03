@@ -19,7 +19,7 @@ export const getAllBookmarks = catchAsync(
     const id = req.params.id;
     const userId = req.user._id;
 
-    const bookmarks = await Bookmark.find({ tweetId: id, userId });
+    const bookmarks = await Bookmark.find({ userId }).populate('tweetId').populate('userId');
     if (!bookmarks) return next(new ErrorHandler(404, 'Error occurred'));
     res.status(200).json({ message: 'All bookmarks', data: bookmarks });
   },
@@ -30,7 +30,7 @@ export const getSingleBookmark = catchAsync(
     const id = req.params.id;
     const userId = req.user._id;
 
-    const bookmark = await Bookmark.findOne({ id, userId });
+    const bookmark = await Bookmark.findOne({ id, userId }).populate('tweetId').populate('userId');
     if (!bookmark) return next(new ErrorHandler(404, 'Error occurred'));
     res.status(200).json({ message: 'Single bookmark', data: bookmark });
   },
