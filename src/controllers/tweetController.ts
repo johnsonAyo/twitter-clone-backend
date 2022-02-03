@@ -125,7 +125,7 @@ export const allUserTweet = catchAsync(async (req: Request, res: Response, next:
   //All user tweet
 
   let allTweets = await CreateTweetCln.find({ userId: req.user._id }).populate(
-    'noOfLikes commentCount allComment',
+    'noOfLikes commentCount allComment createdBy',
   );
 
   if (allTweets == null) {
@@ -238,7 +238,7 @@ export const singleTweetAndComment = catchAsync(
 
     let singleTweet = await CreateTweetCln.find({ _id: tweetId }).populate([
       {
-        path: 'retweetCount commentCount noOfLikes allComment who_that_created_tweet',
+        path: 'retweetCount commentCount noOfLikes allComment createdBy',
         select: 'content userId tweetId firstName lastName email profilePic bioData',
         model: 'allCreatedTweets',
         options: {
