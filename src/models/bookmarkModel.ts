@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const bookmarkSchema = new mongoose.Schema({
   tweetId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Tweet',
+    ref: 'allCreatedTweets',
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,

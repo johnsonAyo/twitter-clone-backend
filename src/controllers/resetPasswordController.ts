@@ -142,8 +142,8 @@ const forgotPassword = catchAsync(async (req: Request, res: Response, next: Next
     //   message: 'check your email to reset your password',
     // });
 
-    resData.setSuccess(200, 'check your email to reset your password', {});
-    return resData.send(res);
+    resData.setSuccess(200, 'check your email to reset your password', {url})
+    return resData.send(res)
   } catch (e) {
     user.passwordExpires = undefined;
     user.passwordResetToken = undefined;

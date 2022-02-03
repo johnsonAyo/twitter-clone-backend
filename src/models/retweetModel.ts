@@ -40,6 +40,11 @@ reTweetSchema.virtual('retweeter_name', {
   localField: 'reTweeterId',
   foreignField: '_id',
 });
+<<<<<<< HEAD
+=======
+
+reTweetSchema.index({ text: "text" });
+>>>>>>> e8ca4462b7af93bac54246534e5829c44b9cfa1e
 
 const CreateReTweet = mongoose.model('allReTweets', reTweetSchema);
 
