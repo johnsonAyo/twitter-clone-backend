@@ -97,13 +97,14 @@ export const reTweeting = catchAsync(async (req: Request, res: Response, next: N
 
 /****************************************************************************
  *                 
- *                     Show All user reTweet                                 *                  
+ *                     Show All your reTweet                                 *                  
  *                                                                           *
  *                                                                           *
 /*****************************************************************************/
 
 export const allUserRetweet = catchAsync(async (req: Request, res: Response) => {
-  //get id of reweet and search the message body in tweet colltn using populate function
+  // get id of reweet and search the message body in tweet colltn using populate function
+
   const userReTweet = await CreateRetTweet.find({ reTweeterId: req.user._id }).populate(
     'noOfLikes commentCount tweetId retweeter_name',
   );
@@ -199,10 +200,13 @@ export const getAllUserTweetNRetweet = catchAsync(async (req: Request, res: Resp
   const otherUserId = req.params.id;
 
   const otherUserReTweetDetail = await CreateRetTweet.find({ reTweeterId: otherUserId }).populate(
-    'tweetId',
+    'tweetId retweeter_name bioData noOfLikes commentCount',
   );
 
-  const allOtherUserTweet = await CreateTweetCln.find({ userId: otherUserId });
+
+  const allOtherUserTweet = await CreateTweetCln.find({ userId: otherUserId }).populate(
+    'noOfLikes commentCount',
+  );
 
   const allOtherUserChat = [
     { otherUserRetweet: otherUserReTweetDetail },
@@ -234,8 +238,8 @@ export const singleTweetAndComment = catchAsync(
 
     let singleTweet = await CreateTweetCln.find({ _id: tweetId }).populate([
       {
-        path: 'retweetCount commentCount noOfLikes allComment',
-        select: 'content userId tweetId',
+        path: 'retweetCount commentCount noOfLikes allComment who_that_created_tweet',
+        select: 'content userId tweetId firstName lastName email profilePic bioData',
         model: 'allCreatedTweets',
         options: {
           sort: { createdAt: -1 },
@@ -246,55 +250,49 @@ export const singleTweetAndComment = catchAsync(
       },
     ]);
 
-    
     responseStatus.setSuccess(200, 'Single tweet and it comment', singleTweet);
 
     return responseStatus.send(res);
   },
 );
 
-
-
 /***********************************************************************
- * 
- * 
- *           
+ *
+ *
+ *
  *  As a login user, you can access other person profile
  * This function handle that
- * 
+ *
  *************************************************************************/
 
-
-export const singleUserProfile  = catchAsync( async (req:Request, res:Response)=>{
-
+export const singleUserProfile = catchAsync(async (req: Request, res: Response) => {
   const otherUserId = req.params.id;
 
-const otherUserDetails  = await User.find({_id:otherUserId}).select({firstName:1,lastName:1,email:1,profilePic:1});
+  const otherUserDetails = await User.find({ _id: otherUserId }).select({
+    firstName: 1,
+    lastName: 1,
+    email: 1,
+    profilePic: 1,
+  });
 
-responseStatus.setSuccess(200, "Bio data", otherUserDetails)
+  responseStatus.setSuccess(200, 'Bio data', otherUserDetails);
 
- return responseStatus.send(res)
-
-})
-
+  return responseStatus.send(res);
+});
 
 /***********************************************************************
- * 
- * 
- *           
+ *
+ *
+ *
  *  As a login user, i want to get the list of people that are the user of the app
  * This function handle that
- * 
+ *
  *************************************************************************/
 
+export const listOfAppUser = catchAsync(async (req: Request, res: Response) => {
+  const userList = await User.find({}).select({ firstName: 1, lastName: 1 });
 
-export const listOfAppUser = catchAsync(async (req:Request, res:Response)=>{
+  responseStatus.setSuccess(200, 'List Of Users In the App', userList);
 
-const userList = await  User.find({}).select({firstName:1,lastName:1});
-
-responseStatus.setSuccess(200, "List Of Users In the App", userList);
-
-return responseStatus.send(res);
-
-
-})
+  return responseStatus.send(res);
+});

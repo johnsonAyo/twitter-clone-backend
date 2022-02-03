@@ -78,6 +78,14 @@ tweetSchema.virtual('allComment', {
   foreignField: 'tweetId',
 });
 
+//name of person that created the tweet
+
+tweetSchema.virtual('who_that_created_tweet', {
+  ref: 'User',
+  localField: 'userId',
+  foreignField: '_id',
+});
+
 const CreateTweetCln = mongoose.model('allCreatedTweets', tweetSchema);
 
 export default CreateTweetCln;
