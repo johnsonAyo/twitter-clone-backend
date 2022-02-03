@@ -19,7 +19,7 @@ export const getAllBookmarks = catchAsync(
     const id = req.params.id;
     const userId = req.user._id;
 
-    const bookmarks = await Bookmark.find({ tweetId: id, userId });
+    const bookmarks = await Bookmark.find({ userId });
     if (!bookmarks) return next(new ErrorHandler(404, 'Error occurred'));
     res.status(200).json({ message: 'All bookmarks', data: bookmarks });
   },
