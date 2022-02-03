@@ -8,6 +8,7 @@ import catchAsync from '../utils/catchAsync';
 import ErrorHandler from '../utils/appError';
 import Responses from '../utils/response';
 import Comment from '../models/commentModel';
+import { createHashtag, extractHashtag } from '../models/trendingModel';
 
 const responseStatus = new Responses();
 /****************************************************************************
@@ -24,20 +25,23 @@ export const userNewTweet = catchAsync(async (req: any, res: Response, next: Nex
   if (error) return next(new ErrorHandler(404, error.message));
 
   const { messageBody, whoCanReply } = req.body;
-
+  let hashtags = await createHashtag(messageBody);
+  extractHashtag(messageBody);
   if (req.file == undefined) {
     let createTweet = new CreateTweetCln({
       userId: req.user._id,
       messageBody,
-      tweetImage: 'cloudImage.secure_url',
+      tweetImage: null,
       whoCanReply,
-      cloudinary_id: 'cloudImage.public_id',
+      cloudinary_id: null,
+      hashtag: hashtags,
     });
 
     if (createTweet) {
       await createTweet.save();
+      console.log('dfdfdfdfd', hashtags);
 
-      responseStatus.setSuccess(201, 'Tweet saved successfully...', createTweet);
+      responseStatus.setSuccess(201, 'Tweet saved successfully...', { createTweet, hashtags });
 
       return responseStatus.send(res);
     } else {
@@ -51,6 +55,7 @@ export const userNewTweet = catchAsync(async (req: any, res: Response, next: Nex
       tweetImage: cloudImage.secure_url,
       whoCanReply,
       cloudinary_id: cloudImage.public_id,
+      hashtag: hashtags,
     });
 
     if (createTweet) {

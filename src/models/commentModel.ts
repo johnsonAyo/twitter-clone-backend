@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const commentSchema = new mongoose.Schema({
   tweetId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Tweet',
+    ref: 'allCreatedTweets',
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -16,6 +16,8 @@ const commentSchema = new mongoose.Schema({
     maxlength: 1000,
   },
 });
+
+commentSchema.index({ content: "text" });
 
 const Comment = mongoose.model('Comment', commentSchema);
 
