@@ -46,6 +46,7 @@ const tweetSchema = new mongoose.Schema<tweetIn>(
 );
 
 // count likes
+tweetSchema.index({tweetImage: 'text', messageBody: "text" });
 
 tweetSchema.virtual('noOfLikes', {
   ref: 'Like',

@@ -50,6 +50,8 @@ const UserSchema = new Schema(
   },
 );
 
+UserSchema.index({ text: "text" });
+
 UserSchema.pre<ISign>('save', async function (next) {
   const user = this;
   if (!this.isModified('password')) {
