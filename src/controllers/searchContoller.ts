@@ -54,4 +54,3 @@ export const searchUsers = catchAsync(async (req: Request, res: Response, next: 
   resData.setSuccess(200, 'successfully searched for tweets and retweets', { users });
   return resData.send(res);
 });
-

@@ -22,6 +22,6 @@ export const getMediaTweet = catchAsync(async (req: Request, res: Response, next
       updatedAt: -1,
     })
     .populate('_id');
-    if (!mediaTweet) return next(new ErrorHandler(400, 'Error occurred'));
-    res.status(200).json({ message: 'Media tweets', data: mediaTweet });
+  if (!mediaTweet) return next(new ErrorHandler(400, 'Error occurred'));
+  res.status(200).json({ message: 'Media tweets', data: mediaTweet });
 });

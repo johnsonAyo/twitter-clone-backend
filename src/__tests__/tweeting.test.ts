@@ -119,5 +119,5 @@ describe('Tweet by authorised user', () => {
     expect(res.status).toBe(200);
   });
 
-  it('should re')
+  it('should re');
 });

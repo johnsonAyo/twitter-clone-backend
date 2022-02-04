@@ -46,7 +46,7 @@ const tweetSchema = new mongoose.Schema<tweetIn>(
 );
 
 // count likes
-tweetSchema.index({tweetImage: 'text', messageBody: "text" });
+tweetSchema.index({ tweetImage: 'text', messageBody: 'text' });
 
 tweetSchema.virtual('noOfLikes', {
   ref: 'Like',
@@ -88,7 +88,6 @@ tweetSchema.virtual('createdBy', {
   localField: 'userId',
   foreignField: '_id',
 });
-
 
 const CreateTweetCln = mongoose.model('allCreatedTweets', tweetSchema);
 

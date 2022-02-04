@@ -17,7 +17,9 @@ export const getComments = catchAsync(async (req: Request, res: Response, next: 
   const id = req.params.id;
   const userId = req.user._id;
 
-  const comments = await Comment.find({ tweetId: id, userId }).populate('tweetId').populate('userId');
+  const comments = await Comment.find({ tweetId: id, userId })
+    .populate('tweetId')
+    .populate('userId');
   if (!comments) return next(new ErrorHandler(400, 'Error occurred'));
   res.status(200).json({ message: 'All comments', data: comments, number: comments.length });
 });
