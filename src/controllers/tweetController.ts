@@ -54,8 +54,8 @@ export const userNewTweet = catchAsync(async (req: any, res: Response, next: Nex
       tweetImage: cloudImage.secure_url,
       whoCanReply,
       cloudinary_id: cloudImage.public_id,
-      hashtag: hashtags
-      });
+      hashtag: hashtags,
+    });
 
     if (createTweet) {
       await createTweet.save();

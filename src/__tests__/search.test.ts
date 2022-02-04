@@ -11,7 +11,7 @@ describe('Following Feature Test Case', () => {
     email: 'tolz@yahoo.com',
     password: 'testing',
   };
-  
+
   test('signup', async () => {
     const response = await supertest(app).post('/users/signup').send(userData);
 
@@ -40,19 +40,18 @@ describe('Following Feature Test Case', () => {
     expect(response.body.user.isActive).toBe(true);
   });
 
-  it('Searches for tweets and comments', async() => {
-      const response = await supertest(app)
-      .get(`/api/v1/search`)
-      .set('Authorization', `Bearer ${token}`)
-      expect(response.status).toBe(200)
-      expect(response.body.message).toBe('success')
-  })
-  it('Searches for users', async() => {
+  it('Searches for tweets and comments', async () => {
     const response = await supertest(app)
-    .get(`/api/v1/search/users`)
-    .set('Authorization', `Bearer ${token}`)
-    expect(response.status).toBe(200)
-    expect(response.body.message).toBe('success')
-})
-  
+      .get(`/api/v1/search`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe('success');
+  });
+  it('Searches for users', async () => {
+    const response = await supertest(app)
+      .get(`/api/v1/search/users`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe('success');
+  });
 });
