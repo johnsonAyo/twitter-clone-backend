@@ -50,6 +50,7 @@ describe('Following Feature Test Case', () => {
     expect(response.status).toBe(200);
     expect(response.body.message).toBe('success');
   });
+
   test('Trending Hashtag  count', async () => {
     const response = await supertest(app)
       .get('/api/trends/tweetcount')

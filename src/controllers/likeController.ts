@@ -33,9 +33,11 @@ export const getLikes = catchAsync(async (req: Request, res: Response, next: Nex
   res.status(200).json({ message: 'All likes', data: likes, number: likes.length });
 });
 
-export const getLikesByUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const userId = req.params.id;
+export const getLikesByUser = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.params.id;
 
-  const likes = await Like.find({ userId }).populate('tweetId').select(['-userId', '-_id'])
-  res.status(200).json({ message: 'Tweets Liked By User', data: likes, number: likes.length });
-});
+    const likes = await Like.find({ userId }).populate('tweetId').select(['-userId', '-_id']);
+    res.status(200).json({ message: 'Tweets Liked By User', data: likes, number: likes.length });
+  },
+);
