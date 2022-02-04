@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction, response } from 'express';
 import multer from 'multer';
-// import Profile from '../models/profileModel';
 import catchAsync from '../utils/catchAsync';
 import cloudinary from 'cloudinary';
 import ErrorHandler from '../utils/appError';
@@ -9,8 +8,6 @@ import cloudinaryImage from '../utils/tweet_utils/cloudinaryImageStorage';
 import User from '../models/userModels';
 import { getFollowersModel } from '../models/followModel';
 import { getFollowingModel } from '../models/followModel';
-import { viewTweet } from '../models/viewtweetModel';
-import { number, string } from 'joi';
 
 const upload = imageMulter.single('profilePicture');
 

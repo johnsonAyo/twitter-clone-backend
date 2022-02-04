@@ -38,7 +38,7 @@ describe('Auth', () => {
       .send({ email: userData.email, password: userData.password });
 
     token = response.body.token;
-    userId = response.body._id;
+    userId = response.body.user._id;
 
     expect(response.status).toBe(201);
     expect(response.body.user.isActive).toBe(true);
@@ -63,12 +63,12 @@ describe('Tweet by authorised user', () => {
   // check if a user is not authorised
   it(' Authorised user  can tweet', async () => {
     const res = await request(app)
-      .post('/tweet/')
+      .post('/tweet')
       .set(`Authorization`, `Bearer ${token}`)
       .send(newData);
     expect(res.status).toBe(201);
 
-    tweetId = res.body.data._id;
+    tweetId = res.body.data.createTweet._id;
   });
 
   // All user tweet
@@ -89,6 +89,7 @@ describe('Tweet by authorised user', () => {
 
   //retweet a tweet
   it(' Retweet a tweet using valid tweet id', async () => {
+    console.log(tweetId);
     const res = await request(app)
       .post(`/tweet/retweet/${tweetId}`)
       .set(`Authorization`, `Bearer ${token}`)
@@ -117,5 +118,40 @@ describe('Tweet by authorised user', () => {
 
       .set(`Authorization`, `Bearer ${token}`);
     expect(res.status).toBe(200);
+  });
+
+  //get tweet and retweet of other user
+
+  it('Get tweet and retweet of other user', async () => {
+    const res = await request(app)
+      .get(`/tweet/otherusertweet/${tweetId}`)
+
+      .set(`Authorization`, `Bearer ${token}`);
+    expect(res.status).toBe(200);
+  });
+
+  // Get single tweet and it comment
+
+  it('Get Single tweet and it comment', async () => {
+    const res = await request(app)
+      .get(`/tweet/singletweet/${tweetId}`)
+
+      .set(`Authorization`, `Bearer ${token}`);
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe('successful');
+    expect(res.body).toHaveProperty('message');
+  });
+
+  //single user profile
+
+  it('A login user can get a list of users of the app', async () => {
+    const res = await request(app)
+      .get(`/tweet/list-of-users`)
+
+      .set(`Authorization`, `Bearer ${token}`);
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe('successful');
+    expect(res.body).toHaveProperty('message');
+    expect(res.body).toHaveProperty('data');
   });
 });
