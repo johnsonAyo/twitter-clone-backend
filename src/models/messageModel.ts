@@ -1,25 +1,15 @@
 import { IMessage } from '../utils/interfaces/chatInterface';
-import { Schema, model } from 'mongoose';
+import mongoose from 'mongoose';
 
-// const ReceiverSchema = new Schema({
-//     receiverId: {
-//         type: String
-//     },
-//     isDeleted: {
-//         type: Boolean,
-//         default: false
-//     }
-// })
-
-const MessageSchema = new Schema(
+const MessageSchema = new mongoose.Schema(
   {
     conversationId: {
       type: String,
       required: true,
     },
     senderId: {
-      type: String,
-      required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
     },
     deleted: {
       type: Boolean,
@@ -45,7 +35,9 @@ const MessageSchema = new Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   },
 );
 
-export default model<IMessage>('Message', MessageSchema);
+export default mongoose.model<IMessage>('Message', MessageSchema);

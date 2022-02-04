@@ -9,11 +9,11 @@ export const createConversation = catchAsync(
     const { senderId, receiverId } = req.body;
     let user = req.user._id.toString();
 
-    const existingCOnversation = await Conversation.findOne({
+    const existingConversation = await Conversation.findOne({
       $and: [{ members: user }, { members: req.body.receiverId }],
     });
 
-    if (existingCOnversation) {
+    if (existingConversation) {
       return next(new ErrorHandler(400, 'conversation already exist'));
     }
 
@@ -32,10 +32,19 @@ export const createConversation = catchAsync(
 
 export const getConversation = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const data = await Conversation.find({ members: { $in: [req.params.id] } });
-    if (!data) {
-      return next(new ErrorHandler(401, 'You have no chat records. Start by typing hello!'));
+    let user = req.user._id.toString();
+    const data = await Conversation.find({ members: { $in: [req.params.id] } })
+      .sort({
+        createdAt: -1,
+      })
+      .populate('members', 'firstName lastName -_id');
+    if (req.params.id !== user) {
+      return next(new ErrorHandler(401, 'You are not logged in!'));
     }
+    // else if(!data){
+    //   return next(new ErrorHandler(401, 'You have no previous chat!'));
+    // }
+
     res.status(200).json({
       status: 'Successful',
       message: 'Users conversations',
@@ -48,13 +57,13 @@ export const getUsersConversation = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const data = await Conversation.find({
       members: { $all: [req.params.firstUserId, req.params.secondUserId] },
-    });
+    }).populate('members', 'firstName lastName -_id');
     if (!data) {
       return next(new ErrorHandler(401, 'You have no chat records. Start by typing hello!'));
     }
     res.status(200).json({
       status: 'Successful',
-      message: 'Chat was created',
+      message: 'Users conversation',
       data,
     });
   },
