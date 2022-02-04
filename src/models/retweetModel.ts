@@ -8,7 +8,7 @@ const reTweetSchema = new mongoose.Schema(
     },
     reTweeterId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'users',
+      ref: 'User',
     },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } },
