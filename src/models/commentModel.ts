@@ -17,7 +17,7 @@ const commentSchema = new mongoose.Schema({
   },
 });
 
-commentSchema.index({ content: "text" });
+commentSchema.index({ content: 'text' });
 
 const Comment = mongoose.model('Comment', commentSchema);
 
