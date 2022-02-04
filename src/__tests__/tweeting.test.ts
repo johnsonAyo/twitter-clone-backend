@@ -63,7 +63,7 @@ describe('Tweet by authorised user', () => {
   // check if a user is not authorised
   it(' Authorised user  can tweet', async () => {
     const res = await request(app)
-      .post('/tweet/')
+      .post('/tweet')
       .set(`Authorization`, `Bearer ${token}`)
       .send(newData);
     expect(res.status).toBe(201);
@@ -119,5 +119,38 @@ describe('Tweet by authorised user', () => {
     expect(res.status).toBe(200);
   });
 
-  it('should re')
+  //get tweet and retweet of other user
+
+  it('Get tweet and retweet of other user', async () => {
+    const res = await request(app)
+      .get(`/tweet/otherusertweet/${tweetId}`)
+
+      .set(`Authorization`, `Bearer ${token}`);
+    expect(res.status).toBe(200);
+  });
+
+  // Get single tweet and it comment
+
+  it('Get Single tweet and it comment', async () => {
+    const res = await request(app)
+      .get(`/tweet/singletweet/${tweetId}`)
+
+      .set(`Authorization`, `Bearer ${token}`);
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe('successful');
+    expect(res.body).toHaveProperty('message');
+  });
+
+  //single user profile
+
+  it('A login user can get a list of users of the app', async () => {
+    const res = await request(app)
+      .get(`/tweet/list-of-users`)
+
+      .set(`Authorization`, `Bearer ${token}`);
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe('successful');
+    expect(res.body).toHaveProperty('message');
+    expect(res.body).toHaveProperty('data');
+  });
 });
