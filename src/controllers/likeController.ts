@@ -25,7 +25,17 @@ export const unlikeTweet = catchAsync(async (req: Request, res: Response, next: 
 });
 
 export const getLikes = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const likes = await Like.find();
+  const id = req.params.id;
+  const userId = req.user._id;
+
+  const likes = await Like.find({ tweetId: id, userId }).populate('tweetId').populate('userId');
   if (!likes) return next(new ErrorHandler(500, 'Error occured'));
   res.status(200).json({ message: 'All likes', data: likes, number: likes.length });
+});
+
+export const getLikesByUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const userId = req.params.id;
+
+  const likes = await Like.find({ userId }).populate('tweetId').select(['-userId', '-_id'])
+  res.status(200).json({ message: 'Tweets Liked By User', data: likes, number: likes.length });
 });

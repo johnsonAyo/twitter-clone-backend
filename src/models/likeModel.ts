@@ -3,12 +3,16 @@ import mongoose from 'mongoose';
 const likeSchema = new mongoose.Schema({
   tweetId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Tweet',
+    ref: 'allCreatedTweets'
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'User'
   },
+}, 
+{
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
 });
 
 const Like = mongoose.model('Like', likeSchema);

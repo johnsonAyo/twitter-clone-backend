@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction, response } from 'express';
 import multer from 'multer';
-// import Profile from '../models/profileModel';
 import catchAsync from '../utils/catchAsync';
 import cloudinary from 'cloudinary';
 import ErrorHandler from '../utils/appError';
@@ -9,7 +8,7 @@ import cloudinaryImage from '../utils/tweet_utils/cloudinaryImageStorage';
 import User from '../models/userModels';
 import { getFollowersModel } from '../models/followModel';
 import { getFollowingModel } from '../models/followModel';
-import { ISign } from '../utils/interfaces/userInterface';
+
 
 const upload = imageMulter.single('profilePicture');
 
@@ -22,7 +21,6 @@ export const uploadProfilePicture = catchAsync(
         return next(new ErrorHandler(500, err.message));
       }
 
-      console.log(req.file, 'lll');
       const path = req.file?.path;
       try {
         const profile = await User.findOne({ email: req.user.email });
@@ -59,7 +57,7 @@ export const uploadProfilePicture = catchAsync(
 export const updateProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const profile = await User.findOne({ email: req.user.email });
   if (!profile) return next(new ErrorHandler(404, 'profile does not exist'));
-  await profile.update({
+  await profile.updateOne({
     firstName: req.body.firstName || profile.firstName,
     lastName: req.body.lastName || profile.lastName,
     bioData: req.body.bioData || profile.bioData,
@@ -93,11 +91,3 @@ export const getProfile = catchAsync(async (req: Request, res: Response, next: N
     following,
   });
 });
-
-// export const getProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) =>{
-//   const profile = await User.findOne({_id:req.params.id})
-//   res.status(201).json({
-//     status: 'successful!',
-//     profile
-//   });
-// })

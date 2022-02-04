@@ -1,16 +1,18 @@
-import app from '../app';
 import supertest from 'supertest';
+import app from '../app';
 
 let emailToken: string;
 let token: string;
-let resetToken: string;
 
-describe('Auth', () => {
+describe('Following Feature Test Case', () => {
   const userData = {
     firstName: 'Tolu',
     lastName: 'Johnson',
     email: 'tolz@yahoo.com',
     password: 'testing',
+  };
+  const followId = {
+    userId: '61e5f7416ecc46c9c0556ac1',
   };
 
   test('signup', async () => {
@@ -41,49 +43,25 @@ describe('Auth', () => {
     expect(response.body.user.isActive).toBe(true);
   });
 
-  const changePassword = {
-    previousPassword: 'testing',
-    newPassword: 'passpass',
-    confirmNewPassword: 'passpass',
-  };
-
-  const reset = {
-    password: 'testing',
-    passwordConfirm: 'testing',
-  };
-
-  it('forgets password', async () => {
+  test('Trending Hashtag with tweet', async () => {
     const response = await supertest(app)
-      .post('/api/v1/reset/forgotpassword')
-      .send({ email: 'tolz@yahoo.com' })
-      
-      resetToken = response.body.resetToken
-    expect(response.status).toBe(200)
-    // console.log(resetToken)
-  });
-
-  it('resets password', async () => {
-    const response = await supertest(app)
-      .post(`/api/v1/reset/resetpassword/${resetToken}`)
-      .send(reset)
-    expect(response.status).toBe(200)
-    console.log(response.body);
-    
-  })
-
-  it('change password', async () => {
-    const response = await supertest(app)
-      .post('/api/v1/reset/changepassword')
-      .set('Authorization', `Bearer ${token}`)
-      .send(changePassword);
+      .get('/api/trends')
+      .set('Authorization', `Bearer ${token}`);
     expect(response.status).toBe(200);
+    expect(response.body.message).toBe('success');
   });
-
-  it('resets password', async () => {
+  test('Trending Hashtag  count', async () => {
     const response = await supertest(app)
-      .post(`/api/v1/reset/resetpassword/${resetToken}`)
-      .set('Authorization', `Bearer ${token}`)
-      .send(reset);
+      .get('/api/trends/tweetcount')
+      .set('Authorization', `Bearer ${token}`);
     expect(response.status).toBe(200);
+    expect(response.body.message).toBe('success');
+  });
+  test('View tweets of a friend', async () => {
+    const response = await supertest(app)
+      .get('/api/viewtweet/friend/61f2bdaef45386084b83aceb?pageNo=2&pageSize=5')
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe('success');
   });
 });

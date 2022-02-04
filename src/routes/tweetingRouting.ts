@@ -27,6 +27,10 @@ router.delete('/undoretweet/:id', protectRoute, tweetControls.undoUserReweet);
 //get other user tweet and retweet in th
 router.get('/otherusertweet/:id', protectRoute, tweetControls.getAllUserTweetNRetweet);
 
+router.get('/usertweet/:userId', protectRoute, tweetControls.getUserTweetByTime)
+
+router.get('/popular', protectRoute, tweetControls.getPopularTweets)
+
 // Single tweet with it comments
 
 router.get('/singletweet/:id', protectRoute, tweetControls.singleTweetAndComment);
