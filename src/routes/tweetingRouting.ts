@@ -31,6 +31,4 @@ router.get('/otherusertweet/:id', protectRoute, tweetControls.getAllUserTweetNRe
 
 // router.get('/popular', protectRoute, tweetControls.getPopularTweets);
 
-
-
 export default router;

@@ -89,7 +89,7 @@ describe('Tweet by authorised user', () => {
 
   //retweet a tweet
   it(' Retweet a tweet using valid tweet id', async () => {
-    console.log(tweetId)
+    console.log(tweetId);
     const res = await request(app)
       .post(`/tweet/retweet/${tweetId}`)
       .set(`Authorization`, `Bearer ${token}`)
