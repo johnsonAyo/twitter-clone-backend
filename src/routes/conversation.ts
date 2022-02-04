@@ -1,5 +1,9 @@
 import express from 'express';
-import { createConversation, getConversation, getUsersConversation  } from '../controllers/conversationController';
+import {
+  createConversation,
+  getConversation,
+  getUsersConversation,
+} from '../controllers/conversationController';
 import { protectRoute } from '../controllers/authController';
 
 const router = express.Router();
