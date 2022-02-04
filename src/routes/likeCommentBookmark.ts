@@ -17,7 +17,7 @@ router.get('/bookmark', getAllBookmarks);
 router.get('/bookmark/:id', getSingleBookmark);
 router.get('/:id/comment', getComments);
 router.get('/:id/like', getLikes);
-router.get('/user/likes/:id', getLikesByUser);
+router.get('/user/likes/:id', getLikesByUser)
 
 //POST Request
 router.post('/:id/like', likeTweet);

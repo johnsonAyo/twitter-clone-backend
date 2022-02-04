@@ -16,7 +16,7 @@ class APIFeatures {
   }
   sort() {
     if (this.queryString.sort) {
-      const sortSearch = this.queryString.sort.split(',').join(' ');
+      const sortSearch = this.queryString.sort.split(",").join(" ");
       this.query = this.query.sort(sortSearch);
     }
     return this;
