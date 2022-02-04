@@ -55,13 +55,11 @@ export const getConversation = catchAsync(
 
 export const getUsersConversation = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    let user = req.user._id.toString();
     const data = await Conversation.find({
       members: { $all: [req.params.firstUserId, req.params.secondUserId] },
-    }).populate('members', 'firstName lastName -_id')
-
-    if (req.params.firstUserId !== user) {
-      return next(new ErrorHandler(401, 'You are not logged in!'));
+    }).populate('members', 'firstName lastName -_id');
+    if (!data) {
+      return next(new ErrorHandler(401, 'You have no chat records. Start by typing hello!'));
     }
     res.status(200).json({
       status: 'Successful',
