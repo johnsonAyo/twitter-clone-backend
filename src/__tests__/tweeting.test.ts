@@ -118,6 +118,4 @@ describe('Tweet by authorised user', () => {
       .set(`Authorization`, `Bearer ${token}`);
     expect(res.status).toBe(200);
   });
-
-  it('should re')
-});
+})
