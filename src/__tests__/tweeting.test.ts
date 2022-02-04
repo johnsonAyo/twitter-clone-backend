@@ -125,7 +125,6 @@ describe('Tweet by authorised user', () => {
   it('Get tweet and retweet of other user', async () => {
     const res = await request(app)
       .get(`/tweet/otherusertweet/${tweetId}`)
-
       .set(`Authorization`, `Bearer ${token}`);
     expect(res.status).toBe(200);
   });
