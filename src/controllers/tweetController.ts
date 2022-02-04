@@ -11,7 +11,7 @@ import User from '../models/userModels';
 import { createHashtag, extractHashtag } from '../models/trendingModel';
 import Bookmark from '../models/bookmarkModel';
 import Like from '../models/likeModel';
-import Comment from '../models/commentModel'
+import Comment from '../models/commentModel';
 
 const responseStatus = new Responses();
 /****************************************************************************
@@ -215,7 +215,7 @@ export const getAllUserTweetNRetweet = catchAsync(async (req: Request, res: Resp
   const otherUserId = req.params.id;
 
   const otherUserReTweetDetail = await CreateRetTweet.find({ reTweeterId: otherUserId }).populate(
-    'tweetId retweeter_name bioData noOfLikes commentCount',
+    'tweetId retweeter_name noOfLikes commentCount',
   );
 
   const allOtherUserTweet = await CreateTweetCln.find({ userId: otherUserId }).populate(
@@ -303,5 +303,84 @@ export const getPopularTweets = catchAsync(async (req: Request, res: Response) =
   // const tweets = await CreateTweetCln.find().populate(['Like', 'Comment', 'Bookmark'])
 
   responseStatus.setSuccess(200, 'Get popular tweets', data);
+  return responseStatus.send(res);
+});
+
+// Sprint Two \\
+/****************************************************************************
+ *                 
+ *                  Get Single tweet and it comment                           *                  
+ /*****************************************************************************/
+
+export const singleTweetAndComment = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const tweetId = req.params.id;
+
+    // const {contentLimit, pageNo} =  req.query;
+
+    let numObj = { contentLimit: 2, pageNo: 1 };
+
+    let { contentLimit, pageNo } = numObj;
+
+    console.log(contentLimit, pageNo);
+
+    let singleTweet = await CreateTweetCln.find({ _id: tweetId }).populate([
+      {
+        path: 'retweetCount commentCount noOfLikes allComment createdBy',
+        select: 'content userId tweetId firstName lastName email profilePic bioData',
+        model: 'allCreatedTweets',
+        options: {
+          sort: { createdAt: -1 },
+        },
+
+        skip: (Number(pageNo) - 1) * Number(contentLimit),
+        limit: Number(contentLimit),
+      },
+    ]);
+
+    responseStatus.setSuccess(200, 'Single tweet and it comment', singleTweet);
+
+    return responseStatus.send(res);
+  },
+);
+
+/***********************************************************************
+ *
+ *
+ *
+ *  As a login user, you can access other person profile
+ * This function handle that
+ *
+ *************************************************************************/
+
+export const singleUserProfile = catchAsync(async (req: Request, res: Response) => {
+  const otherUserId = req.params.id;
+
+  const otherUserDetails = await User.find({ _id: otherUserId }).select({
+    firstName: 1,
+    lastName: 1,
+    email: 1,
+    profilePic: 1,
+  });
+
+  responseStatus.setSuccess(200, 'Bio data', otherUserDetails);
+
+  return responseStatus.send(res);
+});
+
+/***********************************************************************
+ *
+ *
+ *
+ *  As a login user, i want to get the list of people that are the user of the app
+ * This function handle that
+ *
+ *************************************************************************/
+
+export const listOfAppUser = catchAsync(async (req: Request, res: Response) => {
+  const userList = await User.find({}).select({ firstName: 1, lastName: 1 });
+
+  responseStatus.setSuccess(200, 'List Of Users In the App', userList);
+
   return responseStatus.send(res);
 });
