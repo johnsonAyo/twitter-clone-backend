@@ -51,6 +51,6 @@ export const searchUsers = catchAsync(async (req: Request, res: Response, next: 
 
   const users = await usersQuery.query;
 
-  resData.setSuccess(200, 'successfully searched for tweets and retweets', { users });
+  resData.setSuccess(200, 'successfully searched for users', { users });
   return resData.send(res);
 });

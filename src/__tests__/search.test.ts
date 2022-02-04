@@ -4,7 +4,7 @@ import app from '../app';
 let emailToken: string;
 let token: string;
 
-describe('Following Feature Test Case', () => {
+describe('Searching Test Case', () => {
   const userData = {
     firstName: 'Tolu',
     lastName: 'Johnson',
@@ -40,18 +40,19 @@ describe('Following Feature Test Case', () => {
     expect(response.body.user.isActive).toBe(true);
   });
 
-  it('Searches for tweets and comments', async () => {
+  test('Searches for tweets and comments', async () => {
     const response = await supertest(app)
-      .get(`/api/v1/search`)
+      .get(`/api/v1/search?search=sars`)
       .set('Authorization', `Bearer ${token}`);
     expect(response.status).toBe(200);
-    expect(response.body.message).toBe('success');
+    expect(response.body.message).toBe('successfully searched for tweets and retweets');
   });
-  it('Searches for users', async () => {
+
+  test('Searches for users', async () => {
     const response = await supertest(app)
-      .get(`/api/v1/search/users`)
+      .get(`/api/v1/search/users?search=Oyinkansola&limit=5&page=1`)
       .set('Authorization', `Bearer ${token}`);
     expect(response.status).toBe(200);
-    expect(response.body.message).toBe('success');
+    expect(response.body.message).toBe('successfully searched for tweets and retweets');
   });
 });
