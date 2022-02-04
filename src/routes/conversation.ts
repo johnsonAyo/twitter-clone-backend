@@ -11,6 +11,6 @@ const router = express.Router();
 router.post('/', protectRoute, createConversation);
 router.get('/:id', protectRoute, getConversation);
 router.get('/:firstUserId/:secondUserId', protectRoute, getUsersConversation);
-router.get('/:coversationId', protectRoute, getUsersConversation);
+// router.get('/:coversationId', protectRoute, getUsersConversation);
 
 export default router;
