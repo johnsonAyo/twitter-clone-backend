@@ -27,8 +27,18 @@ router.delete('/undoretweet/:id', protectRoute, tweetControls.undoUserReweet);
 //get other user tweet and retweet in th
 router.get('/otherusertweet/:id', protectRoute, tweetControls.getAllUserTweetNRetweet);
 
-// router.get('/usertweet/:userId', protectRoute, tweetControls.getUserTweetByTime);
+//list of all user of the app
+router.get('/list-of-users/', protectRoute, tweetControls.listOfAppUser);
 
-// router.get('/popular', protectRoute, tweetControls.getPopularTweets);
+router.get('/usertweet/:userId', protectRoute, tweetControls.getUserTweetByTime);
+
+//get single user prover
+router.get('/single-user-profile/:id', protectRoute, tweetControls.singleUserProfile);
+
+//single tweet and it comment
+
+router.get('/singletweet/:id', protectRoute, tweetControls.singleUserProfile);
+
+router.get('/popular', protectRoute, tweetControls.getPopularTweets);
 
 export default router;
