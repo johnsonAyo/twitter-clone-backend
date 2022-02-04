@@ -9,6 +9,9 @@ import ErrorHandler from '../utils/appError';
 import Responses from '../utils/response';
 import User from '../models/userModels';
 import { createHashtag, extractHashtag } from '../models/trendingModel';
+import Bookmark from '../models/bookmarkModel';
+import Like from '../models/likeModel';
+import Comment from '../models/commentModel'
 
 const responseStatus = new Responses();
 /****************************************************************************
@@ -39,6 +42,7 @@ export const userNewTweet = catchAsync(async (req: any, res: Response, next: Nex
 
     if (createTweet) {
       await createTweet.save();
+      console.log('dfdfdfdfd', hashtags);
 
       responseStatus.setSuccess(201, 'Tweet saved successfully...', { createTweet, hashtags });
 
@@ -54,8 +58,8 @@ export const userNewTweet = catchAsync(async (req: any, res: Response, next: Nex
       tweetImage: cloudImage.secure_url,
       whoCanReply,
       cloudinary_id: cloudImage.public_id,
-      hashtag: hashtags
-      });
+      hashtag: hashtags,
+    });
 
     if (createTweet) {
       await createTweet.save();
@@ -132,19 +136,6 @@ export const allUserTweet = catchAsync(async (req: Request, res: Response, next:
     'noOfLikes commentCount allComment createdBy',
   );
 
-  //   {
-  //     path: 'retweetCount commentCount noOfLikes allComment createdBy',
-  //     select: 'content userId tweetId firstName lastName email profilePic bioData',
-  //     model: 'allCreatedTweets',
-  //     options: {
-  //       sort: { createdAt: -1 },
-  //     },
-
-  //     skip: (Number(pageNo) - 1) * Number(contentLimit),
-  //     limit: Number(contentLimit),
-  //   },
-  // ]
-
   if (allTweets == null) {
     return next(new ErrorHandler(404, 'Error Occured in tweet fetching...'));
   } else {
@@ -163,25 +154,32 @@ export const allUserTweet = catchAsync(async (req: Request, res: Response, next:
 export const deleteTweet = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const tweetId = req.params.id;
 
-  CreateTweetCln.findById({ _id: tweetId }, async (err: any, user: any) => {
+  CreateTweetCln.findById(tweetId, async (err: any, tweet: any) => {
     if (err) {
       return next(new ErrorHandler(404, 'Error occured in finding a particular tweet'));
     } else {
       //delete image from cloudinary according to post id
 
-      if (!user) return next(new ErrorHandler(404, 'The document you want is not found...'));
-      await cloudinaryImage.uploader.destroy(user.cloudinary_id);
+      try {
+        if (!tweet) return next(new ErrorHandler(404, 'The document you want is not found...'));
+        if (tweet.cloudinary_id) await cloudinaryImage.uploader.destroy(tweet.cloudinary_id);
 
-      //delete user tweet
-      await user.remove();
+        //delete user tweet
+        await tweet.remove();
 
-      // delete also the retweet which a user has deleted from retweet collection
+        // delete also the retweet which a user has deleted from retweet collection
 
-      let deletedTweet = await CreateRetTweet.deleteMany({ tweetId: tweetId });
+        let deletedTweet = await CreateRetTweet.deleteMany({ tweetId: tweetId });
+        await Bookmark.deleteMany({ tweetId });
+        await Like.deleteMany({ tweetId });
+        await Comment.deleteMany({ tweetId });
 
-      if (deletedTweet) {
-        responseStatus.setSuccess(200, 'This tweet was removed', deletedTweet);
-        return responseStatus.send(res);
+        if (deletedTweet) {
+          responseStatus.setSuccess(200, 'This tweet was removed', deletedTweet);
+          return responseStatus.send(res);
+        }
+      } catch (error: any) {
+        next(new ErrorHandler(500, error.message));
       }
     }
   });
@@ -217,7 +215,7 @@ export const getAllUserTweetNRetweet = catchAsync(async (req: Request, res: Resp
   const otherUserId = req.params.id;
 
   const otherUserReTweetDetail = await CreateRetTweet.find({ reTweeterId: otherUserId }).populate(
-    'tweetId retweeter_name noOfLikes commentCount',
+    'tweetId retweeter_name bioData noOfLikes commentCount',
   );
 
   const allOtherUserTweet = await CreateTweetCln.find({ userId: otherUserId }).populate(
@@ -234,81 +232,76 @@ export const getAllUserTweetNRetweet = catchAsync(async (req: Request, res: Resp
   return responseStatus.send(res);
 });
 
-// Sprint Two \\
-/****************************************************************************
- *                 
- *                  Get Single tweet and it comment                           *                  
- /*****************************************************************************/
+export const getUserTweetByTime = catchAsync(async (req: Request, res: Response) => {
+  const { pageNo, pageSize, createdAt } = req.query as any;
+  const page = +pageNo || 1;
+  const size = +pageSize || 5;
+  const otherUserTweet = await CreateTweetCln.find({
+    createdAt: { $gte: new Date(new Date(createdAt).setHours(0, 0, 0)) },
+    userId: req.params.userId,
+  })
+    .populate('userId')
+    .skip(page - 1)
+    .limit(size);
 
-export const singleTweetAndComment = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const tweetId = req.params.id;
+  const otherUserRetweet = await CreateRetTweet.find({
+    createdAt: { $gte: new Date(new Date(createdAt).setHours(0, 0, 0)) },
+    reTweeterId: req.params.userId,
+  })
+    .populate('reTweeterId')
+    .skip(page - 1)
+    .limit(size);
 
-    // const {contentLimit, pageNo} =  req.query;
+  const data = {
+    tweets: otherUserTweet,
+    retweets: otherUserRetweet,
+  };
 
-    let numObj = { contentLimit: 2, pageNo: 1 };
-
-    let { contentLimit, pageNo } = numObj;
-
-    console.log(contentLimit, pageNo);
-
-    let singleTweet = await CreateTweetCln.find({ _id: tweetId }).populate([
-      {
-        path: 'retweetCount commentCount noOfLikes allComment createdBy',
-        select: 'content userId tweetId firstName lastName email profilePic bioData',
-        model: 'allCreatedTweets',
-        options: {
-          sort: { createdAt: -1 },
-        },
-
-        skip: (Number(pageNo) - 1) * Number(contentLimit),
-        limit: Number(contentLimit),
-      },
-    ]);
-
-    responseStatus.setSuccess(200, 'Single tweet and it comment', singleTweet);
-
-    return responseStatus.send(res);
-  },
-);
-
-/***********************************************************************
- *
- *
- *
- *  As a login user, you can access other person profile
- * This function handle that
- *
- *************************************************************************/
-
-export const singleUserProfile = catchAsync(async (req: Request, res: Response) => {
-  const otherUserId = req.params.id;
-
-  const otherUserDetails = await User.find({ _id: otherUserId }).select({
-    firstName: 1,
-    lastName: 1,
-    email: 1,
-    profilePic: 1,
-  });
-
-  responseStatus.setSuccess(200, 'Bio data', otherUserDetails);
-
+  responseStatus.setSuccess(200, 'Get tweets and retweets by time', data);
   return responseStatus.send(res);
 });
 
-/***********************************************************************
- *
- *
- *
- *  As a login user, i want to get the list of people that are the user of the app
- * This function handle that
- *
- *************************************************************************/
+export const getPopularTweets = catchAsync(async (req: Request, res: Response) => {
+  const likes = await Like.aggregate([
+    { $group: { _id: '$tweetId', count: { $sum: 1 } } },
+    { $sort: { count: -1 } },
+  ]);
 
-export const listOfAppUser = catchAsync(async (req: Request, res: Response) => {
-  const userList = await User.find({}).select({ firstName: 1, lastName: 1 });
+  const comments = await Comment.aggregate([
+    { $group: { _id: '$tweetId', count: { $sum: 1 } } },
+    { $sort: { count: -1 } },
+  ]);
 
-  responseStatus.setSuccess(200, 'List Of Users In the App', userList);
+  const bookmarks = await Bookmark.aggregate([
+    { $group: { _id: '$tweetId', count: { $sum: 1 } } },
+    { $sort: { count: -1 } },
+  ]);
 
+  const tweets = await CreateTweetCln.find().populate('userId');
+
+  // console.log(tweets)
+
+  const combinedTweetsAndCounts = tweets.map((tweet) => {
+    const tweetLikes = likes.find((like) => tweet._id.equals(like._id)) || { count: 0 };
+    const tweetComments = comments.find((comment: any) => tweet._id.equals(comment._id)) || {
+      count: 0,
+    };
+    const tweetBookmarks = bookmarks.find((bookmark) => tweet._id.equals(bookmark._id)) || {
+      count: 0,
+    };
+
+    return {
+      tweet,
+      count: tweetLikes.count + tweetComments.count + tweetBookmarks.count,
+    };
+  });
+
+  const data = combinedTweetsAndCounts.sort((a, b) => b.count - a.count);
+
+  // const tweets = await CreateTweetCln.populate(likes, {path: "tweetId"});
+
+  // const tweets = await CreateTweetCln.find().populate(['Like', 'Comment', 'Bookmark'])
+
+  responseStatus.setSuccess(200, 'Get popular tweets', data);
   return responseStatus.send(res);
 });

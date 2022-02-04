@@ -25,7 +25,7 @@ const tweetSchema = new mongoose.Schema<tweetIn>(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'users',
+      ref: 'User',
     },
     messageBody: {
       type: String,
