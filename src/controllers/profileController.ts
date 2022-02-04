@@ -9,7 +9,6 @@ import User from '../models/userModels';
 import { getFollowersModel } from '../models/followModel';
 import { getFollowingModel } from '../models/followModel';
 
-
 const upload = imageMulter.single('profilePicture');
 
 export const uploadProfilePicture = catchAsync(
