@@ -23,7 +23,7 @@ import latest from './routes/latest';
 import trendingRoutes from './routes/trendingRoute';
 import conversationRouter from './routes/conversation';
 import messageRouter from './routes/message';
-import searchRouter from './routes/search'
+import searchRouter from './routes/search';
 
 dotenv.config();
 const app = express();

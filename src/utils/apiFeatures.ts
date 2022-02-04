@@ -21,7 +21,6 @@ class APIFeatures {
     }
     return this;
   }
-  
 }
 
 export default APIFeatures;
