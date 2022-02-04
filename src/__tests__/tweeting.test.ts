@@ -38,7 +38,7 @@ describe('Auth', () => {
       .send({ email: userData.email, password: userData.password });
 
     token = response.body.token;
-    userId = response.body._id;
+    userId = response.body.user._id;
 
     expect(response.status).toBe(201);
     expect(response.body.user.isActive).toBe(true);
@@ -68,7 +68,7 @@ describe('Tweet by authorised user', () => {
       .send(newData);
     expect(res.status).toBe(201);
 
-    tweetId = res.body.data._id;
+    tweetId = res.body.data.createTweet._id;
   });
 
   // All user tweet
@@ -89,6 +89,7 @@ describe('Tweet by authorised user', () => {
 
   //retweet a tweet
   it(' Retweet a tweet using valid tweet id', async () => {
+    console.log(tweetId);
     const res = await request(app)
       .post(`/tweet/retweet/${tweetId}`)
       .set(`Authorization`, `Bearer ${token}`)
