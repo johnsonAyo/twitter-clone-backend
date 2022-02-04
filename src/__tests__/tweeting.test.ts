@@ -120,8 +120,6 @@ describe('Tweet by authorised user', () => {
     expect(res.status).toBe(200);
   });
 
-
-
   //get tweet and retweet of other user
 
   it('Get tweet and retweet of other user', async () => {
@@ -132,7 +130,6 @@ describe('Tweet by authorised user', () => {
     expect(res.status).toBe(200);
   });
 
-
   // Get single tweet and it comment
 
   it('Get Single tweet and it comment', async () => {
@@ -141,10 +138,9 @@ describe('Tweet by authorised user', () => {
 
       .set(`Authorization`, `Bearer ${token}`);
     expect(res.status).toBe(200);
-    expect(res.body.status).toBe("successful");
-    expect(res.body).toHaveProperty("message");
+    expect(res.body.status).toBe('successful');
+    expect(res.body).toHaveProperty('message');
   });
-
 
   //single user profile
 
@@ -154,8 +150,8 @@ describe('Tweet by authorised user', () => {
 
       .set(`Authorization`, `Bearer ${token}`);
     expect(res.status).toBe(200);
-    expect(res.body.status).toBe("successful");
-    expect(res.body).toHaveProperty("message");
-    expect(res.body).toHaveProperty("data");
+    expect(res.body.status).toBe('successful');
+    expect(res.body).toHaveProperty('message');
+    expect(res.body).toHaveProperty('data');
   });
 });

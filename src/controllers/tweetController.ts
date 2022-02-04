@@ -8,10 +8,10 @@ import catchAsync from '../utils/catchAsync';
 import ErrorHandler from '../utils/appError';
 import Responses from '../utils/response';
 import User from '../models/userModels';
-import Comment from '../models/commentModel';
 import { createHashtag, extractHashtag } from '../models/trendingModel';
-import Like from '../models/likeModel';
 import Bookmark from '../models/bookmarkModel';
+import Like from '../models/likeModel';
+import Comment from '../models/commentModel'
 
 const responseStatus = new Responses();
 /****************************************************************************
@@ -28,8 +28,8 @@ export const userNewTweet = catchAsync(async (req: any, res: Response, next: Nex
   if (error) return next(new ErrorHandler(404, error.message));
 
   const { messageBody, whoCanReply } = req.body;
+
   let hashtags = await createHashtag(messageBody);
-  extractHashtag(messageBody);
   if (req.file == undefined) {
     let createTweet = new CreateTweetCln({
       userId: req.user._id,
@@ -161,20 +161,19 @@ export const deleteTweet = catchAsync(async (req: Request, res: Response, next: 
       //delete image from cloudinary according to post id
 
       try {
-
         if (!tweet) return next(new ErrorHandler(404, 'The document you want is not found...'));
         if (tweet.cloudinary_id) await cloudinaryImage.uploader.destroy(tweet.cloudinary_id);
-  
+
         //delete user tweet
         await tweet.remove();
-  
+
         // delete also the retweet which a user has deleted from retweet collection
-  
+
         let deletedTweet = await CreateRetTweet.deleteMany({ tweetId: tweetId });
         await Bookmark.deleteMany({ tweetId });
         await Like.deleteMany({ tweetId });
         await Comment.deleteMany({ tweetId });
-  
+
         if (deletedTweet) {
           responseStatus.setSuccess(200, 'This tweet was removed', deletedTweet);
           return responseStatus.send(res);
@@ -284,7 +283,7 @@ export const getPopularTweets = catchAsync(async (req: Request, res: Response) =
 
   const combinedTweetsAndCounts = tweets.map((tweet) => {
     const tweetLikes = likes.find((like) => tweet._id.equals(like._id)) || { count: 0 };
-    const tweetComments = comments.find((comment) => tweet._id.equals(comment._id)) || {
+    const tweetComments = comments.find((comment: any) => tweet._id.equals(comment._id)) || {
       count: 0,
     };
     const tweetBookmarks = bookmarks.find((bookmark) => tweet._id.equals(bookmark._id)) || {
