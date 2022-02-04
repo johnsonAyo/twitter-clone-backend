@@ -53,6 +53,6 @@ describe('Searching Test Case', () => {
       .get(`/api/v1/search/users?search=Oyinkansola&limit=5&page=1`)
       .set('Authorization', `Bearer ${token}`);
     expect(response.status).toBe(200);
-    expect(response.body.message).toBe('successfully searched for tweets and retweets');
+    expect(response.body.message).toBe('successfully searched for users');
   });
 });
