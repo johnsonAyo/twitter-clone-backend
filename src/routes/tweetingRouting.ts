@@ -33,7 +33,7 @@ router.get('/popular', protectRoute, tweetControls.getPopularTweets)
 
 // Single tweet with it comments
 
-router.get('/singletweet/:id', protectRoute, tweetControls.singleTweetAndComment);
+router.get('/singletweet/:id', protectRoute, tweetControls.singleTweetArrndComment);
 
 // A particular user's profile
 router.get('/single-user-profile/:id', protectRoute, tweetControls.singleUserProfile);
