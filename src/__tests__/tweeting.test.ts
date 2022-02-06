@@ -146,7 +146,7 @@ describe('Tweet by authorised user', () => {
 
   it('A login user can get a list of users of the app', async () => {
     const res = await request(app)
-      .get(`/tweet/list-of-users`)
+      .get(`/profile/list-of-users`)
 
       .set(`Authorization`, `Bearer ${token}`);
     expect(res.status).toBe(200);
