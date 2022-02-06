@@ -7,17 +7,19 @@ const ConversationSchema = new mongoose.Schema(
     //   {
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: 'User',
-        
+
     //   },
-    // ] 
-    members:{
+    // ]
+    members: {
       type: Array,
-      ref: 'User'
-    }
+      ref: 'User',
+    },
   },
 
   {
-    timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true }
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   },
 );
 

@@ -36,6 +36,7 @@ const tweetSchema = new mongoose.Schema<tweetIn>(
     },
     whoCanReply: {
       type: String,
+      default:"Everyone",
     },
     cloudinary_id: {
       type: String,
