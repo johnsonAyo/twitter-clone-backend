@@ -13,10 +13,12 @@ export async function viewTweet(userId: string, pageNo: number, pageSize: number
     .limit(pageSize);
   let followingId = following.map((val: any) => val.userId);
 
-  let data: any = await CreateTweetCln.find({ userId: { $in: followingId } });
+  let data: any = await CreateTweetCln.find({ userId: { $in: followingId } }).populate('userId');
 
   let followingIdRe = following.map((val: any) => val.userId.toString());
-  let retweet: any = await CreateReTweet.find({ reTweeterId: { $in: followingIdRe } });
+  let retweet: any = await CreateReTweet.find({ reTweeterId: { $in: followingIdRe } }).populate(
+    'reTweeterId',
+  );
 
   let output: any = { following: followingId, tweet: data, retweet };
   return output;

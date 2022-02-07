@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import CreateTweetCln from './tweetModel';
-type ResultTypes = object;
+
 /***********************************
  * schema for trending Hashtags
  ***********************************/
@@ -181,6 +181,16 @@ export async function getTrendingHashtagwithTweet() {
   });
   return new Promise((resolve, reject) => {
     hashtagArr ? resolve({ trending }) : reject(hashtagArr);
+  });
+}
+/************************************************************
+ *           Get  Hashtag tweet (MAIN METHOD)
+ ************************************************************/
+
+export async function findHashtagTweet(hashtag: string) {
+  let tweet = await CreateTweetCln.find({ hashtag: hashtag }).populate('userId')
+  return new Promise((resolve, reject) => {
+    tweet ? resolve({ tweet }) : reject(tweet);
   });
 }
 
