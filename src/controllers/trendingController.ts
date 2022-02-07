@@ -52,7 +52,9 @@ export const trendsTweetCountController = catchAsync(
 export const hashtagTweetController = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      let data: any = await findHashtagTweet(req.query.hashtag as string);
+      let { hashtag, pageNo, pageSize }: any = req.query;
+      pageNo = parseInt(pageNo);
+      let data: any = await findHashtagTweet(hashtag, pageNo, pageSize);
       responseClass.setSuccess(200, 'success', data);
       return responseClass.send(res);
     } catch (error) {

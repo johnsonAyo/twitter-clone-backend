@@ -187,8 +187,11 @@ export async function getTrendingHashtagwithTweet() {
  *           Get  Hashtag tweet (MAIN METHOD)
  ************************************************************/
 
-export async function findHashtagTweet(hashtag: string) {
-  let tweet = await CreateTweetCln.find({ hashtag: hashtag }).populate('userId')
+export async function findHashtagTweet(hashtag: string, pageNo: number, pageSize: number) {
+  let tweet = await CreateTweetCln.find({ hashtag: hashtag })
+    .populate('userId')
+    .skip(pageNo - 1)
+    .limit(pageSize);
   return new Promise((resolve, reject) => {
     tweet ? resolve({ tweet }) : reject(tweet);
   });
