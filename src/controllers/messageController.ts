@@ -22,7 +22,7 @@ export const getMessages = catchAsync(async (req: Request, res: Response, next: 
     .sort({
       createdAt: -1,
     })
-    .populate('senderId', 'firstName lastName -_id');
+    .populate('senderId');
   if (!data) {
     return next(new ErrorHandler(401, 'You have no chat records. Start by typing hello!'));
   }
