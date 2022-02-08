@@ -12,6 +12,7 @@ import { createHashtag, extractHashtag } from '../models/trendingModel';
 import Bookmark from '../models/bookmarkModel';
 import Like from '../models/likeModel';
 import Comment from '../models/commentModel';
+import { getFollowersModel, getFollowingModel } from '../models/followModel';
 
 const responseStatus = new Responses();
 /****************************************************************************
@@ -35,14 +36,13 @@ export const userNewTweet = catchAsync(async (req: any, res: Response, next: Nex
       userId: req.user._id,
       messageBody,
       tweetImage: null,
-      whoCanReply,
+      whoCanReply:whoCanReply == "Everyone" ? whoCanReply : "People you follow",
       cloudinary_id: null,
       hashtag: hashtags,
     });
 
     if (createTweet) {
       await createTweet.save();
-      console.log('dfdfdfdfd', hashtags);
 
       responseStatus.setSuccess(201, 'Tweet saved successfully...', { createTweet, hashtags });
 
@@ -56,7 +56,7 @@ export const userNewTweet = catchAsync(async (req: any, res: Response, next: Nex
       userId: req.user._id,
       messageBody,
       tweetImage: cloudImage.secure_url,
-      whoCanReply,
+      whoCanReply:whoCanReply == "Everyone" ? whoCanReply : "People you follow",
       cloudinary_id: cloudImage.public_id,
       hashtag: hashtags,
     });
@@ -122,12 +122,16 @@ export const allUserRetweet = catchAsync(async (req: Request, res: Response) => 
     return responseStatus.send(res);
   }
 });
+
+
 /****************************************************************************
  *                 
  *                     Show All user Tweet                                 *                  
  *                                                                           *
  *                                                                           *
 /*****************************************************************************/
+
+
 
 export const allUserTweet = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   //All user tweet
@@ -154,11 +158,19 @@ export const allUserTweet = catchAsync(async (req: Request, res: Response, next:
 export const deleteTweet = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const tweetId = req.params.id;
 
+  // if(req.user._id) return res.json
+
+  
+
   CreateTweetCln.findById(tweetId, async (err: any, tweet: any) => {
     if (err) {
       return next(new ErrorHandler(404, 'Error occured in finding a particular tweet'));
     } else {
       //delete image from cloudinary according to post id
+
+    if(!tweet.userId.equals(req.user._id)){
+     return res.json({warning:"You cannot delete another person's tweet"})
+    }
 
       try {
         if (!tweet) return next(new ErrorHandler(404, 'The document you want is not found...'));
@@ -192,16 +204,23 @@ export const deleteTweet = catchAsync(async (req: Request, res: Response, next: 
 
 export const undoUserReweet = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    await CreateRetTweet.deleteOne({ tweetId: req.params.id }, (err: any, content: any) => {
-      if (err) return next(new ErrorHandler(404, err.message));
 
-      if (content) {
-        responseStatus.setSuccess(200, 'Reweet is been undo successfully...', content);
-        return responseStatus.send(res);
-      }
-    });
+    const tweetToDelete =  await CreateRetTweet.findOne({ tweetId: req.params.id });
+
+    if (!tweetToDelete) return next(new ErrorHandler(404, "Error occurred in finding retweet to undo.."));
+
+    if(!tweetToDelete.reTweeterId.equals(req.user._id)){
+      return res.json({warning:"You cannot delete another person's retweet"})
+     }else{
+
+     await tweetToDelete.remove(); // remove from the collection of retweet
+      responseStatus.setSuccess(200, 'Reweet is been undo successfully...', tweetToDelete);
+      return responseStatus.send(res);
+     }
+
+   
   },
-);
+); 
 
 /****************************************************************************
  *                 
@@ -277,7 +296,7 @@ export const getPopularTweets = catchAsync(async (req: Request, res: Response) =
     { $sort: { count: -1 } },
   ]);
 
-  const tweets = await CreateTweetCln.find().populate('userId');
+  const tweets = await CreateTweetCln.find().populate('userId').populate('noOfLikes commentCount bookmarkCount');
 
   // console.log(tweets)
 
@@ -318,7 +337,7 @@ export const singleTweetAndComment = catchAsync(
 
     // const {contentLimit, pageNo} =  req.query;
 
-    let numObj = { contentLimit: 2, pageNo: 1 };
+    let numObj = { contentLimit: 5, pageNo: 3 };
 
     let { contentLimit, pageNo } = numObj;
 
@@ -363,7 +382,18 @@ export const singleUserProfile = catchAsync(async (req: Request, res: Response) 
     profilePic: 1,
   });
 
-  responseStatus.setSuccess(200, 'Bio data', otherUserDetails);
+  const followers = await getFollowersModel(otherUserId, 1, 1);
+
+  const following = await getFollowingModel(otherUserId, 1, 1);
+
+  const totalFollowers = {
+    totalFollowers: followers.Totalfollowers,
+    totalFollowing: following.Totalfollowing,
+  };
+
+  const otherUsersProfiles_Details = [totalFollowers, otherUserDetails];
+
+  responseStatus.setSuccess(200, 'Bio data', otherUsersProfiles_Details);
 
   return responseStatus.send(res);
 });
@@ -378,9 +408,26 @@ export const singleUserProfile = catchAsync(async (req: Request, res: Response) 
  *************************************************************************/
 
 export const listOfAppUser = catchAsync(async (req: Request, res: Response) => {
-  const userList = await User.find({}).select({ firstName: 1, lastName: 1 });
+  const userList = await User.find({}).where({ isActive: true });
 
   responseStatus.setSuccess(200, 'List Of Users In the App', userList);
 
   return responseStatus.send(res);
 });
+
+/**
+ *  .select({ firstName: 1, lastName: 1, profilePic: 1, bioData: 1 })
+ * [
+      {
+        path: 'retweetCount commentCount noOfLikes allComment createdBy',
+        select: 'content userId tweetId firstName lastName email profilePic bioData',
+        model: 'allCreatedTweets',
+        options: {
+          sort: { createdAt: -1 },
+        },
+
+        skip: (Number(pageNo) - 1) * Number(contentLimit),
+        limit: Number(contentLimit),
+      },
+    ]
+ */

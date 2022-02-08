@@ -65,4 +65,11 @@ describe('Following Feature Test Case', () => {
     expect(response.status).toBe(200);
     expect(response.body.message).toBe('success');
   });
+  test('find Hashtag tweets', async () => {
+    const response = await supertest(app)
+      .get('/api/trends/hashtag?hashtag=%23davidadejo')
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe('success');
+  });
 });

@@ -36,6 +36,7 @@ const tweetSchema = new mongoose.Schema<tweetIn>(
     },
     whoCanReply: {
       type: String,
+      default:"Everyone",
     },
     cloudinary_id: {
       type: String,
@@ -88,6 +89,13 @@ tweetSchema.virtual('createdBy', {
   localField: 'userId',
   foreignField: '_id',
 });
+
+tweetSchema.virtual('bookmarkCount', {
+  ref: 'Bookmark',
+  localField: '_id',
+  foreignField: 'tweetId',
+  count: true, 
+})
 
 const CreateTweetCln = mongoose.model('allCreatedTweets', tweetSchema);
 
