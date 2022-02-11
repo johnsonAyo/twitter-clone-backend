@@ -1,11 +1,10 @@
-import app from '../app';
 import supertest from 'supertest';
+import app from '../app';
 
 let emailToken: string;
 let token: string;
-let resetToken: string;
 
-describe('Auth', () => {
+describe('Searching Test Case', () => {
   const userData = {
     firstName: 'Tolu',
     lastName: 'Johnson',
@@ -41,42 +40,19 @@ describe('Auth', () => {
     expect(response.body.user.isActive).toBe(true);
   });
 
-  const changePassword = {
-    previousPassword: 'testing',
-    newPassword: 'passpass',
-    confirmNewPassword: 'passpass',
-  };
-
-  const reset = {
-    password: 'testing',
-    passwordConfirm: 'testing',
-  };
-
-  test('forgets password', async () => {
+  test('Searches for tweets and comments', async () => {
     const response = await supertest(app)
-      .post('/api/v1/reset/forgotpassword')
-      .send({ email: 'tolz@yahoo.com' });
-
-    resetToken = response.body.resetToken;
+      .get(`/api/v1/search?search=sars`)
+      .set('Authorization', `Bearer ${token}`);
     expect(response.status).toBe(200);
-    // console.log(resetToken)
+    expect(response.body.message).toBe('successfully searched for tweets and retweets');
   });
 
-  test('resets password', async () => {
+  test('Searches for users', async () => {
     const response = await supertest(app)
-      .post(`/api/v1/reset/resetpassword/${resetToken}`)
-      .send(reset);
+      .get(`/api/v1/search/users?search=Oyinkansola&limit=5&page=1`)
+      .set('Authorization', `Bearer ${token}`);
     expect(response.status).toBe(200);
-    // console.log(response.body);
+    expect(response.body.message).toBe('successfully searched for users');
   });
-
-  test('change password', async () => {
-    console.log("token:", token)
-    const response = await supertest(app)
-      .post('/api/v1/reset/changepassword')
-      .set('Authorization', `Bearer ${token}`)
-      .send(changePassword);
-    expect(response.status).toBe(200);
-  });
-
 });
