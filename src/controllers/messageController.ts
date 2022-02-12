@@ -31,5 +31,4 @@ export const getMessages = catchAsync(async (req: Request, res: Response, next: 
     message: 'message was created',
     data,
   });
- 
 });

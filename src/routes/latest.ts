@@ -7,7 +7,7 @@ const router = express.Router();
 router.use(protectRoute);
 
 //GET Request Lastest Tweet
-router.get('/latest', getLatestTweet);
+router.get('/', getLatestTweet);
 
 //Get Request Tweet with Media
 router.get('/media', getMediaTweet);
