@@ -3,7 +3,6 @@ import Conversation from '../models/conversationModel';
 import catchAsync from '../utils/catchAsync';
 import ErrorHandler from '../utils/appError';
 
-
 export const createConversation = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     // const { senderId, receiverId } = req.body;
@@ -13,13 +12,9 @@ export const createConversation = catchAsync(
       $and: [{ members: user }, { members: req.body.receiverId }],
     });
 
-    
-
     if (existingConversation) {
       return next(new ErrorHandler(400, 'conversation already exist'));
     }
-
-    
 
     const data = new Conversation({
       members: [user, req.body.receiverId],

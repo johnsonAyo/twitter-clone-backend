@@ -288,7 +288,9 @@ export const getPopularTweets = catchAsync(async (req: Request, res: Response) =
     { $sort: { count: -1 } },
   ]);
 
-  const tweets = await CreateTweetCln.find().populate('userId').populate('noOfLikes commentCount bookmarkCount');
+  const tweets = await CreateTweetCln.find()
+    .populate('userId')
+    .populate('noOfLikes commentCount bookmarkCount');
 
   // console.log(tweets)
 

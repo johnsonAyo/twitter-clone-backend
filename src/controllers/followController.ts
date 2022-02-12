@@ -38,8 +38,6 @@ export const postFollowerController = catchAsync(
   },
 );
 
-
-
 /***********************************
  * get all followers for an authorized user
  ***********************************/

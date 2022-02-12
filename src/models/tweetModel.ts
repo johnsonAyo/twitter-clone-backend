@@ -94,8 +94,8 @@ tweetSchema.virtual('bookmarkCount', {
   ref: 'Bookmark',
   localField: '_id',
   foreignField: 'tweetId',
-  count: true, 
-})
+  count: true,
+});
 
 const CreateTweetCln = mongoose.model('allCreatedTweets', tweetSchema);
 

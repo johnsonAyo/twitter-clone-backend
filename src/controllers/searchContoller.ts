@@ -9,27 +9,26 @@ import User from '../models/userModels';
 
 const resData = new Responses();
 
-export const searchTweets = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const searchString = req.query.search as string;
+export const searchTweets = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const searchString = req.query.search as string;
 
-    if (!req.query.search) {
-      return next(new ErrorHandler(400, 'Query must be provided'));
-    }
-    const usersQuery = new QueryApi(
-      CreateTweetCln.find ({
-       messageBody: { $regex: `${searchString}` }
-      }), 
-      req.query)
-      .sort()
+  if (!req.query.search) {
+    return next(new ErrorHandler(400, 'Query must be provided'));
+  }
+  const usersQuery = new QueryApi(
+    CreateTweetCln.find({
+      messageBody: { $regex: `${searchString}` },
+    }),
+    req.query,
+  )
+    .sort()
     .paginate();
 
   let tweets = await usersQuery.query;
-  tweets = tweets.populate('userId')
-    resData.setSuccess(200, 'successfully searched for tweets and retweets', { tweets });
-    return resData.send(res);
-  },
-);
+  tweets = tweets.populate('userId');
+  resData.setSuccess(200, 'successfully searched for tweets and retweets', { tweets });
+  return resData.send(res);
+});
 
 export const searchUsers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const searchString = req.query.search as string;
@@ -72,8 +71,7 @@ export const searchLatestTweet = catchAsync(
 
     resData.setSuccess(200, 'successfully searched for latest tweets', { tweets });
     return resData.send(res);
-  }
-
+  },
 );
 
 export const searchThroughMedia = catchAsync(
@@ -83,7 +81,10 @@ export const searchThroughMedia = catchAsync(
     if (!req.query.search) {
       return next(new ErrorHandler(400, 'Query must be provided'));
     }
-    const mediaTweet = await CreateTweetCln.find({ tweetImage: /.+/i, messageBody: { $regex: `${searchString}` } })
+    const mediaTweet = await CreateTweetCln.find({
+      tweetImage: /.+/i,
+      messageBody: { $regex: `${searchString}` },
+    })
       .sort({
         updatedAt: -1,
       })

@@ -8,7 +8,7 @@ let token2: string;
 let user: string;
 let user2: string;
 let conversationId: string;
-const message = "Hello";
+const message = 'Hello';
 
 describe('Auth', () => {
   const userData = {
@@ -104,7 +104,6 @@ describe('message', () => {
       senderId: user,
       text: message,
     };
-   
 
     const response = await supertest(app)
       .post('/message')
@@ -122,6 +121,6 @@ describe('message', () => {
 
     console.log(response.body.data[0].text, message, '***');
     expect(response.status).toBe(200);
-    expect(response.body.data[0].text).toStrictEqual(message)
+    expect(response.body.data[0].text).toStrictEqual(message);
   });
 });
