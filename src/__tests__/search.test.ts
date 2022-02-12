@@ -4,15 +4,12 @@ import app from '../app';
 let emailToken: string;
 let token: string;
 
-describe('Following Feature Test Case', () => {
+describe('Searching Test Case', () => {
   const userData = {
     firstName: 'Tolu',
     lastName: 'Johnson',
     email: 'tolz@yahoo.com',
     password: 'testing',
-  };
-  const followId = {
-    userId: '61e5f7416ecc46c9c0556ac1',
   };
 
   test('signup', async () => {
@@ -43,33 +40,19 @@ describe('Following Feature Test Case', () => {
     expect(response.body.user.isActive).toBe(true);
   });
 
-  test('Trending Hashtag with tweet', async () => {
+  test('Searches for tweets and comments', async () => {
     const response = await supertest(app)
-      .get('/api/trends')
+      .get(`/api/v1/search?search=sars`)
       .set('Authorization', `Bearer ${token}`);
     expect(response.status).toBe(200);
-    expect(response.body.message).toBe('success');
+    expect(response.body.message).toBe('successfully searched for tweets and retweets');
   });
 
-  test('Trending Hashtag  count', async () => {
+  test('Searches for users', async () => {
     const response = await supertest(app)
-      .get('/api/trends/tweetcount')
+      .get(`/api/v1/search/users?search=Oyinkansola&limit=5&page=1`)
       .set('Authorization', `Bearer ${token}`);
     expect(response.status).toBe(200);
-    expect(response.body.message).toBe('success');
+    expect(response.body.message).toBe('successfully searched for users');
   });
-  test('View tweets of a friend', async () => {
-    const response = await supertest(app)
-      .get('/api/viewtweet/friend/61f2bdaef45386084b83aceb?pageNo=2&pageSize=5')
-      .set('Authorization', `Bearer ${token}`);
-    expect(response.status).toBe(200);
-    expect(response.body.message).toBe('success');
-  });
-  // test('find Hashtag tweets', async () => {
-  //   const response = await supertest(app)
-  //     .get('/api/trends/hashtag?hashtag=#davidadejo')
-  //     .set('Authorization', `Bearer ${token}`);
-  //   expect(response.status).toBe(200);
-  //   expect(response.body.message).toBe('success');
-  // });
 });
