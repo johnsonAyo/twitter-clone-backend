@@ -5,7 +5,8 @@ const sendEmail = async (email: string, subject: string, message: string) => {
   //1. create a transporter
   if (process.env.NODE_ENV === 'production') {
     transporter = nodemailer.createTransport({
-      service: 'hotmail',
+      host: 'smtp-mail.outlook.com',
+      port: 587,
       auth: {
         user: process.env.OUTLOOK_USERNAME,
         pass: process.env.OUTLOOK_PASSWORD,
@@ -38,9 +39,9 @@ const sendEmail = async (email: string, subject: string, message: string) => {
 
   transporter.sendMail(mailOptions, function (error: any) {
     if (error) {
-      console.log(error);
+      console.log(error.message, '>>>>');
     } else {
-      console.log('Message Sent');
+      console.log('Message Sent>>>');
     }
   });
 };
