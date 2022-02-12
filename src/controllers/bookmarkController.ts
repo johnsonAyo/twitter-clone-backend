@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import Bookmark from '../models/bookmarkModel';
 import catchAsync from '../utils/catchAsync';
 import ErrorHandler from '../utils/appError';
+import Paginate from "../utils/apiFeatures";
 
 export const createBookmark = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -19,7 +20,12 @@ export const getAllBookmarks = catchAsync(
     const id = req.params.id;
     const userId = req.user._id;
 
-    const bookmarks = await Bookmark.find({ userId }).populate('tweetId').populate('userId');
+    const result = new Paginate(Bookmark.find({ userId }), req.query)
+      .sort()
+      .paginate();
+    const bookmarks = await result.query
+      .populate('tweetId')
+      .populate('userId');
     if (!bookmarks) return next(new ErrorHandler(404, 'Error occurred'));
     res.status(200).json({ message: 'All bookmarks', data: bookmarks });
   },
