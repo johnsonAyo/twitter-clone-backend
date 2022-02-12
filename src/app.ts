@@ -55,6 +55,8 @@ if (process.env.NODE_ENV === 'test') {
   connectDB();
 }
 
+import socketapi from './socketapi'; // <== Add this line
+
 console.log(process.env.NODE_ENV);
 
 app.use('/', indexRouter);

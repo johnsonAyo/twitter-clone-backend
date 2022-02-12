@@ -7,6 +7,7 @@
 const app = require('../dist/app').default;
 const debug = require('debug')('week-6-task:server');
 const http = require('http');
+const io = require('../dist/socketapi.js').default;
 
 /**
  * Get port from environment and store in Express.
@@ -24,6 +25,8 @@ var server = http.createServer(app);
 /**
  * Listen on provided port, on all network interfaces.
  */
+
+io.attach(server);
 
 server.listen(port, () => {
   console.log(`server running on port ${port}`);
