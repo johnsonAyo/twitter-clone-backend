@@ -71,12 +71,11 @@ describe('Auth', () => {
   });
 
   test('change password', async () => {
-    console.log("token:", token)
+    console.log('token:', token);
     const response = await supertest(app)
       .post('/api/v1/reset/changepassword')
       .set('Authorization', `Bearer ${token}`)
       .send(changePassword);
     expect(response.status).toBe(200);
   });
-
 });

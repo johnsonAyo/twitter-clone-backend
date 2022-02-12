@@ -36,7 +36,7 @@ export const userNewTweet = catchAsync(async (req: any, res: Response, next: Nex
       userId: req.user._id,
       messageBody,
       tweetImage: null,
-      whoCanReply:whoCanReply == "Everyone" ? whoCanReply : "People you follow",
+      whoCanReply: whoCanReply == 'Everyone' ? whoCanReply : 'People you follow',
       cloudinary_id: null,
       hashtag: hashtags,
     });
@@ -56,7 +56,7 @@ export const userNewTweet = catchAsync(async (req: any, res: Response, next: Nex
       userId: req.user._id,
       messageBody,
       tweetImage: cloudImage.secure_url,
-      whoCanReply:whoCanReply == "Everyone" ? whoCanReply : "People you follow",
+      whoCanReply: whoCanReply == 'Everyone' ? whoCanReply : 'People you follow',
       cloudinary_id: cloudImage.public_id,
       hashtag: hashtags,
     });
@@ -123,15 +123,12 @@ export const allUserRetweet = catchAsync(async (req: Request, res: Response) => 
   }
 });
 
-
 /****************************************************************************
  *                 
  *                     Show All user Tweet                                 *                  
  *                                                                           *
  *                                                                           *
 /*****************************************************************************/
-
-
 
 export const allUserTweet = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   //All user tweet
@@ -160,17 +157,15 @@ export const deleteTweet = catchAsync(async (req: Request, res: Response, next: 
 
   // if(req.user._id) return res.json
 
-  
-
   CreateTweetCln.findById(tweetId, async (err: any, tweet: any) => {
     if (err) {
       return next(new ErrorHandler(404, 'Error occured in finding a particular tweet'));
     } else {
       //delete image from cloudinary according to post id
 
-    if(!tweet.userId.equals(req.user._id)){
-     return res.json({warning:"You cannot delete another person's tweet"})
-    }
+      if (!tweet.userId.equals(req.user._id)) {
+        return res.json({ warning: "You cannot delete another person's tweet" });
+      }
 
       try {
         if (!tweet) return next(new ErrorHandler(404, 'The document you want is not found...'));
@@ -204,23 +199,20 @@ export const deleteTweet = catchAsync(async (req: Request, res: Response, next: 
 
 export const undoUserReweet = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
+    const tweetToDelete = await CreateRetTweet.findOne({ tweetId: req.params.id });
 
-    const tweetToDelete =  await CreateRetTweet.findOne({ tweetId: req.params.id });
+    if (!tweetToDelete)
+      return next(new ErrorHandler(404, 'Error occurred in finding retweet to undo..'));
 
-    if (!tweetToDelete) return next(new ErrorHandler(404, "Error occurred in finding retweet to undo.."));
-
-    if(!tweetToDelete.reTweeterId.equals(req.user._id)){
-      return res.json({warning:"You cannot delete another person's retweet"})
-     }else{
-
-     await tweetToDelete.remove(); // remove from the collection of retweet
+    if (!tweetToDelete.reTweeterId.equals(req.user._id)) {
+      return res.json({ warning: "You cannot delete another person's retweet" });
+    } else {
+      await tweetToDelete.remove(); // remove from the collection of retweet
       responseStatus.setSuccess(200, 'Reweet is been undo successfully...', tweetToDelete);
       return responseStatus.send(res);
-     }
-
-   
+    }
   },
-); 
+);
 
 /****************************************************************************
  *                 
@@ -296,7 +288,9 @@ export const getPopularTweets = catchAsync(async (req: Request, res: Response) =
     { $sort: { count: -1 } },
   ]);
 
-  const tweets = await CreateTweetCln.find().populate('userId').populate('noOfLikes commentCount bookmarkCount');
+  const tweets = await CreateTweetCln.find()
+    .populate('userId')
+    .populate('noOfLikes commentCount bookmarkCount');
 
   // console.log(tweets)
 

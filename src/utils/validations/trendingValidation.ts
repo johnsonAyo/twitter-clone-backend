@@ -7,8 +7,8 @@ export const hashtagTweetPolicy = (req: Request, res: Response, next: NextFuncti
     pageNo: Joi.number().min(1).required(),
     pageSize: Joi.number().min(4).required(),
   });
-  const { hashtag, pageNo, pageSize} = req.query;
-  const { error }: any = schema.validate({ hashtag, pageNo, pageSize});
+  const { hashtag, pageNo, pageSize } = req.query;
+  const { error }: any = schema.validate({ hashtag, pageNo, pageSize });
   if (error) {
     return res.status(500).json({ message: error.details[0].message.split('"').join('') });
   }
