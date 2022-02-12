@@ -6,7 +6,6 @@ import Paginate from '../utils/apiFeatures';
 
 export const getLatestTweet = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    //const tweetId = req.params.id;
     const userId = req.user._id;
     const result = new Paginate(CreateTweetCln.find(), req.query)
       .sort()
@@ -19,7 +18,6 @@ export const getLatestTweet = catchAsync(
 //const tweets = await CreateTweetCln.find()
 
 export const getMediaTweet = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  //const { page, size } = req.query as any;
   let pageNo = req.query.pageNo as string;
   let pageSize = req.query.pageSize as string;
   const userId = req.user._id;
@@ -30,5 +28,3 @@ export const getMediaTweet = catchAsync(async (req: Request, res: Response, next
   if (!mediaTweet) return next(new ErrorHandler(400, 'Error occurred'));
   res.status(200).json({ message: 'Media tweets', number: mediaTweet.length, data: mediaTweet });
 });
-
-//const mediaTweet = await CreateTweetCln.find({ tweetImage: /.+/i })
