@@ -153,4 +153,18 @@ describe('Tweet by authorised user', () => {
     expect(res.body).toHaveProperty('message');
     expect(res.body).toHaveProperty('data');
   });
+  it('gets user tweet by time', async () => {
+    const res = await request(app)
+      .get(`/tweet/otherusertweet/${userId}`)
+
+      .set(`Authorization`, `Bearer ${token}`);
+    expect(res.status).toBe(200);
+  });
+  it('gets popular tweets', async () => {
+    const res = await request(app)
+      .get('/tweet/popular')
+
+      .set(`Authorization`, `Bearer ${token}`);
+    expect(res.status).toBe(200);
+  });
 });
