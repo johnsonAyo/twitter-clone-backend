@@ -55,6 +55,7 @@ export const getFollowersModel = async (userId: string, pageNo: number, pageSize
 /***********************************
  * Method to get all users I follow
  ***********************************/
+
 export const getFollowingModel = async (userId: string, pageNo: number, pageSize: number) => {
   const followList = await Follow.find({ followId: userId });
   // console.log(followList);

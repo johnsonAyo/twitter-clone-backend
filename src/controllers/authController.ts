@@ -38,7 +38,7 @@ export const signup = catchAsync(async (req: Request, res: Response, next: NextF
       emailToken,
     });
   } else {
-    await sendEmail(
+    sendEmail(
       newUser.email,
       'Email Verification',
       `<p>Hello ${newUser.firstName},</p><p>Thank you for signing up for a Twitter account.
@@ -46,7 +46,14 @@ export const signup = catchAsync(async (req: Request, res: Response, next: NextF
        Click
        <button><a href= http://localhost:3000/users/verify/${emailToken}>here</a></button> 
        to verify your email. Thanks`,
-    );
+    )
+      .then(() => {
+        console.log('email sent');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    console.log(emailToken);
     res.status(200).json({
       status: 'success',
       message: 'Token sent to email',

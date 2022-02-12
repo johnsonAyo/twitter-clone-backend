@@ -59,7 +59,7 @@ console.log(process.env.NODE_ENV);
 
 app.use('/', indexRouter);
 app.use('/api/follow', followRoutes);
-app.use('/tweet', tweetRoute);
+app.use('/tweeting', tweetRoute);
 app.use('/users', usersRouter);
 
 app.use('/profile', profileRouter);

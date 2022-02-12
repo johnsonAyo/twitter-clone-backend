@@ -3,6 +3,7 @@ import { updateProfile, uploadProfilePicture, getProfile } from '../controllers/
 import { profileValidator } from '../utils/validations/profileValidation';
 import middleware from '../middleware/middleware';
 import { protectRoute } from '../controllers/authController';
+import * as tweetControls from '../controllers/tweetController';
 
 const router = express.Router();
 
@@ -12,6 +13,9 @@ router
   .get(protectRoute, getProfile)
   .put(protectRoute, [middleware(profileValidator)], updateProfile);
 router.put('/picture', protectRoute, uploadProfilePicture);
+
+//list of all user of the app
+router.get('/list-of-users', protectRoute, tweetControls.listOfAppUser);
 
 // router.post('/create', protectRoute, [middleware(profileValidator)], createProfile);
 
