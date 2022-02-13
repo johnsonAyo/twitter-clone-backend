@@ -1,9 +1,13 @@
-import { Server } from 'socket.io';
-const io = new Server();
+import { Socket } from 'socket.io';
+import { DefaultEventsMap } from 'socket.io/dist/typed-events';
+import app from './app';
 
-io.on('connection', (socket) => {
-  // socket implementation
-  console.log(socket, '***');
-});
+const Socketapi = () =>
+  app.io.on(
+    'connection',
+    (socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>) => {
+      console.log(socket.id, 'A user connected');
+    },
+  );
 
-export default io;
+export default Socketapi;
