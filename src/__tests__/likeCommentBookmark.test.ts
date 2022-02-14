@@ -37,7 +37,7 @@ describe('Auth', () => {
       .send({ email: userData.email, password: userData.password });
 
     token = response.body.token;
-    //console.log(response.body)
+    userId = response.body.user._id
     expect(response.status).toBe(201);
     expect(response.body.user.isActive).toBe(true);
   });
@@ -186,5 +186,11 @@ describe('bookmark', () => {
       .delete(`/tweet/${tweetId}/bookmark`)
       .set('Authorization', `Bearer ${token}`);
     expect(response.status).toBe(200);
+  });
+  test('get likes by user', async () => {
+    const res = await supertest(app)
+      .get(`/tweet/user/likes/${userId}`)
+      .set(`Authorization`, `Bearer ${token}`);
+    expect(res.status).toBe(200);
   });
 });
