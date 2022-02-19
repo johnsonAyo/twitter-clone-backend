@@ -47,7 +47,7 @@ app.use(cors());
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: 'http://localhost:3001',
+    origin: 'http://localhost:3001/',
   },
 });
 

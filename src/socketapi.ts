@@ -17,19 +17,22 @@ const Socketapi = () => {
 
   app.io.on('connection', (socket) => {
     //when ceonnect
-
+    console.log('connection');
     //take userId and socketId from user
     socket.on('addUser', (userId) => {
       addUser(userId, socket.id);
       app.io.emit('getUsers', users);
+      console.log({ users });
       console.log('a user connected.');
       console.log(userId, socket.id);
     });
 
     //send and get message
     socket.on('sendMessage', ({ senderId, receiverId, text }) => {
-      const user = getUser(receiverId);
-      app.io.to(user.socketId).emit('getMessage', {
+      const user = getUser(receiverId._id);
+      console.log({ user });
+      console.log({ senderId, receiverId, text });
+      app.io.to(user.socketId!).emit('getMessage', {
         senderId,
         text,
       });
