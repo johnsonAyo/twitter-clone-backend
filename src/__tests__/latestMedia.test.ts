@@ -190,19 +190,15 @@ describe('bookmark', () => {
 });
 
 describe('media tweet', () => {
-    test('media', async () => {
-      const response = await supertest(app)
-        .get(`/media`)
-        .set('Authorization', `Bearer ${token}`);
-      expect(response.status).toBe(200);
-    });
+  test('media', async () => {
+    const response = await supertest(app).get(`/media`).set('Authorization', `Bearer ${token}`);
+    expect(response.status).toBe(200);
+  });
 });
 
 describe('latest tweet', () => {
-    test('latest', async () => {
-      const response = await supertest(app)
-        .get(`/latest`)
-        .set('Authorization', `Bearer ${token}`);
-      expect(response.status).toBe(200);
-    });
+  test('latest', async () => {
+    const response = await supertest(app).get(`/latest`).set('Authorization', `Bearer ${token}`);
+    expect(response.status).toBe(200);
+  });
 });

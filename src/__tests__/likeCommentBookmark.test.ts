@@ -37,7 +37,7 @@ describe('Auth', () => {
       .send({ email: userData.email, password: userData.password });
 
     token = response.body.token;
-    userId = response.body.user._id
+    userId = response.body.user._id;
     expect(response.status).toBe(201);
     expect(response.body.user.isActive).toBe(true);
   });

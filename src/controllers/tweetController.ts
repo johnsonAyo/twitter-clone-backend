@@ -87,6 +87,15 @@ export const reTweeting = catchAsync(async (req: Request, res: Response, next: N
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     return res.status(404).json({ msg: 'Invalid tweet Id ' });
   }
+
+  //check if you have already retweeted this tweet
+  const checkIfRetweeted = await CreateRetTweet.findOne({ tweetId: req.params.id }).where({
+    reTweeterId: req.user._id,
+  });
+  if (checkIfRetweeted) {
+    return undoUserReweet(req, res, next);
+  }
+
   const createReTweet = new CreateRetTweet({
     tweetId: req.params.id,
     reTweeterId: req.user._id,
@@ -197,18 +206,18 @@ export const deleteTweet = catchAsync(async (req: Request, res: Response, next: 
  *                   Undo a particular tweet you reweeted.                            *                  
  /*****************************************************************************/
 
-export const undoUserReweet = catchAsync(
+ export const undoUserReweet = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const tweetToDelete = await CreateRetTweet.findOne({ tweetId: req.params.id });
+    const tweetToDelete = await CreateRetTweet.deleteOne({ tweetId: req.params.id }).where({
+      reTweeterId: req.user._id,
+    });
 
-    if (!tweetToDelete)
+    if (!tweetToDelete) {
       return next(new ErrorHandler(404, 'Error occurred in finding retweet to undo..'));
-
-    if (!tweetToDelete.reTweeterId.equals(req.user._id)) {
-      return res.json({ warning: "You cannot delete another person's retweet" });
     } else {
-      await tweetToDelete.remove(); // remove from the collection of retweet
-      responseStatus.setSuccess(200, 'Reweet is been undo successfully...', tweetToDelete);
+      responseStatus.setSuccess(200, 'Reweet is been undo successfully...', {
+        deleteRetweetId: req.params.id,
+      });
       return responseStatus.send(res);
     }
   },
