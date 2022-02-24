@@ -7,9 +7,7 @@ import Paginate from '../utils/apiFeatures';
 export const getLatestTweet = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user._id;
-    const result = new Paginate(CreateTweetCln.find(), req.query)
-      .sort()
-      .paginate();
+    const result = new Paginate(CreateTweetCln.find(), req.query).sort().paginate();
     const tweets = await result.query.populate('_id').populate('userId');
     if (!tweets) return next(new ErrorHandler(400, 'Error occurred'));
     res.status(200).json({ message: 'Latest tweets', number: tweets.length, data: tweets });

@@ -20,7 +20,7 @@ import resetRouter from './routes/resetPassword';
 import authRouter from './routes/auth';
 import profileRouter from './routes/profile';
 import latest from './routes/latest';
-import media from "./routes/media"
+import media from './routes/media';
 import trendingRoutes from './routes/trendingRoute';
 import conversationRouter from './routes/conversation';
 import messageRouter from './routes/message';
@@ -67,7 +67,7 @@ app.use('/profile', profileRouter);
 app.use('/api/viewtweet', viewtweetRoute);
 app.use('/tweet', likeCommentBook);
 app.use('/latest', latest);
-app.use('/media', media)
+app.use('/media', media);
 
 app.use('/api/v1/reset', resetRouter);
 app.use('/auth', authRouter);

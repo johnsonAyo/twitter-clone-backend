@@ -13,7 +13,9 @@ export async function viewTweet(userId: string, pageNo: number, pageSize: number
     .limit(pageSize);
   let followingId = following.map((val: any) => val.userId);
 
-  let data: any = await CreateTweetCln.find({ userId: { $in: followingId } }).populate('userId');
+  let data: any = await CreateTweetCln.find({ userId: { $in: followingId } }).populate(
+    'userId noOfLikes commentCount allComment retweetCount bookmarkCount',
+  );
 
   let followingIdRe = following.map((val: any) => val.userId.toString());
   let retweet: any = await CreateReTweet.find({ reTweeterId: { $in: followingIdRe } }).populate(
