@@ -49,7 +49,8 @@ describe('Auth', () => {
     const response = await supertest(app)
       .post('/users/login')
       .send({ email: userData.email, password: userData.password });
-
+  
+      // console.log(response.body)
     const response2 = await supertest(app)
       .post('/users/login')
       .send({ email: userData2.email, password: userData2.password });
@@ -59,9 +60,11 @@ describe('Auth', () => {
     user = response.body.user._id;
     user2 = response2.body.user._id;
     expect(response.status).toBe(201);
-    expect(response.body.user.isActive).toBe(true);
+  
   });
 });
+
+
 
 describe('Conversation', () => {
   test('create conversation', async () => {
@@ -119,7 +122,7 @@ describe('message', () => {
       .get(`/message/${conversationId}`)
       .set('Authorization', `Bearer ${token}`);
 
-    console.log(response.body.data[0].text, message, '***');
+    // console.log(response.body.data[0].text, message, '***');
     expect(response.status).toBe(200);
     expect(response.body.data[0].text).toStrictEqual(message);
   });
