@@ -37,7 +37,7 @@ describe('Auth', () => {
       .send({ email: userData.email, password: userData.password });
 
     token = response.body.token;
-    userId = response.body.user._id;
+    //console.log(response.body)
     expect(response.status).toBe(201);
     expect(response.body.user.isActive).toBe(true);
   });
@@ -187,10 +187,18 @@ describe('bookmark', () => {
       .set('Authorization', `Bearer ${token}`);
     expect(response.status).toBe(200);
   });
-  test('get likes by user', async () => {
-    const res = await supertest(app)
-      .get(`/tweet/user/likes/${userId}`)
-      .set(`Authorization`, `Bearer ${token}`);
-    expect(res.status).toBe(200);
+});
+
+describe('media tweet', () => {
+  test('media', async () => {
+    const response = await supertest(app).get(`/media`).set('Authorization', `Bearer ${token}`);
+    expect(response.status).toBe(200);
+  });
+});
+
+describe('latest tweet', () => {
+  test('latest', async () => {
+    const response = await supertest(app).get(`/latest`).set('Authorization', `Bearer ${token}`);
+    expect(response.status).toBe(200);
   });
 });
