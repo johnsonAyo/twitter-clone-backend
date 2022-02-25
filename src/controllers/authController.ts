@@ -104,21 +104,21 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
     return next(new ErrorHandler(401, 'invalid login credentials'));
   }
 
-  const emailToken = generateEmailToken(user.email);
-  if (!user.isActive) {
-    await sendEmail(
-      user.email,
-      'Email Verification',
-      `<p>Thank you for signing up for a Twitter account</p>
-    <p>In order to access your Twitter account</p>
-    Click
-    <button><a href= http://localhost:3000/users/verify/${emailToken}>here</a></button> 
-    to verify your email. Thanks`,
-    );
-    return next(
-      new ErrorHandler(401, 'A mail has been sent to you. Please confirm email to login'),
-    );
-  }
+  // const emailToken = generateEmailToken(user.email);
+  // if (!user.isActive) {
+  //   await sendEmail(
+  //     user.email,
+  //     'Email Verification',
+  //     `<p>Thank you for signing up for a Twitter account</p>
+  //   <p>In order to access your Twitter account</p>
+  //   Click
+  //   <button><a href= http://localhost:3000/users/verify/${emailToken}>here</a></button> 
+  //   to verify your email. Thanks`,
+  //   );
+  //   return next(
+  //     new ErrorHandler(401, 'A mail has been sent to you. Please confirm email to login'),
+  //   );
+  // }
 
   //Check if password is correct
   const match = await bcrypt.compare(req.body.password, user.password);

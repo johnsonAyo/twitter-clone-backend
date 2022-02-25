@@ -24,6 +24,7 @@ const UserSchema = new Schema(
     },
     isActive: {
       type: Boolean,
+      select: false,
       default: false,
     },
 
