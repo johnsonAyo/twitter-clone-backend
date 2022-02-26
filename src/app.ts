@@ -25,6 +25,8 @@ import trendingRoutes from './routes/trendingRoute';
 import conversationRouter from './routes/conversation';
 import messageRouter from './routes/message';
 import searchRouter from './routes/search';
+import http from 'http';
+import { Server } from 'socket.io';
 
 dotenv.config();
 const app = express();
@@ -41,6 +43,13 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(cors());
+
+const httpServer = http.createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: 'http://localhost:3001/',
+  },
+});
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -94,4 +103,4 @@ app.set('view engine', 'ejs');
 
 app.use(globalErrorHandler);
 
-export default app;
+export default { app, httpServer, io };

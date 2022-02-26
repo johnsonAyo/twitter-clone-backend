@@ -122,3 +122,42 @@ export const suggestFollowersController = catchAsync(
     }
   },
 );
+
+/***********************************
+ * get all followers for a queried user
+ ***********************************/
+
+export const getUserFollowersController = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    {
+      let userId: any = req.params.userId;
+      userId = userId.toString();
+      let pageNo: any = req.query.pageNo;
+      let pageSize: any = req.query.pageSize;
+      let data: any = await getFollowersModel(userId, parseInt(pageNo), parseInt(pageSize));
+      if (!data) return next(new ErrorHandler(401, 'Error occurred'));
+      responseClass.setSuccess(200, 'success', data);
+      return responseClass.send(res);
+    }
+  },
+);
+
+/***********************************
+ * Get all accounts a queried user follows
+ ***********************************/
+
+export const getUserFolloweringController = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    {
+      let userId: any = req.params.userId;
+      userId = userId.toString();
+
+      let pageNo: any = req.query.pageNo;
+      let pageSize: any = req.query.pageSize;
+      let data: any = await getFollowingModel(userId, parseInt(pageNo), parseInt(pageSize));
+      if (!data) return next(new ErrorHandler(401, 'Error occurred'));
+      responseClass.setSuccess(200, 'success', data);
+      return responseClass.send(res);
+    }
+  },
+);
