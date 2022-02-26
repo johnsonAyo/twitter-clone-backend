@@ -112,7 +112,7 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
   //     `<p>Thank you for signing up for a Twitter account</p>
   //   <p>In order to access your Twitter account</p>
   //   Click
-  //   <button><a href= http://localhost:3000/users/verify/${emailToken}>here</a></button> 
+  //   <button><a href= http://localhost:3000/users/verify/${emailToken}>here</a></button>
   //   to verify your email. Thanks`,
   //   );
   //   return next(

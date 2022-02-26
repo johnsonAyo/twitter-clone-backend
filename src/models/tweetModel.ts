@@ -97,6 +97,9 @@ tweetSchema.virtual('bookmarkCount', {
   count: true,
 });
 
+
 const CreateTweetCln = mongoose.model('allCreatedTweets', tweetSchema);
+
+
 
 export default CreateTweetCln;

@@ -3,7 +3,7 @@ import {
   createBookmark,
   deleteBookmark,
   getAllBookmarks,
-  getSingleBookmark,
+  getSingleBookmark
 } from '../controllers/bookmarkController';
 import { commentTweet, getComments } from '../controllers/commentController';
 import { getLikes, getLikesByUser, likeTweet, unlikeTweet } from '../controllers/likeController';
