@@ -49,8 +49,8 @@ describe('Auth', () => {
     const response = await supertest(app)
       .post('/users/login')
       .send({ email: userData.email, password: userData.password });
-  
-      // console.log(response.body)
+
+    // console.log(response.body)
     const response2 = await supertest(app)
       .post('/users/login')
       .send({ email: userData2.email, password: userData2.password });
@@ -60,11 +60,8 @@ describe('Auth', () => {
     user = response.body.user._id;
     user2 = response2.body.user._id;
     expect(response.status).toBe(201);
-  
   });
 });
-
-
 
 describe('Conversation', () => {
   test('create conversation', async () => {

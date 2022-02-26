@@ -14,7 +14,7 @@ export const createBookmark = catchAsync(
     if (isBooked) {
       return deleteAlreadyBookmark(req, res, next); /// unbookmark a tweet if already bookmarked
     }
-    const bookmark = await Bookmark.create({ tweetId: id, userId, isBookmark:true });
+    const bookmark = await Bookmark.create({ tweetId: id, userId, isBookmark: true });
     if (!bookmark) return next(new ErrorHandler(404, 'Error occurred'));
     res.status(200).json({ message: 'Bookmark created', data: bookmark });
   },
@@ -67,3 +67,5 @@ const deleteAlreadyBookmark = catchAsync(
     res.status(200).json({ removedBookMarkId: id });
   },
 );
+
+

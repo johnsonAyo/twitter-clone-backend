@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "CI= node ./bin/www",
+    "start:dev":"nodemon ./bin/www",
     "dev": "yarn && yarn prettier:fix && yarn build && nodemon ./bin/www",
     "start:prod": "NODE_ENV=production nodemon ./bin/www",
     "build": "tsc",
