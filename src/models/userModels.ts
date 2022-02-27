@@ -27,11 +27,6 @@ const UserSchema = new Schema(
       select: false,
       default: false,
     },
-    isFollow: {
-      type: Boolean,
-      default: false,
-    },
-
     provider: {
       type: String,
       enum: ['local', 'facebook', 'google'],
