@@ -5,8 +5,8 @@ import userModels from './userModels';
  ***********************************/
 const followSchema = new mongoose.Schema(
   {
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'userModels' },
-    followId: { type: String, required: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'userModels' }, // person to follow
+    followId: { type: String, required: true }, // logged in user
     followTrackerId: { type: String, unique: true },
   },
   { timestamps: true },
