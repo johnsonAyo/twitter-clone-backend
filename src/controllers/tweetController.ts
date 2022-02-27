@@ -162,8 +162,6 @@ export const allUserTweet = catchAsync(async (req: Request, res: Response, next:
     'noOfLikes commentCount allComment createdBy',
   );
 
-  console.log(allTweets)
-
   if (allTweets == null) {
     return next(new ErrorHandler(404, 'Error Occured in tweet fetching...'));
   } else {
