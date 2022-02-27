@@ -67,5 +67,3 @@ const deleteAlreadyBookmark = catchAsync(
     res.status(200).json({ removedBookMarkId: id });
   },
 );
-
-

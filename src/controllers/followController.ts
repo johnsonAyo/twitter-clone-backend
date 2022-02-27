@@ -136,6 +136,7 @@ export const getUserFollowersController = catchAsync(
       let pageSize: any = req.query.pageSize;
       let data: any = await getFollowersModel(userId, parseInt(pageNo), parseInt(pageSize));
       if (!data) return next(new ErrorHandler(401, 'Error occurred'));
+      console.log(data)
       responseClass.setSuccess(200, 'success', data);
       return responseClass.send(res);
     }

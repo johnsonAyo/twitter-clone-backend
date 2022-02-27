@@ -161,11 +161,10 @@ export const allUserTweet = catchAsync(async (req: Request, res: Response, next:
   let allTweets = await CreateTweetCln.find({ userId: req.user._id }).populate(
     'noOfLikes commentCount allComment createdBy',
   );
-  
+
   if (allTweets == null) {
     return next(new ErrorHandler(404, 'Error Occured in tweet fetching...'));
   } else {
-  
     const tweetsPromises = allTweets.map(async (item: any) => {
       let isLiked = await Like.findOne({ userId: req.user._id, tweetId: item._id });
       let isBookmarked = await Bookmark.findOne({ userId: req.user._id, tweetId: item._id });
@@ -272,7 +271,6 @@ export const getAllUserTweetNRetweet = catchAsync(async (req: Request, res: Resp
     'tweetId retweeter_name noOfLikes commentCount',
   );
 
-
   const reTweetsPromises = otherUserReTweetDetail.map(async (item: any) => {
     let isLiked = await Like.findOne({ userId: req.user._id, tweetId: item._id });
     let isBookmarked = await Bookmark.findOne({ userId: req.user._id, tweetId: item._id });
@@ -283,12 +281,11 @@ export const getAllUserTweetNRetweet = catchAsync(async (req: Request, res: Resp
     isLiked = isLiked ? true : false;
     isBookmarked = isBookmarked ? true : false;
     isRetweeted = isRetweeted ? true : false;
-    
+
     return { ...item._doc, isLiked, isBookmarked, isRetweeted };
   });
 
   const reTweets = await Promise.all(reTweetsPromises);
-
 
   const allOtherUserTweet = await CreateTweetCln.find({ userId: otherUserId }).populate(
     'noOfLikes commentCount',
@@ -304,17 +301,13 @@ export const getAllUserTweetNRetweet = catchAsync(async (req: Request, res: Resp
     isLiked = isLiked ? true : false;
     isBookmarked = isBookmarked ? true : false;
     isRetweeted = isRetweeted ? true : false;
-    
+
     return { ...item._doc, isLiked, isBookmarked, isRetweeted };
   });
 
   const tweets = await Promise.all(tweetsPromises);
 
-
-  const allOtherUserChat = [
-    { otherUserRetweet: reTweets },
-    { OtherUserTweet: tweets },
-  ];
+  const allOtherUserChat = [{ otherUserRetweet: reTweets }, { OtherUserTweet: tweets }];
 
   responseStatus.setSuccess(200, 'getAllUserTweetNRetweet', allOtherUserChat);
 
