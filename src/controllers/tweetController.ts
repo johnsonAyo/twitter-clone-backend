@@ -206,7 +206,7 @@ export const deleteTweet = catchAsync(async (req: Request, res: Response, next: 
  *                   Undo a particular tweet you reweeted.                            *                  
  /*****************************************************************************/
 
- export const undoUserReweet = catchAsync(
+export const undoUserReweet = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const tweetToDelete = await CreateRetTweet.deleteOne({ tweetId: req.params.id }).where({
       reTweeterId: req.user._id,
