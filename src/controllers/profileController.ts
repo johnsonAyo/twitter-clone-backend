@@ -90,3 +90,18 @@ export const getProfile = catchAsync(async (req: Request, res: Response, next: N
     following,
   });
 });
+
+export const getUserProfile = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { page, size } = req.query as any;
+    const user = await User.findOne({ _id: req.params.userId });
+    if (!user) return next(new ErrorHandler(404, 'User does not exist'));
+    const followers = await getFollowersModel(user._id, +page || 1, +size || 5);
+    const following = await getFollowingModel(user._id, +page || 1, +size || 5);
+    return res.status(200).json({
+      user,
+      followers,
+      following,
+    });
+  },
+);

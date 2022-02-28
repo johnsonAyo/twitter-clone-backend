@@ -125,9 +125,25 @@ export const allUserRetweet = catchAsync(async (req: Request, res: Response) => 
   const userReTweet = await CreateRetTweet.find({ reTweeterId: req.user._id }).populate(
     'noOfLikes commentCount tweetId retweeter_name',
   );
+  // console.log(userReTweet)
 
   if (userReTweet) {
-    responseStatus.setSuccess(200, 'All your Retweet', userReTweet);
+    const tweetsPromises = userReTweet.map(async (item: any) => {
+      let isLiked = await Like.findOne({ userId: req.user._id, tweetId: item._id });
+      let isBookmarked = await Bookmark.findOne({ userId: req.user._id, tweetId: item._id });
+      let isRetweeted = await CreateRetTweet.findOne({
+        reTweeterId: req.user._id,
+        tweetId: item._id,
+      });
+      isLiked = isLiked ? true : false;
+      isBookmarked = isBookmarked ? true : false;
+      isRetweeted = isRetweeted ? true : false;
+
+      return { ...item._doc, isLiked, isBookmarked, isRetweeted };
+    });
+
+    const reTweet = await Promise.all(tweetsPromises);
+    responseStatus.setSuccess(200, 'All your Retweet', reTweet);
     return responseStatus.send(res);
   }
 });
@@ -149,7 +165,24 @@ export const allUserTweet = catchAsync(async (req: Request, res: Response, next:
   if (allTweets == null) {
     return next(new ErrorHandler(404, 'Error Occured in tweet fetching...'));
   } else {
-    responseStatus.setSuccess(200, 'All your  tweet and comments', allTweets);
+    const tweetsPromises = allTweets.map(async (item: any) => {
+      let isLiked = await Like.findOne({ userId: req.user._id, tweetId: item._id });
+      let isBookmarked = await Bookmark.findOne({ userId: req.user._id, tweetId: item._id });
+      let isRetweeted = await CreateRetTweet.findOne({
+        reTweeterId: req.user._id,
+        tweetId: item._id,
+      });
+      isLiked = isLiked ? true : false;
+      isBookmarked = isBookmarked ? true : false;
+      isRetweeted = isRetweeted ? true : false;
+
+      return { ...item._doc, isLiked, isBookmarked, isRetweeted };
+    });
+
+    const tweets = await Promise.all(tweetsPromises);
+
+    console.log(tweets);
+    responseStatus.setSuccess(200, 'All your  tweet and comments', tweets);
     return responseStatus.send(res);
   }
 });
@@ -238,14 +271,43 @@ export const getAllUserTweetNRetweet = catchAsync(async (req: Request, res: Resp
     'tweetId retweeter_name noOfLikes commentCount',
   );
 
+  const reTweetsPromises = otherUserReTweetDetail.map(async (item: any) => {
+    let isLiked = await Like.findOne({ userId: req.user._id, tweetId: item._id });
+    let isBookmarked = await Bookmark.findOne({ userId: req.user._id, tweetId: item._id });
+    let isRetweeted = await CreateRetTweet.findOne({
+      reTweeterId: req.user._id,
+      tweetId: item._id,
+    });
+    isLiked = isLiked ? true : false;
+    isBookmarked = isBookmarked ? true : false;
+    isRetweeted = isRetweeted ? true : false;
+
+    return { ...item._doc, isLiked, isBookmarked, isRetweeted };
+  });
+
+  const reTweets = await Promise.all(reTweetsPromises);
+
   const allOtherUserTweet = await CreateTweetCln.find({ userId: otherUserId }).populate(
     'noOfLikes commentCount',
   );
 
-  const allOtherUserChat = [
-    { otherUserRetweet: otherUserReTweetDetail },
-    { OtherUserTweet: allOtherUserTweet },
-  ];
+  const tweetsPromises = allOtherUserTweet.map(async (item: any) => {
+    let isLiked = await Like.findOne({ userId: req.user._id, tweetId: item._id });
+    let isBookmarked = await Bookmark.findOne({ userId: req.user._id, tweetId: item._id });
+    let isRetweeted = await CreateRetTweet.findOne({
+      reTweeterId: req.user._id,
+      tweetId: item._id,
+    });
+    isLiked = isLiked ? true : false;
+    isBookmarked = isBookmarked ? true : false;
+    isRetweeted = isRetweeted ? true : false;
+
+    return { ...item._doc, isLiked, isBookmarked, isRetweeted };
+  });
+
+  const tweets = await Promise.all(tweetsPromises);
+
+  const allOtherUserChat = [{ otherUserRetweet: reTweets }, { OtherUserTweet: tweets }];
 
   responseStatus.setSuccess(200, 'getAllUserTweetNRetweet', allOtherUserChat);
 
@@ -300,8 +362,6 @@ export const getPopularTweets = catchAsync(async (req: Request, res: Response) =
   const tweets = await CreateTweetCln.find()
     .populate('userId')
     .populate('noOfLikes commentCount bookmarkCount');
-
-  // console.log(tweets)
 
   const combinedTweetsAndCounts = tweets.map((tweet) => {
     const tweetLikes = likes.find((like) => tweet._id.equals(like._id)) || { count: 0 };
