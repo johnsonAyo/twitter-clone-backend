@@ -5,7 +5,7 @@ import {
   getFollowingModel,
   suggestFollowersModel,
   unFollowModel,
-  Follow
+  Follow,
 } from '../models/followModel';
 import catchAsync from '../utils/catchAsync';
 import ErrorHandler from '../utils/appError';
@@ -53,15 +53,15 @@ export const getFollowersController = catchAsync(
       let pageSize: any = req.query.pageSize;
       let data: any = await getFollowersModel(userId, parseInt(pageNo), parseInt(pageSize));
       if (!data) return next(new ErrorHandler(401, 'Error occurred'));
-     
-      const follow = data.followers.map(async(el : any) => {
-        let isFollow = await Follow.findOne({followId: req.user._id, userId: el._id })
+
+      const follow = data.followers.map(async (el: any) => {
+        let isFollow = await Follow.findOne({ followId: req.user._id, userId: el._id });
         isFollow = isFollow ? true : false;
 
-        return {...el._doc, isFollow}
-      })
-      const follower = await Promise.all(follow)
-      data.followers = follower
+        return { ...el._doc, isFollow };
+      });
+      const follower = await Promise.all(follow);
+      data.followers = follower;
 
       responseClass.setSuccess(200, 'success', data);
       return responseClass.send(res);
@@ -84,15 +84,15 @@ export const getFolloweringController = catchAsync(
       let data: any = await getFollowingModel(userId, parseInt(pageNo), parseInt(pageSize));
       if (!data) return next(new ErrorHandler(401, 'Error occurred'));
 
-      const follow = data.following.map(async(el : any) => {
-        let isFollow = await Follow.findOne({followId: req.user._id, userId: el._id })
+      const follow = data.following.map(async (el: any) => {
+        let isFollow = await Follow.findOne({ followId: req.user._id, userId: el._id });
         isFollow = isFollow ? true : false;
 
-        return {...el._doc, isFollow}
-      })
-      const follower = await Promise.all(follow)
-      data.following = follower
-      
+        return { ...el._doc, isFollow };
+      });
+      const follower = await Promise.all(follow);
+      data.following = follower;
+
       responseClass.setSuccess(200, 'success', data);
       return responseClass.send(res);
     }
@@ -157,15 +157,15 @@ export const getUserFollowersController = catchAsync(
       let pageSize: any = req.query.pageSize;
       let data: any = await getFollowersModel(userId, parseInt(pageNo), parseInt(pageSize));
       if (!data) return next(new ErrorHandler(401, 'Error occurred'));
-      
-      const dataUpdate = data.followers.map(async(el :any ) => {
-        let isFollowing = await Follow.findOne({userId: el._id, followId: req.user._id});
-        isFollowing = isFollowing ? true : false
-        
-        return {...el._doc, isFollowing}
-      })
-      const follow = await Promise.all(dataUpdate)
-      data.followers = follow
+
+      const dataUpdate = data.followers.map(async (el: any) => {
+        let isFollowing = await Follow.findOne({ userId: el._id, followId: req.user._id });
+        isFollowing = isFollowing ? true : false;
+
+        return { ...el._doc, isFollowing };
+      });
+      const follow = await Promise.all(dataUpdate);
+      data.followers = follow;
       // console.log(dataUpdate)
       responseClass.setSuccess(200, 'success', data);
       return responseClass.send(res);
@@ -188,15 +188,15 @@ export const getUserFolloweringController = catchAsync(
       let pageSize: any = req.query.pageSize;
       let data: any = await getFollowingModel(userId, parseInt(pageNo), parseInt(pageSize));
       if (!data) return next(new ErrorHandler(401, 'Error occurred'));
-     
-      const dataUpdate = data.following.map(async(el :any ) => {
-        let isFollowing = await Follow.findOne({userId: el._id, followId: req.user._id});
-        isFollowing = isFollowing ? true : false
-        
-        return {...el._doc, isFollowing}
-      })
-      const follow = await Promise.all(dataUpdate)
-      data.following = follow
+
+      const dataUpdate = data.following.map(async (el: any) => {
+        let isFollowing = await Follow.findOne({ userId: el._id, followId: req.user._id });
+        isFollowing = isFollowing ? true : false;
+
+        return { ...el._doc, isFollowing };
+      });
+      const follow = await Promise.all(dataUpdate);
+      data.following = follow;
 
       responseClass.setSuccess(200, 'success', data);
       return responseClass.send(res);
