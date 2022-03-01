@@ -139,7 +139,7 @@ export const allUserRetweet = catchAsync(async (req: Request, res: Response) => 
       isBookmarked = isBookmarked ? true : false;
       isRetweeted = isRetweeted ? true : false;
 
-      return { ...item._doc, isLiked, isBookmarked, isRetweeted };
+      return { tweet: item, isLiked, isBookmarked, isRetweeted };
     });
 
     const reTweet = await Promise.all(tweetsPromises);
@@ -148,6 +148,7 @@ export const allUserRetweet = catchAsync(async (req: Request, res: Response) => 
   }
 });
 
+// get single retweet by the user
 /****************************************************************************
  *                 
  *                     Show All user Tweet                                 *                  
