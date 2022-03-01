@@ -6,14 +6,9 @@ import Paginate from '../utils/apiFeatures';
 
 export const createBookmark = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const id = req.params;
+    const id = req.params.id;
     const userId = req.user._id;
 
-    //check if user already book mark this tweet
-    const isBooked = await Bookmark.findOne({ tweetId: id }).where({ userId: userId });
-    if (isBooked) {
-      return res.json({ bookMarked: 'Already saved this tweet' });
-    }
     const bookmark = await Bookmark.create({ tweetId: id, userId, isBookmark: true });
     if (!bookmark) return next(new ErrorHandler(404, 'Error occurred'));
     res.status(200).json({ message: 'Bookmark created', data: bookmark });
