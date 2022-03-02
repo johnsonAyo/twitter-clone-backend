@@ -30,6 +30,7 @@ import { Server } from 'socket.io';
 
 dotenv.config();
 const app = express();
+app.use(cors());
 googleStrategy(passport);
 facebookStrategy(passport);
 app.use(
@@ -42,7 +43,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(cors());
+
 
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
