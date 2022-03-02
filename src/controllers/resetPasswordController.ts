@@ -120,7 +120,7 @@ const forgotPassword = catchAsync(async (req: Request, res: Response, next: Next
     },
   );
 
-  const url = `${req.protocol}://${req.get('host')}/resetPassword/${resetToken}`;
+  const url = `${req.protocol}://${req.get('host')}/resetpassword/${resetToken}`;
 
   try {
     if (process.env.NODE_ENV === 'test') {
