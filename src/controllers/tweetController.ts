@@ -177,7 +177,7 @@ export const allUserTweet = catchAsync(async (req: Request, res: Response, next:
       isBookmarked = isBookmarked ? true : false;
       isRetweeted = isRetweeted ? true : false;
 
-      return { ...item._doc, isLiked, isBookmarked, isRetweeted };
+      return { item, isLiked, isBookmarked, isRetweeted };
     });
 
     const tweets = await Promise.all(tweetsPromises);
