@@ -43,8 +43,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
