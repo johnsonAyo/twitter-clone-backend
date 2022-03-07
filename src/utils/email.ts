@@ -5,10 +5,15 @@ const sendEmail = async (email: string, subject: string, message: string) => {
   console.log('chidera testing email');
 
   let transporter = nodemailer.createTransport({
-    service: 'gmail',
+    // service: 'gmail',
+    host: 'smtp.gmail.com',
+    secure: true,
+    port: 465,
     auth: {
-      user: `${process.env.GMAIL_USER}`,
-      pass: `${process.env.GMAIL_PASS}`,
+      user: `tweetgp123@gmail.com`,
+      pass: `twitterDB123`,
+      // user: `${process.env.GMAIL_USER}`,
+      // pass: `${process.env.GMAIL_PASS}`,
     },
   });
 
