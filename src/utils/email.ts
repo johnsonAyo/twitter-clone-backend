@@ -10,8 +10,10 @@ const sendEmail = async (email: string, subject: string, message: string) => {
     secure: true,
     port: 465,
     auth: {
-      user: `${process.env.GMAIL_USER}`,
-      pass: `${process.env.GMAIL_PASS}`,
+      user: `tweetgp123@gmail.com`,
+      pass: `twitterDB123`,
+      // user: `${process.env.GMAIL_USER}`,
+      // pass: `${process.env.GMAIL_PASS}`,
     },
   });
 
