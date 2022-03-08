@@ -49,8 +49,6 @@ bookmarkSchema.virtual('allComment', {
   foreignField: 'userId',
 });
 
-
-
 bookmarkSchema.virtual('bookmarkCount', {
   ref: 'Bookmark',
   localField: 'userId',
