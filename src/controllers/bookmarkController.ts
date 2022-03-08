@@ -13,7 +13,7 @@ export const createBookmark = catchAsync(
     const id = req.params.id;
     const userId = req.user._id;
 
-    const bookmark = await Bookmark.create({ tweetId: id, userId, isBookmark: true });
+    const bookmark = await Bookmark.create({ tweetId: id, userId });
     if (!bookmark) return next(new ErrorHandler(404, 'Error occurred'));
     res.status(200).json({ message: 'Bookmark created', data: bookmark });
   },
@@ -26,8 +26,8 @@ export const getAllBookmarks = catchAsync(
 
     const result = new Paginate(Bookmark.find({ userId }), req.query).sort().paginate();
     const bookmarks = await result.query.populate(
-      'userId noOfLikes commentCount retweetCount bookmarkCount createdBy allComment',
-    );
+
+      'userId tweetId noOfLikes commentCount retweetCount bookmarkCount createdBy allComment');
     if (!bookmarks) return next(new ErrorHandler(404, 'Error occurred'));
 
     // res.status(200).json({ message: 'All bookmarks', data: bookmarks });
