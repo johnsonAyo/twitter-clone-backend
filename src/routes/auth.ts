@@ -12,7 +12,7 @@ router.get(
   '/google/callback',
   passport.authenticate('google', {
     failureRedirect: '/',
-    successRedirect: 'http://localhost:3000/auth/login/success',
+    successRedirect: `${process.env.BACKEND_URL}/auth/login/success`,
   }),
 );
 
@@ -21,7 +21,7 @@ router.get('/login/success', (req, res) => {
 
   const user = JSON.stringify(req.session.passport.user);
 
-  res.redirect(`http://localhost:3001/social/${req.session.passport.user.token}`);
+  res.redirect(`${process.env.FRONTEND_URL}/social/${req.session.passport.user.token}`);
 });
 
 // @desc    Auth with Facebook
