@@ -10,8 +10,19 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
 // @route   GET /auth/google/callback
 router.get(
   '/google/callback',
-  passport.authenticate('google', { failureRedirect: '/', successRedirect: '/dashboard' }),
+  passport.authenticate('google', {
+    failureRedirect: '/',
+    successRedirect: 'http://localhost:3000/auth/login/success',
+  }),
 );
+
+router.get('/login/success', (req, res) => {
+  console.log(req.session.passport.user, 'Pasport');
+
+  const user = JSON.stringify(req.session.passport.user);
+
+  res.redirect(`http://localhost:3001/social/${req.session.passport.user.token}`);
+});
 
 // @desc    Auth with Facebook
 // @route   GET /auth/facebook
