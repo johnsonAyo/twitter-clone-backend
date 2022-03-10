@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import Joi, { Err } from 'joi';
 import { Mongoose } from 'mongoose';
+import multer from 'multer';
 
 export interface books {
   id?: string;
